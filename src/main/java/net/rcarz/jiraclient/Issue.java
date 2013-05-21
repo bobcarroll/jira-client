@@ -31,6 +31,58 @@ import net.sf.json.JSONObject;
  */
 public final class Issue extends Resource {
 
+    /**
+     * Used to chain fields to an update action.
+     */
+    public final class FluentUpdate {
+
+        Map<String, Object> fields = new HashMap<String, Object>();
+        JSONObject editmeta = null;
+
+        private FluentUpdate(JSONObject editmeta) {
+            this.editmeta = editmeta;
+        }
+
+        /**
+         * Executes the update action.
+         *
+         * @throws JiraException when the update fails
+         */
+        public void execute() throws JiraException {
+            JSONObject fieldmap = new JSONObject();
+
+            if (fields.size() == 0)
+                throw new JiraException("No fields were given for update");
+
+            for (Map.Entry<String, Object> ent : fields.entrySet()) {
+                Object newval = Field.toJson(ent.getKey(), ent.getValue(), editmeta);
+                fieldmap.put(ent.getKey(), newval);
+            }
+
+            JSONObject req = new JSONObject();
+            req.put("fields", fieldmap);
+
+            try {
+                restclient.put(getRestUri(key), req);
+            } catch (Exception ex) {
+                throw new JiraException("Failed to update issue " + key, ex);
+            }
+        }
+
+        /**
+         * Appends a field to the update action.
+         *
+         * @param name Name of the field
+         * @param value New field value
+         *
+         * @return the current fluent update instance
+         */
+        public FluentUpdate field(String name, Object value) {
+            fields.put(name, value);
+            return this;
+        }
+    }
+
     private String key = null;
 
     /* system fields */
@@ -89,6 +141,22 @@ public final class Issue extends Resource {
         versions = Field.getResourceArray(Version.class, fields.get(Field.VERSIONS), restclient);
     }
 
+    private static String getRestUri(String key) {
+        return RESOURCE_URI + "issue/" + key;
+    }
+
+    private JSONObject getEditMetadata() throws JiraException {
+        JSONObject result = null;
+
+        try {
+            result = restclient.get(getRestUri(key) + "/editmeta");
+        } catch (Exception ex) {
+            throw new JiraException("Failed to retrieve issue metadata", ex);
+        }
+
+        return result;
+    }
+
     /**
      * Retrieves the given issue record.
      *
@@ -105,12 +173,23 @@ public final class Issue extends Resource {
         JSONObject result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "issue/" + key);
+            result = restclient.get(getRestUri(key));
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve issue " + key, ex);
         }
 
         return new Issue(restclient, result);
+    }
+
+    /**
+     * Begins an update field chain.
+     *
+     * @return a fluent update instance
+     *
+     * @throws JiraException when the client fails to retrieve issue metadata
+     */
+    public FluentUpdate update() throws JiraException {
+        return new FluentUpdate(getEditMetadata());
     }
 
     @Override

@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient;
 
+import java.lang.Iterable;
 import java.lang.UnsupportedOperationException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -36,6 +37,19 @@ import net.sf.json.JSONObject;
  */
 public final class Field {
 
+    /**
+     * Field metadata structure.
+     */
+    public static final class Meta {
+        public boolean required;
+        public String type;
+        public String items;
+        public String name;
+        public String system;
+        public String custom;
+        public int customId;
+    }
+
     public static final String ASSIGNEE = "assignee";
     public static final String ATTACHMENT = "attachment";
     public static final String COMMENT = "comment";
@@ -51,6 +65,8 @@ public final class Field {
     public static final String SUMMARY = "summary";
     public static final String TIME_TRACKING = "timetracking";
     public static final String VERSIONS = "versions";
+
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     private Field() { }
 
@@ -98,7 +114,7 @@ public final class Field {
         Date result = null;
 
         if (d instanceof String) {
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
             result = df.parse((String)d, new ParsePosition(0));
         }
 
@@ -270,6 +286,139 @@ public final class Field {
             result = new TimeTracking((JSONObject)tt);
 
         return result;
+    }
+
+    /**
+     * Extracts field metadata from an editmeta JSON object.
+     *
+     * @param name Field name
+     * @param editmeta Edit metadata JSON object
+     *
+     * @return a Meta instance with field metadata
+     *
+     * @throws JiraException when the field is missing or metadata is bad
+     */
+    public static Meta getFieldMetadata(String name, JSONObject editmeta)
+        throws JiraException {
+
+        if (editmeta.isNullObject() || !editmeta.containsKey("fields"))
+            throw new JiraException("Edit metadata is malformed");
+
+        Map fields = (Map)editmeta.get("fields");
+
+        if (!fields.containsKey(name))
+            throw new JiraException("Field '" + name + "' does not exist or read-only");
+
+        Map f = (Map)fields.get(name);
+        Meta m = new Meta();
+
+        m.required = Field.getBoolean(f.get("required"));
+        m.name = Field.getString(f.get("name"));
+
+        if (!f.containsKey("schema"))
+            throw new JiraException("Field '" + name + "' is missing schema metadata");
+
+        Map schema = (Map)f.get("schema");
+
+        m.type = Field.getString(schema.get("type"));
+        m.items = Field.getString(schema.get("items"));
+        m.system = Field.getString(schema.get("system"));
+        m.custom = Field.getString(schema.get("custom"));
+        m.customId = Field.getInteger(schema.get("customId"));
+
+        return m;
+    }
+
+    /**
+     * Converts the given value to a date.
+     *
+     * @param value New field value
+     *
+     * @return a Date instance or null
+     */
+    public static Date toDate(Object value) {
+        if (value instanceof Date || value == null)
+            return (Date)value;
+
+        SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
+        return df.parse(value.toString(), new ParsePosition(0));
+    }
+
+    /**
+     * Converts an iterable type to a JSON array.
+     *
+     * @param iter Iterable type containing field values
+     * @param type Name of the item type
+     *
+     * @return a JSON-encoded array of items
+     */
+    public static JSONArray toArray(Iterable iter, String type) throws JiraException {
+        JSONArray result = new JSONArray();
+
+        if (type == null)
+            throw new JiraException("Array field metadata is missing item type");
+
+        for (Object val : iter) {
+            if (type.equals("component") || type.equals("group") ||
+                type.equals("user") || type.equals("version")) {
+
+                JSONObject json = new JSONObject();
+                json.put("name", val.toString());
+
+                result.add(json.toString());
+            } else if (type.equals("string"))
+                result.add(val.toString());
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts the given value to a JSON object.
+     *
+     * @param name Field name
+     * @param value New field value
+     * @param editmeta Edit metadata JSON object
+     *
+     * @return a JSON-encoded field value
+     *
+     * @throws JiraException when a value is bad or field has invalid metadata
+     * @throws UnsupportedOperationException when a field type isn't supported
+     */
+    public static Object toJson(String name, Object value, JSONObject editmeta)
+        throws JiraException, UnsupportedOperationException {
+
+        if (value == null)
+            return null;
+
+        Meta m = getFieldMetadata(name, editmeta);
+
+        if (m.type == null)
+            throw new JiraException("Field metadata is missing a type");
+
+        if (m.type.equals("array")) {
+            if (!(value instanceof Iterable))
+                throw new JiraException("Field expects an Iterable value");
+
+            return toArray((Iterable)value, m.items);
+        } else if (m.type.equals("date")) {
+            Date d = toDate(value);
+
+            if (d == null)
+                throw new JiraException("Field expects a date value or format is invalid");
+
+            SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
+            return df.format(d);
+        } else if (m.type.equals("issuetype") || m.type.equals("priority") || m.type.equals("user")) {
+            JSONObject json = new JSONObject();
+            json.put("name", value.toString());
+
+            return json.toString();
+        } else if (m.type.equals("string")) {
+            return value.toString();
+        }
+
+        throw new UnsupportedOperationException(m.type + " is not a supported field type");
     }
 }
 

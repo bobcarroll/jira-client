@@ -45,8 +45,7 @@ public class RestException extends Exception {
     }
 
     public String getMessage() {
-        String msg = "%s: %s: %s";
-        return msg.format(Integer.toString(status), super.getMessage(), result);
+        return String.format("%s %s: %s", Integer.toString(status), super.getMessage(), result);
     }
 }
 
