@@ -190,21 +190,21 @@ public final class Issue extends Resource {
     private String key = null;
 
     /* system fields */
-    public User assignee = null;
-    public List<Attachment> attachments = null;
-    public List<Comment> comments = null;
-    public List<Component> components = null;
-    public String description = null;
-    public Date dueDate = null;
-    public List<Version> fixVersions = null;
-    public IssueType issueType = null;
-    public List<String> labels = null;
-    public Priority priority = null;
-    public User reporter = null;
-    public Status status = null;
-    public String summary = null;
-    public TimeTracking timeTracking = null;
-    public List<Version> versions = null;
+    private User assignee = null;
+    private List<Attachment> attachments = null;
+    private List<Comment> comments = null;
+    private List<Component> components = null;
+    private String description = null;
+    private Date dueDate = null;
+    private List<Version> fixVersions = null;
+    private IssueType issueType = null;
+    private List<String> labels = null;
+    private Priority priority = null;
+    private User reporter = null;
+    private Status status = null;
+    private String summary = null;
+    private TimeTracking timeTracking = null;
+    private List<Version> versions = null;
 
     /**
      * Creates an issue from a JSON payload.
@@ -284,6 +284,47 @@ public final class Issue extends Resource {
             throw new JiraException("Transition metadata is missing from results");
 
         return (JSONArray)result.get("transitions");
+    }
+
+    /**
+     * Adds a comment to this issue.
+     *
+     * @param body Comment text
+     *
+     * @throws JiraException when the comment creation fails
+     */
+    public void addComment(String body) throws JiraException {
+        addComment(body, null, null);
+    }
+
+    /**
+     * Adds a comment to this issue with limited visibility.
+     *
+     * @param body Comment text
+     * @param visType Target audience type (role or group)
+     * @param visName Name of the role or group to limit visibility to
+     *
+     * @throws JiraException when the comment creation fails
+     */
+    public void addComment(String body, String visType, String visName)
+        throws JiraException {
+
+        JSONObject req = new JSONObject();
+        req.put("body", body);
+
+        if (visType != null && visName != null) {
+            JSONObject vis = new JSONObject();
+            vis.put("type", visType);
+            vis.put("value", visName);
+
+            req.put("visibility", vis);
+        }
+
+        try {
+            restclient.post(getRestUri(key) + "/comment", req);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to retrieve issue " + key, ex);
+        }
     }
 
     /**
