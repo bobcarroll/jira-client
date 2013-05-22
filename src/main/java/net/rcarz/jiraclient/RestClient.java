@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.StringBuilder;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -34,6 +35,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -60,9 +62,37 @@ public class RestClient {
         this.uri = uri;
     }
 
-    private URI buildURI(String path) throws URISyntaxException {
+    /**
+     * Build a URI from a path.
+     *
+     * @param path Path to append to the base URI
+     *
+     * @return the full URI
+     *
+     * @throws URISyntaxException when the path is invalid
+     */
+    public URI buildURI(String path) throws URISyntaxException {
+        return buildURI(path, null);
+    }
+
+    /**
+     * Build a URI from a path and query parmeters.
+     *
+     * @param path Path to append to the base URI
+     * @param params Map of key value pairs
+     *
+     * @return the full URI
+     *
+     * @throws URISyntaxException when the path is invalid
+     */
+    public URI buildURI(String path, Map<String, String> params) throws URISyntaxException {
         URIBuilder ub = new URIBuilder(uri);
         ub.setPath(ub.getPath() + path);
+
+        if (params != null) {
+            for (Map.Entry<String, String> ent : params.entrySet())
+                ub.addParameter(ent.getKey(), ent.getValue());
+        }
 
         return ub.build();
     }
@@ -135,6 +165,39 @@ public class RestClient {
      */
     public JSONObject get(String path) throws RestException, IOException, URISyntaxException {
         return get(buildURI(path));
+    }
+
+    /**
+     * Executes an HTTP POST with the given URI and payload.
+     *
+     * @param uri Full URI of the remote endpoint
+     * @param payload JSON-encoded data to send to the remote service
+     *
+     * @return JSON-encoded result or null when there's no content returned
+     *
+     * @throws RestException when an HTTP-level error occurs
+     * @throws IOException when an error reading the response occurs
+     */
+    public JSONObject post(URI uri, JSONObject payload) throws RestException, IOException {
+        return request(new HttpPost(uri), payload);
+    }
+
+    /**
+     * Executes an HTTP POST with the given path and payload.
+     *
+     * @param path Path to be appended to the URI supplied in the construtor
+     * @param payload JSON-encoded data to send to the remote service
+     *
+     * @return JSON-encoded result or null when there's no content returned
+     *
+     * @throws RestException when an HTTP-level error occurs
+     * @throws IOException when an error reading the response occurs
+     * @throws URISyntaxException when an error occurred appending the path to the URI
+     */
+    public JSONObject post(String path, JSONObject payload)
+        throws RestException, IOException, URISyntaxException {
+
+        return post(buildURI(path), payload);
     }
 
     /**

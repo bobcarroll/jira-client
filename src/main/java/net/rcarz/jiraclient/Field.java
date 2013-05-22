@@ -301,15 +301,10 @@ public final class Field {
     public static Meta getFieldMetadata(String name, JSONObject editmeta)
         throws JiraException {
 
-        if (editmeta.isNullObject() || !editmeta.containsKey("fields"))
-            throw new JiraException("Edit metadata is malformed");
-
-        Map fields = (Map)editmeta.get("fields");
-
-        if (!fields.containsKey(name))
+        if (editmeta.isNullObject() || !editmeta.containsKey(name))
             throw new JiraException("Field '" + name + "' does not exist or read-only");
 
-        Map f = (Map)fields.get(name);
+        Map f = (Map)editmeta.get(name);
         Meta m = new Meta();
 
         m.required = Field.getBoolean(f.get("required"));
@@ -415,10 +410,29 @@ public final class Field {
 
             return json.toString();
         } else if (m.type.equals("string")) {
+            if (value instanceof Map)
+                return toJsonMap((Map)value);
+
             return value.toString();
         }
 
         throw new UnsupportedOperationException(m.type + " is not a supported field type");
+    }
+
+    /**
+     * Converts the given map to a JSON object.
+     *
+     * @param map Map to be converted
+     *
+     * @return a JSON-encoded map
+     */
+    public static Object toJsonMap(Map map) {
+        JSONObject json = new JSONObject();
+
+        for (Object k : map.keySet())
+            json.put(k, map.get(k));
+
+        return json.toString();
     }
 }
 

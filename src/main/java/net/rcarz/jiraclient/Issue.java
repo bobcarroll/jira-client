@@ -19,11 +19,13 @@
 
 package net.rcarz.jiraclient;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -78,6 +80,108 @@ public final class Issue extends Resource {
          * @return the current fluent update instance
          */
         public FluentUpdate field(String name, Object value) {
+            fields.put(name, value);
+            return this;
+        }
+    }
+
+    /**
+     * Used to chain fields to an transition action.
+     */
+    public final class FluentTransition {
+
+        Map<String, Object> fields = new HashMap<String, Object>();
+        JSONArray transitions = null;
+
+        private FluentTransition(JSONArray transitions) {
+            this.transitions = transitions;
+        }
+
+        private JSONObject getTransition(String id, boolean name) throws JiraException {
+            JSONObject result = null;
+
+            for (Object item : transitions) {
+                if (!(item instanceof JSONObject) || !((JSONObject)item).containsKey("id"))
+                    throw new JiraException("Transition metadata is malformed");
+
+                JSONObject t = (JSONObject)item;
+
+                if ((!name && Field.getString(t.get("id")).equals(id)) ||
+                    (name && Field.getString(t.get("name")).equals(id))) {
+
+                    result = t;
+                    break;
+                }
+            }
+
+            if (result == null)
+                throw new JiraException("Transition was not found in metadata");
+
+            return result;
+        }
+
+        private void realExecute(JSONObject trans) throws JiraException {
+
+            if (trans.isNullObject() || !trans.containsKey("fields") ||
+                    !(trans.get("fields") instanceof JSONObject))
+                throw new JiraException("Transition metadata is missing fields");
+
+            JSONObject editmeta = (JSONObject)trans.get("fields");
+            JSONObject fieldmap = new JSONObject();
+
+            for (Map.Entry<String, Object> ent : fields.entrySet()) {
+                Object newval = Field.toJson(ent.getKey(), ent.getValue(), editmeta);
+                fieldmap.put(ent.getKey(), newval);
+            }
+
+            JSONObject req = new JSONObject();
+
+            if (fieldmap.size() > 0)
+                req.put("fields", fieldmap);
+
+            JSONObject t = new JSONObject();
+            t.put("id", Field.getString(trans.get("id")));
+
+            req.put("transition", t);
+
+            try {
+                restclient.post(getRestUri(key) + "/transitions", req);
+            } catch (Exception ex) {
+                throw new JiraException("Failed to transition issue " + key, ex);
+            }
+        }
+
+        /**
+         * Executes the transition action.
+         *
+         * @param id Internal transition ID
+         *
+         * @throws JiraException when the transition fails
+         */
+        public void execute(int id) throws JiraException {
+            realExecute(getTransition(Integer.toString(id), false));
+        }
+
+        /**
+         * Executes the transition action.
+         *
+         * @param name Transition name
+         *
+         * @throws JiraException when the transition fails
+         */
+        public void execute(String name) throws JiraException {
+            realExecute(getTransition(name, true));
+        }
+
+        /**
+         * Appends a field to the transition action.
+         *
+         * @param name Name of the field
+         * @param value New field value
+         *
+         * @return the current fluent transition instance
+         */
+        public FluentTransition field(String name, Object value) {
             fields.put(name, value);
             return this;
         }
@@ -154,7 +258,32 @@ public final class Issue extends Resource {
             throw new JiraException("Failed to retrieve issue metadata", ex);
         }
 
-        return result;
+        if (result.isNullObject() || !result.containsKey("fields") ||
+                !(result.get("fields") instanceof JSONObject))
+            throw new JiraException("Edit metadata is malformed");
+
+        return (JSONObject)result.get("fields");
+    }
+
+    private JSONArray getTransitions() throws JiraException {
+        JSONObject result = null;
+
+        try {
+            URI transuri = restclient.buildURI(
+                getRestUri(key) + "/transitions",
+                new HashMap<String, String>() {{
+                    put("expand", "transitions.fields");
+                }});
+            result = restclient.get(transuri);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to retrieve transitions", ex);
+        }
+
+        if (result.isNullObject() || !result.containsKey("transitions") ||
+                !(result.get("transitions") instanceof JSONArray))
+            throw new JiraException("Transition metadata is missing from results");
+
+        return (JSONArray)result.get("transitions");
     }
 
     /**
@@ -179,6 +308,17 @@ public final class Issue extends Resource {
         }
 
         return new Issue(restclient, result);
+    }
+
+    /**
+     * Begins a transition field chain.
+     *
+     * @return a fluent transition instance
+     *
+     * @throws JiraException when the client fails to retrieve issue metadata
+     */
+    public FluentTransition transition() throws JiraException {
+        return new FluentTransition(getTransitions());
     }
 
     /**
