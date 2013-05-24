@@ -77,7 +77,7 @@ public final class Comment extends Resource {
         JSONObject result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + issue + "/comment/" + id);
+            result = restclient.get(RESOURCE_URI + "issue/" + issue + "/comment/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve comment " + id + " on issue " + issue, ex);
         }
