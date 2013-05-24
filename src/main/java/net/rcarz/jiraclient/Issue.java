@@ -188,6 +188,7 @@ public final class Issue extends Resource {
     }
 
     private String key = null;
+    private Map fields = null;
 
     /* system fields */
     private User assignee = null;
@@ -229,7 +230,7 @@ public final class Issue extends Resource {
         self = Field.getString(map.get("self"));
         key = Field.getString(map.get("key"));
 
-        Map fields = (Map)map.get("fields");
+        fields = (Map)map.get("fields");
 
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
         attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ASSIGNEE), restclient);
@@ -355,6 +356,18 @@ public final class Issue extends Resource {
         }
 
         return new Issue(restclient, result);
+    }
+
+    /**
+     * Gets an arbitrary field by its name.
+     *
+     * @param name Name of the field to retrieve
+     *
+     * @return the field value or null if not found
+     */
+    public Object getField(String name) {
+
+        return fields != null ? fields.get(name) : null;
     }
 
     /**

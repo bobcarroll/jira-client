@@ -187,6 +187,8 @@ public final class Field {
                 result = (T)new Comment(restclient, (JSONObject)r);
             else if (type == Component.class)
                 result = (T)new Component(restclient, (JSONObject)r);
+            else if (type == CustomFieldOption.class)
+                result = (T)new CustomFieldOption(restclient, (JSONObject)r);
             else if (type == IssueType.class)
                 result = (T)new IssueType(restclient, (JSONObject)r);
             else if (type == Priority.class)
@@ -266,6 +268,8 @@ public final class Field {
                     results.add((T)new Comment(restclient, (JSONObject)v));
                 else if (type == Component.class)
                     results.add((T)new Component(restclient, (JSONObject)v));
+                else if (type == CustomFieldOption.class)
+                    results.add((T)new CustomFieldOption(restclient, (JSONObject)v));
                 else if (type == IssueType.class)
                     results.add((T)new IssueType(restclient, (JSONObject)v));
                 else if (type == Priority.class)
