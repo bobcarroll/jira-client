@@ -200,11 +200,14 @@ public final class Issue extends Resource {
     private IssueType issueType = null;
     private List<String> labels = null;
     private Priority priority = null;
+    private Project project = null;
     private User reporter = null;
     private Status status = null;
     private String summary = null;
     private TimeTracking timeTracking = null;
     private List<Version> versions = null;
+    private Votes votes = null;
+    private Watches watches = null;
 
     /**
      * Creates an issue from a JSON payload.
@@ -238,11 +241,14 @@ public final class Issue extends Resource {
         issueType = Field.getResource(IssueType.class, fields.get(Field.ISSUE_TYPE), restclient);
         labels = Field.getStringArray(fields.get(Field.LABELS));
         priority = Field.getResource(Priority.class, fields.get(Field.PRIORITY), restclient);
+        project = Field.getResource(Project.class, fields.get(Field.PROJECT), restclient);
         reporter = Field.getResource(User.class, fields.get(Field.REPORTER), restclient);
         status = Field.getResource(Status.class, fields.get(Field.STATUS), restclient);
         summary = Field.getString(fields.get(Field.SUMMARY));
         timeTracking = Field.getTimeTracking(fields.get(Field.TIME_TRACKING));
         versions = Field.getResourceArray(Version.class, fields.get(Field.VERSIONS), restclient);
+        votes = Field.getResource(Votes.class, fields.get(Field.VOTES), restclient);
+        watches = Field.getResource(Watches.class, fields.get(Field.WATCHES), restclient);
     }
 
     private static String getRestUri(String key) {
@@ -422,6 +428,10 @@ public final class Issue extends Resource {
         return priority;
     }
 
+    public Project getProject() {
+        return project;
+    }
+
     public User getReporter() {
         return reporter;
     }
@@ -440,6 +450,14 @@ public final class Issue extends Resource {
 
     public List<Version> getVersions() {
         return versions;
+    }
+
+    public Votes getVotes() {
+        return votes;
+    }
+
+    public Watches getWatches() {
+        return watches;
     }
 }
 
