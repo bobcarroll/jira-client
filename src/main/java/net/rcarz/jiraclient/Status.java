@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -68,7 +69,7 @@ public final class Status extends Resource {
     public static Status get(RestClient restclient, String id)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "status/" + id);
@@ -76,7 +77,10 @@ public final class Status extends Resource {
             throw new JiraException("Failed to retrieve status " + id, ex);
         }
 
-        return new Status(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new Status(restclient, (JSONObject)result);
     }
 
     @Override

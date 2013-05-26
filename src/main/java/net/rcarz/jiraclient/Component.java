@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -29,6 +30,7 @@ import net.sf.json.JSONObject;
 public final class Component extends Resource {
 
     private String name = null;
+    private boolean isAssigneeTypeValid = false;
 
     /**
      * Creates a component from a JSON payload.
@@ -49,6 +51,7 @@ public final class Component extends Resource {
         self = Field.getString(map.get("self"));
         id = Field.getString(map.get("id"));
         name = Field.getString(map.get("name"));
+        isAssigneeTypeValid = Field.getBoolean(map.get("isAssigneeTypeValid"));
     }
 
     /**
@@ -64,7 +67,7 @@ public final class Component extends Resource {
     public static Component get(RestClient restclient, String id)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "component/" + id);
@@ -72,7 +75,10 @@ public final class Component extends Resource {
             throw new JiraException("Failed to retrieve component " + id, ex);
         }
 
-        return new Component(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new Component(restclient, (JSONObject)result);
     }
 
     @Override
@@ -82,6 +88,10 @@ public final class Component extends Resource {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isAssigneeTypeValid() {
+        return isAssigneeTypeValid;
     }
 }
 

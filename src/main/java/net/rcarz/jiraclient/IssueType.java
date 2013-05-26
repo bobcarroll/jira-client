@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -32,6 +33,7 @@ public final class IssueType extends Resource {
     private String iconUrl = null;
     private String name = null;
     private boolean subtask = false;
+    private JSONObject fields = null;
 
     /**
      * Creates an issue type from a JSON payload.
@@ -55,6 +57,9 @@ public final class IssueType extends Resource {
         iconUrl = Field.getString(map.get("iconUrl"));
         name = Field.getString(map.get("name"));
         subtask = Field.getBoolean(map.get("subtask"));
+
+        if (map.containsKey("fields") && map.get("fields") instanceof JSONObject)
+            fields = (JSONObject)map.get("fields");
     }
 
     /**
@@ -70,7 +75,7 @@ public final class IssueType extends Resource {
     public static IssueType get(RestClient restclient, String id)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "issuetype/" + id);
@@ -78,7 +83,10 @@ public final class IssueType extends Resource {
             throw new JiraException("Failed to retrieve issue type " + id, ex);
         }
 
-        return new IssueType(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new IssueType(restclient, (JSONObject)result);
     }
 
     @Override
@@ -100,6 +108,10 @@ public final class IssueType extends Resource {
 
     public boolean isSubtask() {
         return subtask;
+    }
+
+    public JSONObject getFields() {
+        return fields;
     }
 }
 

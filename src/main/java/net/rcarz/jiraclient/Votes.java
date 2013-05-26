@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -67,7 +68,7 @@ public final class Votes extends Resource {
     public static Votes get(RestClient restclient, String issue)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "issue/" + issue + "/votes");
@@ -75,7 +76,10 @@ public final class Votes extends Resource {
             throw new JiraException("Failed to retrieve votes for issue " + issue, ex);
         }
 
-        return new Votes(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new Votes(restclient, (JSONObject)result);
     }
 
     @Override

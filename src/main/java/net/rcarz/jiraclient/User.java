@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -72,7 +73,7 @@ public final class User extends Resource {
     public static User get(RestClient restclient, String username)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "user?username=" + username);
@@ -80,7 +81,10 @@ public final class User extends Resource {
             throw new JiraException("Failed to retrieve user " + username, ex);
         }
 
-        return new User(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new User(restclient, (JSONObject)result);
     }
 
     @Override

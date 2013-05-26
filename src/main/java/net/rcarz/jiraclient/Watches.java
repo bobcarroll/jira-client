@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -67,7 +68,7 @@ public final class Watches extends Resource {
     public static Watches get(RestClient restclient, String issue)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "issue/" + issue + "/watches");
@@ -75,7 +76,10 @@ public final class Watches extends Resource {
             throw new JiraException("Failed to retrieve watches for issue " + issue, ex);
         }
 
-        return new Watches(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new Watches(restclient, (JSONObject)result);
     }
 
     @Override

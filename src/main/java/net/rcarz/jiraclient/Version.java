@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -68,7 +69,7 @@ public final class Version extends Resource {
     public static Version get(RestClient restclient, String id)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "version/" + id);
@@ -76,7 +77,10 @@ public final class Version extends Resource {
             throw new JiraException("Failed to retrieve version " + id, ex);
         }
 
-        return new Version(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new Version(restclient, (JSONObject)result);
     }
 
     @Override

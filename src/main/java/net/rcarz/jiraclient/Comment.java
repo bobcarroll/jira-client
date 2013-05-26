@@ -22,6 +22,7 @@ package net.rcarz.jiraclient;
 import java.util.Date;
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -74,7 +75,7 @@ public final class Comment extends Resource {
     public static Comment get(RestClient restclient, String issue, String id)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "issue/" + issue + "/comment/" + id);
@@ -82,7 +83,10 @@ public final class Comment extends Resource {
             throw new JiraException("Failed to retrieve comment " + id + " on issue " + issue, ex);
         }
 
-        return new Comment(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new Comment(restclient, (JSONObject)result);
     }
 
     @Override

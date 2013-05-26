@@ -63,6 +63,22 @@ public class JiraClient {
     }
 
     /**
+     * Creates a new issue in the given project.
+     *
+     * @param project Key of the project to create in
+     * @param issueType Name of the issue type to create
+     *
+     * @return a fluent create instance
+     *
+     * @throws JiraException when something goes wrong
+     */
+    public Issue.FluentCreate createIssue(String project, String issueType)
+        throws JiraException {
+
+        return Issue.create(restclient, project, issueType);
+    }
+
+    /**
      * Retreives the issue with the given key.
      *
      * @param key Issue key (PROJECT-123)

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -32,6 +33,68 @@ import net.sf.json.JSONObject;
  * Represents a JIRA issue.
  */
 public final class Issue extends Resource {
+
+    /**
+     * Used to chain fields to a create action.
+     */
+    public static final class FluentCreate {
+
+        Map<String, Object> fields = new HashMap<String, Object>();
+        RestClient restclient = null;
+        JSONObject createmeta = null;
+
+        private FluentCreate(RestClient restclient, JSONObject createmeta) {
+            this.restclient = restclient;
+            this.createmeta = createmeta;
+        }
+
+        /**
+         * Executes the create action.
+         *
+         * @throws JiraException when the create fails
+         */
+        public Issue execute() throws JiraException {
+            JSONObject fieldmap = new JSONObject();
+
+            if (fields.size() == 0)
+                throw new JiraException("No fields were given for create");
+
+            for (Map.Entry<String, Object> ent : fields.entrySet()) {
+                Object newval = Field.toJson(ent.getKey(), ent.getValue(), createmeta);
+                fieldmap.put(ent.getKey(), newval);
+            }
+
+            JSONObject req = new JSONObject();
+            req.put("fields", fieldmap);
+
+            JSON result = null;
+
+            try {
+                result = restclient.post(getRestUri(null), req);
+            } catch (Exception ex) {
+                throw new JiraException("Failed to create issue", ex);
+            }
+
+            if (!(result instanceof JSONObject) || !((JSONObject)result).containsKey("key") ||
+                    !(((JSONObject)result).get("key") instanceof String))
+                throw new JiraException("Unexpected result on create issue");
+
+            return Issue.get(restclient, (String)((JSONObject)result).get("key"));
+        }
+
+        /**
+         * Appends a field to the update action.
+         *
+         * @param name Name of the field
+         * @param value New field value
+         *
+         * @return the current fluent update instance
+         */
+        public FluentCreate field(String name, Object value) {
+            fields.put(name, value);
+            return this;
+        }
+    }
 
     /**
      * Used to chain fields to an update action.
@@ -253,11 +316,51 @@ public final class Issue extends Resource {
     }
 
     private static String getRestUri(String key) {
-        return RESOURCE_URI + "issue/" + key;
+        return RESOURCE_URI + "issue/" + (key != null ? key : "");
+    }
+
+    private static JSONObject getCreateMetadata(
+        RestClient restclient, String project, String issueType) throws JiraException {
+
+        final String pval = project;
+        final String itval = issueType;
+        JSON result = null;
+
+        try {
+            URI createuri = restclient.buildURI(
+                RESOURCE_URI + "issue/createmeta",
+                new HashMap<String, String>() {{
+                    put("expand", "projects.issuetypes.fields");
+                    put("projectKeys", pval);
+                    put("issuetypeNames", itval);
+                }});
+            result = restclient.get(createuri);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to retrieve issue metadata", ex);
+        }
+
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        JSONObject jo = (JSONObject)result;
+
+        if (jo.isNullObject() || !jo.containsKey("projects") ||
+                !(jo.get("projects") instanceof JSONArray))
+            throw new JiraException("Create metadata is malformed");
+
+        List<Project> projects = Field.getResourceArray(
+            Project.class,
+            (JSONArray)jo.get("projects"),
+            restclient);
+
+        if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty())
+            throw new JiraException("Project or issue type missing from create metadata");
+
+        return projects.get(0).getIssueTypes().get(0).getFields();
     }
 
     private JSONObject getEditMetadata() throws JiraException {
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(getRestUri(key) + "/editmeta");
@@ -265,15 +368,20 @@ public final class Issue extends Resource {
             throw new JiraException("Failed to retrieve issue metadata", ex);
         }
 
-        if (result.isNullObject() || !result.containsKey("fields") ||
-                !(result.get("fields") instanceof JSONObject))
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        JSONObject jo = (JSONObject)result;
+
+        if (jo.isNullObject() || !jo.containsKey("fields") ||
+                !(jo.get("fields") instanceof JSONObject))
             throw new JiraException("Edit metadata is malformed");
 
-        return (JSONObject)result.get("fields");
+        return (JSONObject)jo.get("fields");
     }
 
     private JSONArray getTransitions() throws JiraException {
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             URI transuri = restclient.buildURI(
@@ -286,11 +394,13 @@ public final class Issue extends Resource {
             throw new JiraException("Failed to retrieve transitions", ex);
         }
 
-        if (result.isNullObject() || !result.containsKey("transitions") ||
-                !(result.get("transitions") instanceof JSONArray))
-            throw new JiraException("Transition metadata is missing from results");
+        JSONObject jo = (JSONObject)result;
 
-        return (JSONArray)result.get("transitions");
+        if (jo.isNullObject() || !jo.containsKey("transitions") ||
+                !(jo.get("transitions") instanceof JSONArray))
+            throw new JiraException("Transition metadata is missing from jos");
+
+        return (JSONArray)jo.get("transitions");
     }
 
     /**
@@ -335,6 +445,29 @@ public final class Issue extends Resource {
     }
 
     /**
+     * Creates a new JIRA issue.
+     *
+     * @param restclient REST client instance
+     * @param project Key of the project to create the issue in
+     * @param issueType Name of the issue type to create
+     *
+     * @return a fluent create instance
+     *
+     * @throws JiraException when the client fails to retrieve issue metadata
+     */
+    public static FluentCreate create(RestClient restclient, String project, String issueType)
+        throws JiraException {
+
+        FluentCreate fc = new FluentCreate(
+            restclient,
+            getCreateMetadata(restclient, project, issueType));
+
+        return fc
+            .field(Field.PROJECT, project)
+            .field(Field.ISSUE_TYPE, issueType);
+    }
+
+    /**
      * Retrieves the given issue record.
      *
      * @param restclient REST client instance
@@ -347,7 +480,7 @@ public final class Issue extends Resource {
     public static Issue get(RestClient restclient, String key)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(getRestUri(key));
@@ -355,7 +488,10 @@ public final class Issue extends Resource {
             throw new JiraException("Failed to retrieve issue " + key, ex);
         }
 
-        return new Issue(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new Issue(restclient, (JSONObject)result);
     }
 
     /**

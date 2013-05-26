@@ -22,6 +22,7 @@ package net.rcarz.jiraclient;
 import java.util.Date;
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -75,7 +76,7 @@ public final class Attachment extends Resource {
     public static Attachment get(RestClient restclient, String id)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "attachment/" + id);
@@ -83,7 +84,10 @@ public final class Attachment extends Resource {
             throw new JiraException("Failed to retrieve attachment " + id, ex);
         }
 
-        return new Attachment(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new Attachment(restclient, (JSONObject)result);
     }
 
     @Override

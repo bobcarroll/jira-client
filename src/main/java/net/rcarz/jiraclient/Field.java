@@ -428,6 +428,11 @@ public final class Field {
             json.put("name", value.toString());
 
             return json.toString();
+        } else if (m.type.equals("project")) {
+            JSONObject json = new JSONObject();
+            json.put("key", value.toString());
+
+            return json.toString();
         } else if (m.type.equals("string")) {
             if (value instanceof Map)
                 return toJsonMap((Map)value);

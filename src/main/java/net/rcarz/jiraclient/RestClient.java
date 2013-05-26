@@ -41,7 +41,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 
-import net.sf.json.JSONObject;
+import net.sf.json.JSON;
+import net.sf.json.JSONSerializer;
 
 /**
  * A simple REST client that speaks JSON.
@@ -97,7 +98,7 @@ public class RestClient {
         return ub.build();
     }
 
-    private JSONObject request(HttpRequestBase req) throws RestException, IOException {
+    private JSON request(HttpRequestBase req) throws RestException, IOException {
         req.addHeader("Accept", "application/json");
 
         HttpResponse resp = httpclient.execute(req);
@@ -117,10 +118,10 @@ public class RestClient {
         if (sl.getStatusCode() >= 300)
             throw new RestException(sl.getReasonPhrase(), sl.getStatusCode(), result.toString());
 
-        return result.length() > 0 ? JSONObject.fromObject(result.toString()) : null;
+        return result.length() > 0 ? JSONSerializer.toJSON(result.toString()): null;
     }
 
-    private JSONObject request(HttpEntityEnclosingRequestBase req, JSONObject payload)
+    private JSON request(HttpEntityEnclosingRequestBase req, JSON payload)
         throws RestException, IOException {
 
         StringEntity ent = null;
@@ -148,7 +149,7 @@ public class RestClient {
      * @throws RestException when an HTTP-level error occurs
      * @throws IOException when an error reading the response occurs
      */
-    public JSONObject get(URI uri) throws RestException, IOException {
+    public JSON get(URI uri) throws RestException, IOException {
         return request(new HttpGet(uri));
     }
 
@@ -163,7 +164,7 @@ public class RestClient {
      * @throws IOException when an error reading the response occurs
      * @throws URISyntaxException when an error occurred appending the path to the URI
      */
-    public JSONObject get(String path) throws RestException, IOException, URISyntaxException {
+    public JSON get(String path) throws RestException, IOException, URISyntaxException {
         return get(buildURI(path));
     }
 
@@ -178,7 +179,7 @@ public class RestClient {
      * @throws RestException when an HTTP-level error occurs
      * @throws IOException when an error reading the response occurs
      */
-    public JSONObject post(URI uri, JSONObject payload) throws RestException, IOException {
+    public JSON post(URI uri, JSON payload) throws RestException, IOException {
         return request(new HttpPost(uri), payload);
     }
 
@@ -194,7 +195,7 @@ public class RestClient {
      * @throws IOException when an error reading the response occurs
      * @throws URISyntaxException when an error occurred appending the path to the URI
      */
-    public JSONObject post(String path, JSONObject payload)
+    public JSON post(String path, JSON payload)
         throws RestException, IOException, URISyntaxException {
 
         return post(buildURI(path), payload);
@@ -211,7 +212,7 @@ public class RestClient {
      * @throws RestException when an HTTP-level error occurs
      * @throws IOException when an error reading the response occurs
      */
-    public JSONObject put(URI uri, JSONObject payload) throws RestException, IOException {
+    public JSON put(URI uri, JSON payload) throws RestException, IOException {
         return request(new HttpPut(uri), payload);
     }
 
@@ -227,7 +228,7 @@ public class RestClient {
      * @throws IOException when an error reading the response occurs
      * @throws URISyntaxException when an error occurred appending the path to the URI
      */
-    public JSONObject put(String path, JSONObject payload)
+    public JSON put(String path, JSON payload)
         throws RestException, IOException, URISyntaxException {
 
         return put(buildURI(path), payload);

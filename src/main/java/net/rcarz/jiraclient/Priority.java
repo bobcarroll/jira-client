@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -66,7 +67,7 @@ public final class Priority extends Resource {
     public static Priority get(RestClient restclient, String id)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "priority/" + id);
@@ -74,7 +75,10 @@ public final class Priority extends Resource {
             throw new JiraException("Failed to retrieve priority " + id, ex);
         }
 
-        return new Priority(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new Priority(restclient, (JSONObject)result);
     }
 
     @Override

@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -64,7 +65,7 @@ public final class CustomFieldOption extends Resource {
     public static CustomFieldOption get(RestClient restclient, String id)
         throws JiraException {
 
-        JSONObject result = null;
+        JSON result = null;
 
         try {
             result = restclient.get(RESOURCE_URI + "customFieldOption/" + id);
@@ -72,7 +73,10 @@ public final class CustomFieldOption extends Resource {
             throw new JiraException("Failed to retrieve custom field option " + id, ex);
         }
 
-        return new CustomFieldOption(restclient, result);
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new CustomFieldOption(restclient, (JSONObject)result);
     }
 
     @Override
