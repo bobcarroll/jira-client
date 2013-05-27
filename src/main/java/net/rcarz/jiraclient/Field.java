@@ -62,6 +62,8 @@ public final class Field {
     public static final String PRIORITY = "priority";
     public static final String PROJECT = "project";
     public static final String REPORTER = "reporter";
+    public static final String RESOLUTION = "resolution";
+    public static final String RESOLUTION_DATE = "resolutiondate";
     public static final String STATUS = "status";
     public static final String SUMMARY = "summary";
     public static final String TIME_TRACKING = "timetracking";
@@ -195,6 +197,8 @@ public final class Field {
                 result = (T)new Priority(restclient, (JSONObject)r);
             else if (type == Project.class)
                 result = (T)new Project(restclient, (JSONObject)r);
+            else if (type == Resolution.class)
+                result = (T)new Resolution(restclient, (JSONObject)r);
             else if (type == Status.class)
                 result = (T)new Status(restclient, (JSONObject)r);
             else if (type == User.class)
@@ -276,6 +280,8 @@ public final class Field {
                     results.add((T)new Priority(restclient, (JSONObject)v));
                 else if (type == Project.class)
                     results.add((T)new Project(restclient, (JSONObject)v));
+                else if (type == Resolution.class)
+                    results.add((T)new Resolution(restclient, (JSONObject)v));
                 else if (type == Status.class)
                     results.add((T)new Status(restclient, (JSONObject)v));
                 else if (type == User.class)
@@ -423,7 +429,8 @@ public final class Field {
 
             SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
             return df.format(d);
-        } else if (m.type.equals("issuetype") || m.type.equals("priority") || m.type.equals("user")) {
+        } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
+                m.type.equals("user") || m.type.equals("resolution")) {
             JSONObject json = new JSONObject();
             json.put("name", value.toString());
 

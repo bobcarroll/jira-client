@@ -266,6 +266,8 @@ public final class Issue extends Resource {
     private Priority priority = null;
     private Project project = null;
     private User reporter = null;
+    private Resolution resolution = null;
+    private Date resolutionDate = null;
     private Status status = null;
     private String summary = null;
     private TimeTracking timeTracking = null;
@@ -307,6 +309,8 @@ public final class Issue extends Resource {
         priority = Field.getResource(Priority.class, fields.get(Field.PRIORITY), restclient);
         project = Field.getResource(Project.class, fields.get(Field.PROJECT), restclient);
         reporter = Field.getResource(User.class, fields.get(Field.REPORTER), restclient);
+        resolution = Field.getResource(Resolution.class, fields.get(Field.RESOLUTION), restclient);
+        resolutionDate = Field.getDate(fields.get(Field.RESOLUTION_DATE));
         status = Field.getResource(Status.class, fields.get(Field.STATUS), restclient);
         summary = Field.getString(fields.get(Field.SUMMARY));
         timeTracking = Field.getTimeTracking(fields.get(Field.TIME_TRACKING));
@@ -654,6 +658,14 @@ public final class Issue extends Resource {
 
     public User getReporter() {
         return reporter;
+    }
+
+    public Resolution getResolution() {
+        return resolution;
+    }
+
+    public Date getResolutionDate() {
+        return resolutionDate;
     }
 
     public Status getStatus() {
