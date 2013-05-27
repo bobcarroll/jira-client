@@ -60,8 +60,9 @@ public class Example {
             /* Vote for the issue. */
             issue.vote();
 
-            /* And also watch it. */
-            issue.addWatcher("batman");
+            /* And also watch it. Add Robin too. */
+            issue.addWatcher(jira.getSelf());
+            issue.addWatcher("robin");
 
             /* Open the issue and assign it to batman. */
             issue.transition()

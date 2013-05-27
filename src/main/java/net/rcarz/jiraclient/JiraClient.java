@@ -34,6 +34,7 @@ import net.sf.json.JSONObject;
 public class JiraClient {
 
     private RestClient restclient = null;
+    private String username = null;
 
     /**
      * Creates a JIRA client.
@@ -60,6 +61,7 @@ public class JiraClient {
         }
 
         restclient = new RestClient(httpclient, URI.create(uri));
+        username = creds.username;
     }
 
     /**
@@ -93,6 +95,10 @@ public class JiraClient {
 
     public RestClient getRestClient() {
         return restclient;
+    }
+
+    public String getSelf() {
+        return username;
     }
 }
 
