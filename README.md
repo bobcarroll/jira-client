@@ -75,7 +75,7 @@ public class Example {
 
             /* Print the reporter's username and then the display name */
             System.out.println("Reporter: " + issue.getReporter());
-            System.out.println("Reporter's Name: " + issue.getReporter().getDispalyName());
+            System.out.println("Reporter's Name: " + issue.getReporter().getDisplayName());
 
             /* Print existing labels (if any). */
             for (String l : issue.getLabels())
@@ -112,7 +112,7 @@ public class Example {
                 .execute();
 
             /* Pretend customfield_5678 is a multi-select box. Print out the selected values. */
-            List<CustomFieldOption> cfselect = Field.getResource(
+            List<CustomFieldOption> cfselect = Field.getResourceArray(
                 CustomFieldOption.class,
                 issue.getField("customfield_5678"),
                 jira.getRestClient()
