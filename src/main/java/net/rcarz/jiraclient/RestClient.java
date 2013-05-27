@@ -33,6 +33,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -121,22 +122,59 @@ public class RestClient {
         return result.length() > 0 ? JSONSerializer.toJSON(result.toString()): null;
     }
 
+    private JSON request(HttpEntityEnclosingRequestBase req, String payload)
+        throws RestException, IOException {
+
+        if (payload != null) {
+            StringEntity ent = null;
+
+            try {
+                ent = new StringEntity(payload, "UTF-8");
+                ent.setContentType("application/json");
+            } catch (UnsupportedEncodingException ex) {
+                /* utf-8 should always be supported... */
+            }
+
+            req.addHeader("Content-Type", "application/json");
+            req.setEntity(ent);
+        }
+
+        return request(req);
+    }
+
     private JSON request(HttpEntityEnclosingRequestBase req, JSON payload)
         throws RestException, IOException {
 
-        StringEntity ent = null;
+        return request(req, payload != null ? payload.toString() : null);
+    }
 
-        try {
-            ent = new StringEntity(payload.toString(), "UTF-8");
-            ent.setContentType("application/json");
-        } catch (UnsupportedEncodingException ex) {
-            /* utf-8 should always be supported... */
-        }
+    /**
+     * Executes an HTTP DELETE with the given URI.
+     *
+     * @param uri Full URI of the remote endpoint
+     *
+     * @return JSON-encoded result or null when there's no content returned
+     *
+     * @throws RestException when an HTTP-level error occurs
+     * @throws IOException when an error reading the response occurs
+     */
+    public JSON delete(URI uri) throws RestException, IOException {
+        return request(new HttpDelete(uri));
+    }
 
-        req.addHeader("Content-Type", "application/json");
-        req.setEntity(ent);
-
-        return request(req);
+    /**
+     * Executes an HTTP DELETE with the given path.
+     *
+     * @param path Path to be appended to the URI supplied in the construtor
+     *
+     * @return JSON-encoded result or null when there's no content returned
+     *
+     * @throws RestException when an HTTP-level error occurs
+     * @throws IOException when an error reading the response occurs
+     * @throws URISyntaxException when an error occurred appending the path to the URI
+     */
+    public JSON delete(String path) throws RestException, IOException, URISyntaxException {
+        return delete(buildURI(path));
     }
 
     /**
@@ -181,6 +219,31 @@ public class RestClient {
      */
     public JSON post(URI uri, JSON payload) throws RestException, IOException {
         return request(new HttpPost(uri), payload);
+    }
+
+    /**
+     * Executes an HTTP POST with the given URI and payload.
+     *
+     * At least one JIRA REST endpoint expects malformed JSON. The payload
+     * argument is quoted and sent to the server with the application/json
+     * Content-Type header. You should not use this function when proper JSON
+     * is expected.
+     *
+     * @see https://jira.atlassian.com/browse/JRA-29304
+     *
+     * @param uri Full URI of the remote endpoint
+     * @param payload Raw string to send to the remote service
+     *
+     * @return JSON-encoded result or null when there's no content returned
+     *
+     * @throws RestException when an HTTP-level error occurs
+     * @throws IOException when an error reading the response occurs
+     */
+    public JSON post(URI uri, String payload) throws RestException, IOException {
+        String quoted = payload != null ?
+            String.format("\"%s\"", payload) :
+            null;
+        return request(new HttpPost(uri), quoted);
     }
 
     /**

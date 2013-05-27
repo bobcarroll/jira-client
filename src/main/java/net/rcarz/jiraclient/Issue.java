@@ -528,6 +528,77 @@ public final class Issue extends Resource {
         return new FluentUpdate(getEditMetadata());
     }
 
+    /**
+     * Casts a vote in favour of an issue.
+     *
+     * @throws JiraException when the voting fails
+     */
+    public void vote() throws JiraException {
+
+        try {
+            restclient.post(getRestUri(key) + "/votes", null);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to vote on issue " + key, ex);
+        }
+    }
+
+    /**
+     * Removes the current user's vote from the issue.
+     *
+     * @throws JiraException when the voting fails
+     */
+    public void unvote() throws JiraException {
+
+        try {
+            restclient.delete(getRestUri(key) + "/votes");
+        } catch (Exception ex) {
+            throw new JiraException("Failed to unvote on issue " + key, ex);
+        }
+    }
+
+    /**
+     * Adds a watcher to the issue.
+     *
+     * @param username Username of the watcher to add
+     *
+     * @throws JiraException when the operation fails
+     */
+    public void addWatcher(String username) throws JiraException {
+
+        try {
+            URI uri = restclient.buildURI(getRestUri(key) + "/watchers");
+            restclient.post(uri, username);
+        } catch (Exception ex) {
+            throw new JiraException(
+                "Failed to add watcher (" + username + ") to issue " + key, ex
+            );
+        }
+    }
+
+    /**
+     * Removes a watcher to the issue.
+     *
+     * @param username Username of the watcher to remove
+     *
+     * @throws JiraException when the operation fails
+     */
+    public void deleteWatcher(String username) throws JiraException {
+
+        try {
+            final String u = username;
+            URI uri = restclient.buildURI(
+                getRestUri(key) + "/watchers",
+                new HashMap<String, String>() {{
+                    put("username", u);
+                }});
+            restclient.delete(uri);
+        } catch (Exception ex) {
+            throw new JiraException(
+                "Failed to remove watch (" + username + ") from issue " + key, ex
+            );
+        }
+    }
+
     @Override
     public String toString() {
         return getKey();
