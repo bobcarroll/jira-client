@@ -471,17 +471,7 @@ public final class Issue extends Resource {
             .field(Field.ISSUE_TYPE, issueType);
     }
 
-    /**
-     * Retrieves the given issue record.
-     *
-     * @param restclient REST client instance
-     * @param key Issue key (PROJECT-123)
-     *
-     * @return an issue instance
-     *
-     * @throws JiraException when the retrieval fails
-     */
-    public static Issue get(RestClient restclient, String key)
+    private static JSONObject realGet(RestClient restclient, String key)
         throws JiraException {
 
         JSON result = null;
@@ -495,7 +485,33 @@ public final class Issue extends Resource {
         if (!(result instanceof JSONObject))
             throw new JiraException("JSON payload is malformed");
 
-        return new Issue(restclient, (JSONObject)result);
+        return (JSONObject)result;
+    }
+
+    /**
+     * Retrieves the given issue record.
+     *
+     * @param restclient REST client instance
+     * @param key Issue key (PROJECT-123)
+     *
+     * @return an issue instance
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public static Issue get(RestClient restclient, String key)
+        throws JiraException {
+
+        return new Issue(restclient, realGet(restclient, key));
+    }
+
+    /**
+     * Reloads issue data from the JIRA server.
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public void refresh() throws JiraException {
+        JSONObject result = realGet(restclient, key);
+        deserialise(result);
     }
 
     /**
