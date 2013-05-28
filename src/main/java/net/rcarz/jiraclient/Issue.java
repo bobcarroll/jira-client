@@ -270,6 +270,7 @@ public final class Issue extends Resource {
     private Resolution resolution = null;
     private Date resolutionDate = null;
     private Status status = null;
+    private List<Issue> subtasks = null;
     private String summary = null;
     private TimeTracking timeTracking = null;
     private List<Version> versions = null;
@@ -314,6 +315,7 @@ public final class Issue extends Resource {
         resolution = Field.getResource(Resolution.class, fields.get(Field.RESOLUTION), restclient);
         resolutionDate = Field.getDate(fields.get(Field.RESOLUTION_DATE));
         status = Field.getResource(Status.class, fields.get(Field.STATUS), restclient);
+        subtasks = Field.getResourceArray(Issue.class, fields.get(Field.SUBTASKS), restclient);
         summary = Field.getString(fields.get(Field.SUMMARY));
         timeTracking = Field.getTimeTracking(fields.get(Field.TIME_TRACKING));
         versions = Field.getResourceArray(Version.class, fields.get(Field.VERSIONS), restclient);
@@ -692,6 +694,10 @@ public final class Issue extends Resource {
 
     public Status getStatus() {
         return status;
+    }
+
+    public List<Issue> getSubtasks() {
+        return subtasks;
     }
 
     public String getSummary() {

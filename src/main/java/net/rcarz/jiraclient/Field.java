@@ -66,6 +66,7 @@ public final class Field {
     public static final String RESOLUTION = "resolution";
     public static final String RESOLUTION_DATE = "resolutiondate";
     public static final String STATUS = "status";
+    public static final String SUBTASKS = "subtasks";
     public static final String SUMMARY = "summary";
     public static final String TIME_TRACKING = "timetracking";
     public static final String VERSIONS = "versions";
