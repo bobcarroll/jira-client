@@ -57,6 +57,7 @@ public final class Field {
     public static final String DESCRIPTION = "description";
     public static final String DUE_DATE = "duedate";
     public static final String FIX_VERSIONS = "fixVersions";
+    public static final String ISSUE_LINKS = "issuelinks";
     public static final String ISSUE_TYPE = "issuetype";
     public static final String LABELS = "labels";
     public static final String PRIORITY = "priority";
@@ -191,8 +192,14 @@ public final class Field {
                 result = (T)new Component(restclient, (JSONObject)r);
             else if (type == CustomFieldOption.class)
                 result = (T)new CustomFieldOption(restclient, (JSONObject)r);
+            else if (type == Issue.class)
+                result = (T)new Issue(restclient, (JSONObject)r);
+            else if (type == IssueLink.class)
+                result = (T)new IssueLink(restclient, (JSONObject)r);
             else if (type == IssueType.class)
                 result = (T)new IssueType(restclient, (JSONObject)r);
+            else if (type == LinkType.class)
+                result = (T)new LinkType(restclient, (JSONObject)r);
             else if (type == Priority.class)
                 result = (T)new Priority(restclient, (JSONObject)r);
             else if (type == Project.class)
@@ -274,8 +281,14 @@ public final class Field {
                     results.add((T)new Component(restclient, (JSONObject)v));
                 else if (type == CustomFieldOption.class)
                     results.add((T)new CustomFieldOption(restclient, (JSONObject)v));
+                else if (type == Issue.class)
+                    results.add((T)new Issue(restclient, (JSONObject)v));
+                else if (type == IssueLink.class)
+                    results.add((T)new IssueLink(restclient, (JSONObject)v));
                 else if (type == IssueType.class)
                     results.add((T)new IssueType(restclient, (JSONObject)v));
+                else if (type == LinkType.class)
+                    results.add((T)new LinkType(restclient, (JSONObject)v));
                 else if (type == Priority.class)
                     results.add((T)new Priority(restclient, (JSONObject)v));
                 else if (type == Project.class)

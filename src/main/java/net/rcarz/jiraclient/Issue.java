@@ -261,6 +261,7 @@ public final class Issue extends Resource {
     private String description = null;
     private Date dueDate = null;
     private List<Version> fixVersions = null;
+    private List<IssueLink> issueLinks = null;
     private IssueType issueType = null;
     private List<String> labels = null;
     private Priority priority = null;
@@ -304,6 +305,7 @@ public final class Issue extends Resource {
         description = Field.getString(fields.get(Field.DESCRIPTION));
         dueDate = Field.getDate(fields.get(Field.DUE_DATE));
         fixVersions = Field.getResourceArray(Version.class, fields.get(Field.FIX_VERSIONS), restclient);
+        issueLinks = Field.getResourceArray(IssueLink.class, fields.get(Field.ISSUE_LINKS), restclient);
         issueType = Field.getResource(IssueType.class, fields.get(Field.ISSUE_TYPE), restclient);
         labels = Field.getStringArray(fields.get(Field.LABELS));
         priority = Field.getResource(Priority.class, fields.get(Field.PRIORITY), restclient);
@@ -654,6 +656,10 @@ public final class Issue extends Resource {
 
     public List<Version> getFixVersions() {
         return fixVersions;
+    }
+
+    public List<IssueLink> getIssueLinks() {
+        return issueLinks;
     }
 
     public IssueType getIssueType() {

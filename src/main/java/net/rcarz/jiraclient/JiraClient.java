@@ -26,8 +26,6 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import net.sf.json.JSONObject;
-
 /**
  * A simple JIRA REST client.
  */
