@@ -17,6 +17,8 @@ jira-client is still under heavily development. Here's what works:
 * Add comments to issues
 * Vote on issues
 * Add and remove issue watchers
+* Add and remove issue links
+* Create sub-tasks
 
 ## Contributing ##
 
@@ -141,6 +143,14 @@ public class Example {
                 .field(Field.ASSIGNEE, "robin")
                 .execute();
             System.out.println(newIssue);
+
+            /* Link to the old issue */
+            newIssue.link("TEST-123", "Dependency");
+
+            /* Create sub-task */
+            Issue subtask = newIssue.createSubtask()
+                .field(Field.SUMMARY, "replace lightbulb")
+                .execute();
         } catch (JiraException ex) {
             System.err.println(ex.getMessage());
 

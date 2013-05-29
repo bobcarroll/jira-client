@@ -552,6 +552,19 @@ public final class Issue extends Resource {
             .field(Field.ISSUE_TYPE, issueType);
     }
 
+    /**
+     * Creates a new sub-task.
+     *
+     * @return a fluent create instance
+     *
+     * @throws JiraException when the client fails to retrieve issue metadata
+     */
+    public FluentCreate createSubtask() throws JiraException {
+
+        return Issue.create(restclient, getProject().getKey(), "Sub-task")
+            .field("parent", getKey());
+    }
+
     private static JSONObject realGet(RestClient restclient, String key)
         throws JiraException {
 
