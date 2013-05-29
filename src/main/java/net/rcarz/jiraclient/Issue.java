@@ -450,7 +450,82 @@ public final class Issue extends Resource {
         try {
             restclient.post(getRestUri(key) + "/comment", req);
         } catch (Exception ex) {
-            throw new JiraException("Failed to retrieve issue " + key, ex);
+            throw new JiraException("Failed add comment to issue " + key, ex);
+        }
+    }
+
+    /**
+     * Links this issue with another issue.
+     *
+     * @param issue Other issue key
+     * @param type Link type name
+     *
+     * @throws JiraException when the link creation fails
+     */
+    public void link(String issue, String type) throws JiraException {
+        link(issue, type, null, null, null);
+    }
+
+    /**
+     * Links this issue with another issue and adds a comment.
+     *
+     * @param issue Other issue key
+     * @param type Link type name
+     * @param body Comment text
+     *
+     * @throws JiraException when the link creation fails
+     */
+    public void link(String issue, String type, String body) throws JiraException {
+        link(issue, type, body, null, null);
+    }
+
+    /**
+     * Links this issue with another issue and adds a comment with limited visibility.
+     *
+     * @param issue Other issue key
+     * @param type Link type name
+     * @param body Comment text
+     * @param visType Target audience type (role or group)
+     * @param visName Name of the role or group to limit visibility to
+     *
+     * @throws JiraException when the link creation fails
+     */
+    public void link(String issue, String type, String body, String visType, String visName)
+        throws JiraException {
+
+        JSONObject req = new JSONObject();
+
+        JSONObject t = new JSONObject();
+        t.put("name", type);
+        req.put("type", t);
+
+        JSONObject inward = new JSONObject();
+        inward.put("key", key);
+        req.put("inwardIssue", inward);
+
+        JSONObject outward = new JSONObject();
+        outward.put("key", issue);
+        req.put("outwardIssue", outward);
+
+        if (body != null) {
+            JSONObject comment = new JSONObject();
+            comment.put("body", body);
+
+            if (visType != null && visName != null) {
+                JSONObject vis = new JSONObject();
+                vis.put("type", visType);
+                vis.put("value", visName);
+
+                comment.put("visibility", vis);
+            }
+
+            req.put("comment", comment);
+        }
+
+        try {
+            restclient.post(RESOURCE_URI + "issueLink", req);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to link issue " + key + " with issue " + issue, ex);
         }
     }
 
