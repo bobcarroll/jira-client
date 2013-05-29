@@ -55,6 +55,20 @@ public final class IssueLink extends Resource {
     }
 
     /**
+     * Deletes this issue link record.
+     *
+     * @throws JiraException when the delete fails
+     */
+    public void delete() throws JiraException {
+
+        try {
+            restclient.delete(RESOURCE_URI + "issueLink/" + id);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to delete issue link " + id, ex);
+        }
+    }
+
+    /**
      * Retrieves the given issue link record.
      *
      * @param restclient REST client instance
