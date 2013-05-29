@@ -11,6 +11,7 @@ jira-client depends on [Apache HttpComponents](http://hc.apache.org/) and [json-
 jira-client is still under heavily development. Here's what works:
 
 * Retrieve issues by key
+* Search for issues with JQL
 * Create issues
 * Update issues (both system fields and custom fields)
 * Transition issues to new states
@@ -151,6 +152,13 @@ public class Example {
             Issue subtask = newIssue.createSubtask()
                 .field(Field.SUMMARY, "replace lightbulb")
                 .execute();
+
+            /* Search for issues */
+            Issue.SearchResult sr = jira.searchIssues("assignee=batman");
+            System.out.println("Total: " + sr.total);
+            for (Issue i : sr.issues)
+                System.out.println("Result: " + i);
+
         } catch (JiraException ex) {
             System.err.println(ex.getMessage());
 

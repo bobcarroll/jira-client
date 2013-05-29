@@ -91,6 +91,21 @@ public class JiraClient {
         return Issue.get(restclient, key);
     }
 
+    /**
+     * Search for issues with the given query.
+     *
+     * @param jql JQL statement
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public Issue.SearchResult searchIssues(String jql)
+        throws JiraException {
+
+        return Issue.search(restclient, jql);
+    }
+
     public RestClient getRestClient() {
         return restclient;
     }

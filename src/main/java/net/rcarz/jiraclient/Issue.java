@@ -149,7 +149,7 @@ public final class Issue extends Resource {
     }
 
     /**
-     * Used to chain fields to an transition action.
+     * Used to chain fields to a transition action.
      */
     public final class FluentTransition {
 
@@ -248,6 +248,16 @@ public final class Issue extends Resource {
             fields.put(name, value);
             return this;
         }
+    }
+
+    /**
+     * Issue search results structure.
+     */
+    public static class SearchResult {
+        public int start = 0;
+        public int max = 0;
+        public int total = 0;
+        public List<Issue> issues = null;
     }
 
     private String key = null;
@@ -596,6 +606,47 @@ public final class Issue extends Resource {
         throws JiraException {
 
         return new Issue(restclient, realGet(restclient, key));
+    }
+
+    /**
+     * Search for issues with the given query.
+     *
+     * @param restclient REST client instance
+     * @param jql JQL statement
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public static SearchResult search(RestClient restclient, String jql)
+        throws JiraException {
+
+        final String j = jql;
+        JSON result = null;
+
+        try {
+            URI searchUri = restclient.buildURI(
+                RESOURCE_URI + "search",
+                new HashMap<String, String>() {{
+                    put("jql", j);
+                }});
+            result = restclient.get(searchUri);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to search issues", ex);
+        }
+
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        SearchResult sr = new SearchResult();
+        Map map = (Map)result;
+
+        sr.start = Field.getInteger(map.get("startAt"));
+        sr.max = Field.getInteger(map.get("maxResults"));
+        sr.total = Field.getInteger(map.get("total"));
+        sr.issues = Field.getResourceArray(Issue.class, map.get("issues"), restclient);
+
+        return sr;
     }
 
     /**
