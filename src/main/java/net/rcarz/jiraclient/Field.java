@@ -72,6 +72,7 @@ public final class Field {
     public static final String VERSIONS = "versions";
     public static final String VOTES = "votes";
     public static final String WATCHES = "watches";
+    public static final String WORKLOG = "worklog";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
@@ -99,13 +100,30 @@ public final class Field {
      * @param c a JSONObject instance
      * @param restclient REST client instance
      *
-     * @return a list of components found in c
+     * @return a list of comments found in c
      */
     public static List<Comment> getComments(Object c, RestClient restclient) {
         List<Comment> results = new ArrayList<Comment>();
 
         if (c instanceof JSONObject && !((JSONObject)c).isNullObject())
             results = getResourceArray(Comment.class, ((Map)c).get("comments"), restclient);
+
+        return results;
+    }
+
+    /**
+     * Gets a list of work logs from the given object.
+     *
+     * @param c a JSONObject instance
+     * @param restclient REST client instance
+     *
+     * @return a list of work logs found in c
+     */
+    public static List<WorkLog> getWorkLogs(Object c, RestClient restclient) {
+        List<WorkLog> results = new ArrayList<WorkLog>();
+
+        if (c instanceof JSONObject && !((JSONObject)c).isNullObject())
+            results = getResourceArray(WorkLog.class, ((Map)c).get("worklogs"), restclient);
 
         return results;
     }
@@ -217,6 +235,8 @@ public final class Field {
                 result = (T)new Votes(restclient, (JSONObject)r);
             else if (type == Watches.class)
                 result = (T)new Watches(restclient, (JSONObject)r);
+            else if (type == WorkLog.class)
+                result = (T)new WorkLog(restclient, (JSONObject)r);
         }
 
         return result;
@@ -306,6 +326,8 @@ public final class Field {
                     results.add((T)new Votes(restclient, (JSONObject)v));
                 else if (type == Watches.class)
                     results.add((T)new Watches(restclient, (JSONObject)v));
+                else if (type == WorkLog.class)
+                    results.add((T)new WorkLog(restclient, (JSONObject)v));
         }
 
         return results;

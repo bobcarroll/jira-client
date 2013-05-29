@@ -276,6 +276,7 @@ public final class Issue extends Resource {
     private List<Version> versions = null;
     private Votes votes = null;
     private Watches watches = null;
+    private List<WorkLog> workLogs = null;
 
     /**
      * Creates an issue from a JSON payload.
@@ -321,6 +322,7 @@ public final class Issue extends Resource {
         versions = Field.getResourceArray(Version.class, fields.get(Field.VERSIONS), restclient);
         votes = Field.getResource(Votes.class, fields.get(Field.VOTES), restclient);
         watches = Field.getResource(Watches.class, fields.get(Field.WATCHES), restclient);
+        workLogs = Field.getWorkLogs(fields.get(Field.WORKLOG), restclient);
     }
 
     private static String getRestUri(String key) {
@@ -718,6 +720,10 @@ public final class Issue extends Resource {
 
     public Watches getWatches() {
         return watches;
+    }
+
+    public List<WorkLog> getWorkLogs() {
+        return workLogs;
     }
 }
 
