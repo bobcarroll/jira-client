@@ -6,12 +6,43 @@
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
+  <name>jira-client</name>
+  <description>A simple JIRA REST client</description>
+  <url>https://github.com/rcarz/jira-client</url>
+
+  <licenses>
+    <license>
+      <name>GNU General Public License (GPL)</name>
+      <url>http://www.gnu.org/licenses/gpl.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/rcarz/jira-client</url>
+    <connection>https://github.com/rcarz/jira-client</connection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>rcarz</id>
+      <name>Bob Carroll</name>
+      <email>bob.carroll@alum.rit.edu</email>
+    </developer>
+  </developers>
+
   <repositories>
     <repository>
       <id>repo1.maven.org</id>
       <url>http://repo1.maven.org/maven2/</url>
     </repository>
   </repositories>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
 
   <dependencies>
     <dependency>
