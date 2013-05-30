@@ -3,7 +3,7 @@
 
   <groupId>net.rcarz</groupId>
   <artifactId>jira-client</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <packaging>jar</packaging>
 
   <name>jira-client</name>
@@ -30,13 +30,6 @@
       <email>bob.carroll@alum.rit.edu</email>
     </developer>
   </developers>
-
-  <repositories>
-    <repository>
-      <id>repo1.maven.org</id>
-      <url>http://repo1.maven.org/maven2/</url>
-    </repository>
-  </repositories>
 
   <parent>
     <groupId>org.sonatype.oss</groupId>
