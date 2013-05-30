@@ -21,6 +21,19 @@ jira-client is still under heavily development. Here's what works:
 * Add and remove issue links
 * Create sub-tasks
 
+## Maven Dependency ##
+
+Point your *settings.xml* at [Maven Central](http://repo1.maven.org/maven2) and add jira-client to your project.
+
+```xml
+    <dependency>
+      <groupId>net.rcarz</groupId>
+      <artifactId>jira-client</artifactId>
+      <version>0.1</version>
+      <scope>compile</scope>
+    </dependency>
+```
+
 ## Contributing ##
 
 Patches are welcome and appreciated. Please try to follow existing styles, and strive for simplicity. Make sure to add yourself to [AUTHORS](AUTHORS.md)!
