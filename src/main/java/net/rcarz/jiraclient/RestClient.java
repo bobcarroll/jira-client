@@ -51,6 +51,7 @@ import net.sf.json.JSONSerializer;
 public class RestClient {
 
     private HttpClient httpclient = null;
+    private ICredentials creds = null;
     private URI uri = null;
 
     /**
@@ -60,7 +61,19 @@ public class RestClient {
      * @param uri Base URI of the remote REST service
      */
     public RestClient(HttpClient httpclient, URI uri) {
+        this(httpclient, null, uri);
+    }
+
+    /**
+     * Creates an authenticated REST client instance with a URI.
+     *
+     * @param httpclient Underlying HTTP client to use
+     * @param creds Credentials to send with each request
+     * @param uri Base URI of the remote REST service
+     */
+    public RestClient(HttpClient httpclient, ICredentials creds, URI uri) {
         this.httpclient = httpclient;
+        this.creds = creds;
         this.uri = uri;
     }
 
@@ -101,6 +114,9 @@ public class RestClient {
 
     private JSON request(HttpRequestBase req) throws RestException, IOException {
         req.addHeader("Accept", "application/json");
+
+        if (creds != null)
+            creds.authenticate(req);
 
         HttpResponse resp = httpclient.execute(req);
         HttpEntity ent = resp.getEntity();

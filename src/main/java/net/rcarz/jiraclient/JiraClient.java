@@ -21,8 +21,6 @@ package net.rcarz.jiraclient;
 
 import java.net.URI;
 
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -49,17 +47,13 @@ public class JiraClient {
      * @param uri Base URI of the JIRA server
      * @param creds Credentials to authenticate with
      */
-    public JiraClient(String uri, BasicCredentials creds) {
+    public JiraClient(String uri, ICredentials creds) {
         DefaultHttpClient httpclient = new DefaultHttpClient();
 
-        if (creds != null && creds.username != null && !creds.username.equals("")) {
-            httpclient.getCredentialsProvider().setCredentials(
-                new AuthScope(creds.host, 443),
-                new UsernamePasswordCredentials(creds.username, creds.password));
-        }
+        restclient = new RestClient(httpclient, creds, URI.create(uri));
 
-        restclient = new RestClient(httpclient, URI.create(uri));
-        username = creds.username;
+        if (creds != null)
+            username = creds.getLogonName();
     }
 
     /**

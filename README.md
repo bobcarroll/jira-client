@@ -56,11 +56,7 @@ public class Example {
 
     public static void main(String[] args) {
 
-        BasicCredentials creds = new BasicCredentials();
-        creds.host = "jira.example.com"; /* this isn't required, but is good for security */
-        creds.username = "batman";
-        creds.password = "pow! pow!";
-
+        BasicCredentials creds = new BasicCredentials("batman", "pow! pow!");
         JiraClient jira = new JiraClient("https://jira.example.com/jira", creds);
 
         try {
