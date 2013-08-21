@@ -8,7 +8,7 @@ jira-client depends on [Apache HttpComponents](http://hc.apache.org/) and [json-
 
 ## Features ##
 
-jira-client is still under heavily development. Here's what works:
+jira-client is still under heavy development. Here's what works:
 
 * Retrieve issues by key
 * Search for issues with JQL
@@ -29,7 +29,7 @@ Point your *settings.xml* at [Maven Central](http://repo1.maven.org/maven2) and 
     <dependency>
       <groupId>net.rcarz</groupId>
       <artifactId>jira-client</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
       <scope>compile</scope>
     </dependency>
 ```
@@ -93,7 +93,7 @@ public class Example {
             for (String l : issue.getLabels())
                 System.out.println("Label: " + l);
 
-            /* Change the summary and add two labels to issue. The double-brace initialiser
+            /* Change the summary and add two labels to the issue. The double-brace initialiser
                isn't required, but it helps with readability. */
             issue.update()
                 .field(Field.SUMMARY, "tubes are clogged")
