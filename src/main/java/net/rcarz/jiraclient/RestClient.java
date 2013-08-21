@@ -312,5 +312,14 @@ public class RestClient {
 
         return put(buildURI(path), payload);
     }
+    
+    /**
+     * Exposes the http client.
+     *
+     * @return the httpClient property
+     */
+    public HttpClient getHttpClient(){
+        return this.httpClient;
+    }
 }
 
