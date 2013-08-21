@@ -50,7 +50,7 @@ import net.sf.json.JSONSerializer;
  */
 public class RestClient {
 
-    private HttpClient httpclient = null;
+    private HttpClient httpClient = null;
     private ICredentials creds = null;
     private URI uri = null;
 
@@ -72,7 +72,7 @@ public class RestClient {
      * @param uri Base URI of the remote REST service
      */
     public RestClient(HttpClient httpclient, ICredentials creds, URI uri) {
-        this.httpclient = httpclient;
+        this.httpClient = httpclient;
         this.creds = creds;
         this.uri = uri;
     }
@@ -118,7 +118,7 @@ public class RestClient {
         if (creds != null)
             creds.authenticate(req);
 
-        HttpResponse resp = httpclient.execute(req);
+        HttpResponse resp = httpClient.execute(req);
         HttpEntity ent = resp.getEntity();
         StringBuilder result = new StringBuilder();
 
