@@ -432,13 +432,11 @@ public final class Issue extends Resource {
      * @throws JiraException when the comment creation fails
      */
     public void addAttachment(File file) throws JiraException {
-    	if(file != null){
-            try {
-                restclient.postFile(getRestUri(key) + "/attachments", file);
-            } catch (Exception ex) {
-                throw new JiraException("Failed add attachment to issue " + key, ex);
-            }
-    	}
+        try {
+            restclient.postFile(getRestUri(key) + "/attachments", file);
+        } catch (Exception ex) {
+            throw new JiraException("Failed add attachment to issue " + key, ex);
+        }
     }
 
     /**
