@@ -717,7 +717,7 @@ public final class Issue extends Resource {
     public void vote() throws JiraException {
 
         try {
-            restclient.post(getRestUri(key) + "/votes", new JSONObject());
+            restclient.post(getRestUri(key) + "/votes");
         } catch (Exception ex) {
             throw new JiraException("Failed to vote on issue " + key, ex);
         }

@@ -296,6 +296,23 @@ public class RestClient {
     }
     
     /**
+     * Executes an HTTP POST with the given path.
+     *
+     * @param path Path to be appended to the URI supplied in the construtor
+     *
+     * @return JSON-encoded result or null when there's no content returned
+     *
+     * @throws RestException when an HTTP-level error occurs
+     * @throws IOException when an error reading the response occurs
+     * @throws URISyntaxException when an error occurred appending the path to the URI
+     */
+    public JSON post(String path)
+        throws RestException, IOException, URISyntaxException {
+    	
+        return post(buildURI(path), new JSONObject());
+    }
+    
+    /**
      * Executes an HTTP POST with the given path and file payload.
      * 
      * @param uri Full URI of the remote endpoint
