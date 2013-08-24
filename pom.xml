@@ -38,13 +38,20 @@
   </parent>
 
   <dependencies>
+  
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.2.5</version>
       <scope>compile</scope>
     </dependency>
-
+    
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpmime</artifactId>
+		<version>4.2.5</version>
+	</dependency>
+	
     <dependency>
       <groupId>net.sf.json-lib</groupId>
       <artifactId>json-lib</artifactId>
@@ -52,5 +59,6 @@
       <classifier>jdk15</classifier>
       <scope>compile</scope>
     </dependency>
+    
   </dependencies>
 </project>

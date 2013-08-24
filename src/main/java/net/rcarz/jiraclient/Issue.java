@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
@@ -421,6 +422,23 @@ public final class Issue extends Resource {
             throw new JiraException("Transition metadata is missing from jos");
 
         return (JSONArray)jo.get("transitions");
+    }
+    
+    /**
+     * Adds an attachment to this issue.
+     *
+     * @param file java.io.File
+     *
+     * @throws JiraException when the comment creation fails
+     */
+    public void addAttachment(File file) throws JiraException {
+    	if(file != null){
+            try {
+                restclient.postFile(getRestUri(key) + "/attachments", file);
+            } catch (Exception ex) {
+                throw new JiraException("Failed add attachment to issue " + key, ex);
+            }
+    	}
     }
 
     /**
