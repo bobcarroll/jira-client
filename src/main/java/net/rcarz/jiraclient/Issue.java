@@ -311,7 +311,7 @@ public final class Issue extends Resource {
         fields = (Map)map.get("fields");
 
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
-        attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ASSIGNEE), restclient);
+        attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ATTACHMENT), restclient);
         comments = Field.getComments(fields.get(Field.COMMENT), restclient);
         components = Field.getResourceArray(Component.class, fields.get(Field.COMPONENTS), restclient);
         description = Field.getString(fields.get(Field.DESCRIPTION));
