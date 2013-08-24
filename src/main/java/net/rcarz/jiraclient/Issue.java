@@ -433,7 +433,7 @@ public final class Issue extends Resource {
      */
     public void addAttachment(File file) throws JiraException {
         try {
-            restclient.postFile(getRestUri(key) + "/attachments", file);
+            restclient.post(getRestUri(key) + "/attachments", file);
         } catch (Exception ex) {
             throw new JiraException("Failed add attachment to issue " + key, ex);
         }
@@ -717,7 +717,7 @@ public final class Issue extends Resource {
     public void vote() throws JiraException {
 
         try {
-            restclient.post(getRestUri(key) + "/votes", null);
+            restclient.post(getRestUri(key) + "/votes", new JSONObject());
         } catch (Exception ex) {
             throw new JiraException("Failed to vote on issue " + key, ex);
         }

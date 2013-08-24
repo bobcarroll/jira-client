@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import net.sf.json.JSON;
+import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
 import org.apache.http.HttpEntity;
@@ -269,9 +270,10 @@ public class RestClient {
      * @throws IOException when an error reading the response occurs
      */
     public JSON post(URI uri, String payload) throws RestException, IOException {
-        String quoted = payload != null ?
-            String.format("\"%s\"", payload) :
-            null;
+    	String quoted = null;
+    	if(payload != null && !payload.equals(new JSONObject())){
+    		quoted = String.format("\"%s\"", payload);
+    	}
         return request(new HttpPost(uri), quoted);
     }
 
@@ -303,7 +305,7 @@ public class RestClient {
      * @throws IOException 
      * @throws RestException 
      */
-    public JSON postFile(String path, File file) throws RestException, IOException, URISyntaxException{
+    public JSON post(String path, File file) throws RestException, IOException, URISyntaxException{
         return request(new HttpPost(buildURI(path)), file);
     }
 
