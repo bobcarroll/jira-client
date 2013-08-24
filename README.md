@@ -139,6 +139,10 @@ public class Example {
                     put("value", "bar");
                 }})
                 .execute();
+                
+            /* Add an attachment */
+            File file = new File("C:\\Users\\John\\Desktop\\screenshot.jpg");
+            issue.addAttachment(file);
 
             /* And finally let's resolve it as incomplete. */
             issue.transition()
