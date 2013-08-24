@@ -16,6 +16,7 @@ jira-client is still under heavy development. Here's what works:
 * Update issues (both system fields and custom fields)
 * Transition issues to new states
 * Add comments to issues
+* Add attachments to issues
 * Vote on issues
 * Add and remove issue watchers
 * Add and remove issue links
