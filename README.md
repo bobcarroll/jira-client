@@ -16,6 +16,7 @@ jira-client is still under heavy development. Here's what works:
 * Update issues (both system fields and custom fields)
 * Transition issues to new states
 * Add comments to issues
+* Add attachments to issues
 * Vote on issues
 * Add and remove issue watchers
 * Add and remove issue links
@@ -139,6 +140,10 @@ public class Example {
                     put("value", "bar");
                 }})
                 .execute();
+                
+            /* Add an attachment */
+            File file = new File("C:\\Users\\John\\Desktop\\screenshot.jpg");
+            issue.addAttachment(file);
 
             /* And finally let's resolve it as incomplete. */
             issue.transition()
