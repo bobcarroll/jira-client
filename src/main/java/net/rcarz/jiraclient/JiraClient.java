@@ -113,16 +113,16 @@ public class JiraClient {
      *
      * @throws JiraException when the search fails
      */
-	public List<CustomFieldOption> getCustomFieldAllowedValues(String field, String project, String issueType) throws JiraException {
-		JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
- 		JSONObject fieldMetadata = (JSONObject) createMetadata.get(field);
- 		List<CustomFieldOption> customFieldOptions = Field.getResourceArray(
-			CustomFieldOption.class,
-			fieldMetadata.get("allowedValues"),
-			restclient
+    public List<CustomFieldOption> getCustomFieldAllowedValues(String field, String project, String issueType) throws JiraException {
+        JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
+        JSONObject fieldMetadata = (JSONObject) createMetadata.get(field);
+        List<CustomFieldOption> customFieldOptions = Field.getResourceArray(
+            CustomFieldOption.class,
+            fieldMetadata.get("allowedValues"),
+            restclient
         );
- 		return customFieldOptions;
-	}
+        return customFieldOptions;
+    }
 
     public RestClient getRestClient() {
         return restclient;
