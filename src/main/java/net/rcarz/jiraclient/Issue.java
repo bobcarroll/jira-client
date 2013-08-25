@@ -880,9 +880,5 @@ public final class Issue extends Resource {
     public List<WorkLog> getWorkLogs() {
         return workLogs;
     }
-    
-    public JSONObject getCreateMetadata() throws JiraException{
-    	return getCreateMetadata(restclient,"CS","Task");
-    }
 }
 
