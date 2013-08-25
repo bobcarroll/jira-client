@@ -27,12 +27,48 @@ import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
 /**
  * Utility functions for translating between JSON and fields.
  */
 public final class GreenHopperField {
 
+    public static final String DATE_TIME_FORMAT = "d/MMM/yy h:m a";
+
     private GreenHopperField() { }
+
+    /**
+     * Gets a date-time from the given object.
+     *
+     * @param dt Date-Time as a string
+     *
+     * @return the date-time or null
+     */
+    public static DateTime getDateTime(Object dt) {
+        return dt != null ?
+            DateTime.parse((String)dt, DateTimeFormat.forPattern(DATE_TIME_FORMAT)) :
+            null;
+    }
+
+    /**
+     * Gets a list of integers from the given object.
+     *
+     * @param ia a JSONArray instance
+     *
+     * @return a list of integers
+     */
+    public static List<Integer> getIntegerArray(Object ia) {
+        List<Integer> results = new ArrayList<Integer>();
+
+        if (ia instanceof JSONArray) {
+            for (Object v : (JSONArray)ia)
+                results.add((Integer)v);
+        }
+
+        return results;
+    }
 
     /**
      * Gets a GreenHopper resource from the given object.
@@ -49,10 +85,14 @@ public final class GreenHopperField {
         T result = null;
 
         if (r instanceof JSONObject && !((JSONObject)r).isNullObject()) {
-            if (type == RapidView.class)
+            if (type == EstimateStatistic.class)
+                result = (T)new EstimateStatistic(restclient, (JSONObject)r);
+            else if (type == RapidView.class)
                 result = (T)new RapidView(restclient, (JSONObject)r);
             else if (type == Sprint.class)
                 result = (T)new Sprint(restclient, (JSONObject)r);
+            else if (type == SprintIssue.class)
+                result = (T)new SprintIssue(restclient, (JSONObject)r);
         }
 
         return result;

@@ -29,23 +29,21 @@ import net.sf.json.JSONObject;
 import org.joda.time.DateTime;
 
 /**
- * Represents a GreenHopper sprint.
+ * GreenHopper estimate statistics for rapid views.
  */
-public final class Sprint extends GreenHopperResource {
+public final class EstimateStatistic extends GreenHopperResource {
 
-    private String name = null;
-    private boolean closed = false;
-    private DateTime startDate = null;
-    private DateTime endDate = null;
-    private DateTime completeDate = null;
+    private String statFieldId = null;
+    private int statFieldValue = 0;
+    private String statFieldText = null;
 
     /**
-     * Creates a sprint from a JSON payload.
+     * Creates an estimate statistic from a JSON payload.
      *
      * @param restclient REST client instance
      * @param json JSON payload
      */
-    protected Sprint(RestClient restclient, JSONObject json) {
+    protected EstimateStatistic(RestClient restclient, JSONObject json) {
         super(restclient);
 
         if (json != null)
@@ -55,37 +53,28 @@ public final class Sprint extends GreenHopperResource {
     private void deserialise(JSONObject json) {
         Map map = json;
 
-        id = Field.getInteger(map.get("id"));
-        name = Field.getString(map.get("name"));
-        closed = Field.getBoolean(map.get("closed"));
-        startDate = GreenHopperField.getDateTime(map.get("startDate"));
-        endDate = GreenHopperField.getDateTime(map.get("endDate"));
-        completeDate = GreenHopperField.getDateTime(map.get("completeDate"));
+        statFieldId = Field.getString(map.get("statFieldId"));
+
+        if (map.containsKey("statFieldValue") &&
+            map.get("statFieldValue") instanceof JSONObject) {
+
+            Map val = (Map)json.get("statFieldValue");
+
+            statFieldValue = Field.getInteger(map.get("value"));
+            statFieldText = Field.getString(map.get("text"));
+        }
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String getFieldId() {
+        return statFieldId;
     }
 
-    public String getName() {
-        return name;
+    public int getFieldValue() {
+        return statFieldValue;
     }
 
-    public Boolean isClosed() {
-        return closed;
-    }
-
-    public DateTime getStartDate() {
-        return startDate;
-    }
-
-    public DateTime getEndDate() {
-        return endDate;
-    }
-
-    public DateTime getCompleteDate() {
-        return completeDate;
+    public String getFieldText() {
+        return statFieldText;
     }
 }
 

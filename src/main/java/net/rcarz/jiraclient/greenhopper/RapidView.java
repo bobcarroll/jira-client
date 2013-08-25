@@ -155,6 +155,19 @@ public final class RapidView extends GreenHopperResource {
         );
     }
 
+    /**
+     * Retrieves the sprint report for the given sprint.
+     *
+     * @param sprint Sprint to lookup
+     *
+     * @return the sprint report
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public SprintReport getSprintReport(Sprint sprint) throws JiraException {
+        return SprintReport.get(restclient, this, sprint);
+    }
+
     @Override
     public String toString() {
         return name;
