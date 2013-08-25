@@ -168,6 +168,17 @@ public final class RapidView extends GreenHopperResource {
         return SprintReport.get(restclient, this, sprint);
     }
 
+    /**
+     * Retrieves the backlog data for this rapid view.
+     *
+     * @return the backlog
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public Backlog getBacklogData() throws JiraException {
+        return Backlog.get(restclient, this);
+    }
+
     @Override
     public String toString() {
         return name;

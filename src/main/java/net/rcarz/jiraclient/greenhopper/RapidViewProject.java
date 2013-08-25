@@ -20,6 +20,8 @@
 package net.rcarz.jiraclient.greenhopper;
 
 import net.rcarz.jiraclient.Field;
+import net.rcarz.jiraclient.JiraException;
+import net.rcarz.jiraclient.Project;
 import net.rcarz.jiraclient.RestClient;
 
 import java.util.Map;
@@ -27,21 +29,21 @@ import java.util.Map;
 import net.sf.json.JSONObject;
 
 /**
- * Represents a GreenHopper sprint issue.
+ * Represents a GreenHopper JIRA project.
  */
-public final class SprintIssue extends GreenHopperIssue {
+public final class RapidViewProject extends GreenHopperResource {
 
-    private String epic = null;
-    private EstimateStatistic estimateStatistic = null;
+    private String key = null;
+    private String name = null;
 
     /**
-     * Creates a sprint issue from a JSON payload.
+     * Creates a project from a JSON payload.
      *
      * @param restclient REST client instance
      * @param json JSON payload
      */
-    protected SprintIssue(RestClient restclient, JSONObject json) {
-        super(restclient, json);
+    protected RapidViewProject(RestClient restclient, JSONObject json) {
+        super(restclient);
 
         if (json != null)
             deserialise(json);
@@ -50,16 +52,33 @@ public final class SprintIssue extends GreenHopperIssue {
     private void deserialise(JSONObject json) {
         Map map = json;
 
-        epic = Field.getString(map.get("epic"));
-        estimateStatistic = GreenHopperField.getEstimateStatistic(map.get("estimateStatistic"));
+        id = Field.getInteger(map.get("id"));
+        key = Field.getString(map.get("key"));
+        name = Field.getString(map.get("name"));
     }
 
-    public String getEpic() {
-        return epic;
+    /**
+     * Retrieves the full JIRA project.
+     *
+     * @return a Project
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public Project getJiraProject() throws JiraException {
+        return Project.get(restclient, key);
     }
 
-    public EstimateStatistic getEstimateStatistic() {
-        return estimateStatistic;
+    @Override
+    public String toString() {
+        return key;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getName() {
+        return name;
     }
 }
 

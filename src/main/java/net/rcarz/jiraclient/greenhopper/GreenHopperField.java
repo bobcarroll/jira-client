@@ -53,6 +53,22 @@ public final class GreenHopperField {
     }
 
     /**
+     * Gets an epic stats object from the given object.
+     *
+     * @param es a JSONObject instance
+     *
+     * @return a EpicStats instance or null if es isn't a JSONObject instance
+     */
+    public static EpicStats getEpicStats(Object es) {
+        EpicStats result = null;
+
+        if (es instanceof JSONObject && !((JSONObject)es).isNullObject())
+            result = new EpicStats((JSONObject)es);
+
+        return result;
+    }
+
+    /**
      * Gets an estimate statistic object from the given object.
      *
      * @param es a JSONObject instance
@@ -117,8 +133,14 @@ public final class GreenHopperField {
         T result = null;
 
         if (r instanceof JSONObject && !((JSONObject)r).isNullObject()) {
-            if (type == RapidView.class)
+            if (type == Epic.class)
+                result = (T)new Epic(restclient, (JSONObject)r);
+            else if (type == Marker.class)
+                result = (T)new Marker(restclient, (JSONObject)r);
+            else if (type == RapidView.class)
                 result = (T)new RapidView(restclient, (JSONObject)r);
+            else if (type == RapidViewProject.class)
+                result = (T)new RapidViewProject(restclient, (JSONObject)r);
             else if (type == Sprint.class)
                 result = (T)new Sprint(restclient, (JSONObject)r);
             else if (type == SprintIssue.class)

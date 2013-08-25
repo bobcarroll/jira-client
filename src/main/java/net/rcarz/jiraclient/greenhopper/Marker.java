@@ -27,21 +27,20 @@ import java.util.Map;
 import net.sf.json.JSONObject;
 
 /**
- * Represents a GreenHopper sprint issue.
+ * Represents a GreenHopper marker (a sprint that hasn't started).
  */
-public final class SprintIssue extends GreenHopperIssue {
+public final class Marker extends GreenHopperResource {
 
-    private String epic = null;
-    private EstimateStatistic estimateStatistic = null;
+    private String name = null;
 
     /**
-     * Creates a sprint issue from a JSON payload.
+     * Creates a marker from a JSON payload.
      *
      * @param restclient REST client instance
      * @param json JSON payload
      */
-    protected SprintIssue(RestClient restclient, JSONObject json) {
-        super(restclient, json);
+    protected Marker(RestClient restclient, JSONObject json) {
+        super(restclient);
 
         if (json != null)
             deserialise(json);
@@ -50,16 +49,17 @@ public final class SprintIssue extends GreenHopperIssue {
     private void deserialise(JSONObject json) {
         Map map = json;
 
-        epic = Field.getString(map.get("epic"));
-        estimateStatistic = GreenHopperField.getEstimateStatistic(map.get("estimateStatistic"));
+        id = Field.getInteger(map.get("id"));
+        name = Field.getString(map.get("name"));
     }
 
-    public String getEpic() {
-        return epic;
+    @Override
+    public String toString() {
+        return name;
     }
 
-    public EstimateStatistic getEstimateStatistic() {
-        return estimateStatistic;
+    public String getName() {
+        return name;
     }
 }
 

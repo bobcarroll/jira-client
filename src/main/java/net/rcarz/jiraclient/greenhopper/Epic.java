@@ -20,27 +20,31 @@
 package net.rcarz.jiraclient.greenhopper;
 
 import net.rcarz.jiraclient.Field;
+import net.rcarz.jiraclient.Issue;
+import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
 
+import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
 
 /**
- * Represents a GreenHopper sprint issue.
+ * Represents a GreenHopper epic issue.
  */
-public final class SprintIssue extends GreenHopperIssue {
+public final class Epic extends GreenHopperIssue {
 
-    private String epic = null;
-    private EstimateStatistic estimateStatistic = null;
+    public String epicLabel = null;
+    public String epicColour = null;
+    public EpicStats epicStats = null;
 
     /**
-     * Creates a sprint issue from a JSON payload.
+     * Creates an epic issue from a JSON payload.
      *
      * @param restclient REST client instance
      * @param json JSON payload
      */
-    protected SprintIssue(RestClient restclient, JSONObject json) {
+    protected Epic(RestClient restclient, JSONObject json) {
         super(restclient, json);
 
         if (json != null)
@@ -50,16 +54,21 @@ public final class SprintIssue extends GreenHopperIssue {
     private void deserialise(JSONObject json) {
         Map map = json;
 
-        epic = Field.getString(map.get("epic"));
-        estimateStatistic = GreenHopperField.getEstimateStatistic(map.get("estimateStatistic"));
+        epicLabel = Field.getString(map.get("epicLabel"));
+        epicColour = Field.getString(map.get("epicColor"));
+        epicStats = GreenHopperField.getEpicStats(map.get("epicStats"));
     }
 
-    public String getEpic() {
-        return epic;
+    public String getEpicLabel() {
+        return epicLabel;
     }
 
-    public EstimateStatistic getEstimateStatistic() {
-        return estimateStatistic;
+    public String getEpicColour() {
+        return epicColour;
+    }
+
+    public EpicStats getEpicStats() {
+        return epicStats;
     }
 }
 

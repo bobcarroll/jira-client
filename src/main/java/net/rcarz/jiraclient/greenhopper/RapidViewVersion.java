@@ -20,28 +20,31 @@
 package net.rcarz.jiraclient.greenhopper;
 
 import net.rcarz.jiraclient.Field;
+import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
+import net.rcarz.jiraclient.Version;
 
 import java.util.Map;
 
 import net.sf.json.JSONObject;
 
 /**
- * Represents a GreenHopper sprint issue.
+ * Represents a GreenHopper JIRA project version.
  */
-public final class SprintIssue extends GreenHopperIssue {
+public final class RapidViewVersion extends GreenHopperResource {
 
-    private String epic = null;
-    private EstimateStatistic estimateStatistic = null;
+    private String name = null;
+    private int sequence = 0;
+    private boolean released = false;
 
     /**
-     * Creates a sprint issue from a JSON payload.
+     * Creates a version from a JSON payload.
      *
      * @param restclient REST client instance
      * @param json JSON payload
      */
-    protected SprintIssue(RestClient restclient, JSONObject json) {
-        super(restclient, json);
+    protected RapidViewVersion(RestClient restclient, JSONObject json) {
+        super(restclient);
 
         if (json != null)
             deserialise(json);
@@ -50,16 +53,38 @@ public final class SprintIssue extends GreenHopperIssue {
     private void deserialise(JSONObject json) {
         Map map = json;
 
-        epic = Field.getString(map.get("epic"));
-        estimateStatistic = GreenHopperField.getEstimateStatistic(map.get("estimateStatistic"));
+        id = Field.getInteger(map.get("id"));
+        name = Field.getString(map.get("name"));
+        sequence = Field.getInteger(map.get("sequence"));
+        released = Field.getBoolean(map.get("released"));
     }
 
-    public String getEpic() {
-        return epic;
+    /**
+     * Retrieves the full JIRA version.
+     *
+     * @return a Version
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public Version getJiraVersion() throws JiraException {
+        return Version.get(restclient, Integer.toString(id));
     }
 
-    public EstimateStatistic getEstimateStatistic() {
-        return estimateStatistic;
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public boolean isReleased() {
+        return released;
     }
 }
 
