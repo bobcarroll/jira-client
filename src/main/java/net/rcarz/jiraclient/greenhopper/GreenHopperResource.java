@@ -29,7 +29,7 @@ public abstract class GreenHopperResource {
     protected static final String RESOURCE_URI = "/rest/greenhopper/1.0/";
 
     protected RestClient restclient = null;
-    protected String id = null;
+    protected int id = 0;
 
     /**
      * Creates a new GreenHopper resource.
@@ -43,7 +43,7 @@ public abstract class GreenHopperResource {
     /**
      * Internal JIRA ID.
      */
-    public String getId() {
+    public int getId() {
         return id;
     }
 }

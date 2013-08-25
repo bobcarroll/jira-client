@@ -55,7 +55,7 @@ public final class RapidView extends GreenHopperResource {
     private void deserialise(JSONObject json) {
         Map map = json;
 
-        id = Field.getString(map.get("id"));
+        id = Field.getInteger(map.get("id"));
         name = Field.getString(map.get("name"));
         canEdit = Field.getBoolean(map.get("canEdit"));
         sprintSupportEnabled = Field.getBoolean(map.get("sprintSupportEnabled"));
@@ -71,7 +71,7 @@ public final class RapidView extends GreenHopperResource {
      *
      * @throws JiraException when the retrieval fails
      */
-    public static RapidView get(RestClient restclient, String id)
+    public static RapidView get(RestClient restclient, int id)
         throws JiraException {
 
         JSON result = null;
@@ -119,6 +119,38 @@ public final class RapidView extends GreenHopperResource {
         return GreenHopperField.getResourceArray(
             RapidView.class,
             jo.get("views"),
+            restclient
+        );
+    }
+
+    /**
+     * Retrieves all sprints associated with this rapid view.
+     *
+     * @return a list of sprints
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public List<Sprint> getSprints() throws JiraException {
+        JSON result = null;
+
+        try {
+            System.out.println(getId());
+            result = restclient.get(RESOURCE_URI + "sprints/" + id);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to retrieve sprints", ex);
+        }
+
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        JSONObject jo = (JSONObject)result;
+
+        if (!jo.containsKey("sprints") || !(jo.get("sprints") instanceof JSONArray))
+            throw new JiraException("Sprints result is malformed");
+
+        return GreenHopperField.getResourceArray(
+            Sprint.class,
+            jo.get("sprints"),
             restclient
         );
     }

@@ -19,50 +19,55 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
-import net.rcarz.jiraclient.JiraClient;
+import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
 
-import java.util.List;
+import java.util.Map;
+
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
 
 /**
- * A GreenHopper extension to the JIRA client.
+ * Represents a GreenHopper sprint.
  */
-public class GreenHopperClient {
+public final class Sprint extends GreenHopperResource {
 
-    private RestClient restclient = null;
+    private String name = null;
+    private boolean closed = false;
 
     /**
-     * Creates a GreenHopper client.
+     * Creates a sprint from a JSON payload.
      *
-     * @param jira JIRA client
+     * @param restclient REST client instance
+     * @param json JSON payload
      */
-    public GreenHopperClient(JiraClient jira) {
-        restclient = jira.getRestClient();
+    protected Sprint(RestClient restclient, JSONObject json) {
+        super(restclient);
+
+        if (json != null)
+            deserialise(json);
     }
 
-    /**
-     * Retreives the rapid view with the given ID.
-     *
-     * @param id Rapid View ID
-     *
-     * @return a RapidView instance
-     *
-     * @throws JiraException when something goes wrong
-     */
-    public RapidView getRapidView(int id) throws JiraException {
-        return RapidView.get(restclient, id);
+    private void deserialise(JSONObject json) {
+        Map map = json;
+
+        id = Field.getInteger(map.get("id"));
+        name = Field.getString(map.get("name"));
+        closed = Field.getBoolean(map.get("closed"));
     }
 
-    /**
-     * Retreives all rapid views visible to the session user.
-     *
-     * @return a list of rapid views
-     *
-     * @throws JiraException when something goes wrong
-     */
-    public List<RapidView> getRapidViews() throws JiraException {
-        return RapidView.getAll(restclient);
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Boolean isClosed() {
+        return closed;
     }
 }
 

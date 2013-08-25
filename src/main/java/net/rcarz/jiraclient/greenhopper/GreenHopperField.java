@@ -51,6 +51,8 @@ public final class GreenHopperField {
         if (r instanceof JSONObject && !((JSONObject)r).isNullObject()) {
             if (type == RapidView.class)
                 result = (T)new RapidView(restclient, (JSONObject)r);
+            else if (type == Sprint.class)
+                result = (T)new Sprint(restclient, (JSONObject)r);
         }
 
         return result;
