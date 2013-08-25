@@ -340,7 +340,7 @@ public final class Issue extends Resource {
         return RESOURCE_URI + "issue/" + (key != null ? key : "");
     }
 
-    private static JSONObject getCreateMetadata(
+    public static JSONObject getCreateMetadata(
         RestClient restclient, String project, String issueType) throws JiraException {
 
         final String pval = project;
