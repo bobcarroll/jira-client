@@ -20,8 +20,10 @@
 package net.rcarz.jiraclient;
 
 import java.net.URI;
+import java.util.List;
 
-import org.apache.http.client.HttpClient;
+import net.sf.json.JSONObject;
+
 import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
@@ -99,6 +101,28 @@ public class JiraClient {
 
         return Issue.search(restclient, jql);
     }
+    
+    /**
+     * Get a list of options for a custom field
+     *
+     * @param field field id
+     * @param project Key of the project context
+     * @param issueType Name of the issue type 
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+	public List<CustomFieldOption> getCustomFieldAllowedValues(String field, String project, String issueType) throws JiraException {
+		JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
+ 		JSONObject fieldMetadata = (JSONObject) createMetadata.get(field);
+ 		List<CustomFieldOption> customFieldOptions = Field.getResourceArray(
+			CustomFieldOption.class,
+			fieldMetadata.get("allowedValues"),
+			restclient
+        );
+ 		return customFieldOptions;
+	}
 
     public RestClient getRestClient() {
         return restclient;
@@ -107,5 +131,7 @@ public class JiraClient {
     public String getSelf() {
         return username;
     }
+
+
 }
 
