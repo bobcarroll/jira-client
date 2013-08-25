@@ -56,7 +56,7 @@ public final class SprintIssue extends GreenHopperResource {
     private int projectId = 0;
 
     /**
-     * Creates a sprint from a JSON payload.
+     * Creates a sprint issue from a JSON payload.
      *
      * @param restclient REST client instance
      * @param json JSON payload
@@ -86,10 +86,7 @@ public final class SprintIssue extends GreenHopperResource {
         avatarUrl = Field.getString(map.get("avatarUrl"));
         colour = Field.getString(map.get("color"));
         epic = Field.getString(map.get("epic"));
-        estimateStatistic = GreenHopperField.getResource(
-            EstimateStatistic.class,
-            map.get("estimateStatistic"),
-            restclient);
+        estimateStatistic = GreenHopperField.getEstimateStatistic(map.get("estimateStatistic"));
         statusId = Field.getString(map.get("statusId"));
         statusName = Field.getString(map.get("statusName"));
         statusUrl = Field.getString(map.get("statusUrl"));

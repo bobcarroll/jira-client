@@ -181,7 +181,7 @@ public final class RapidView extends GreenHopperResource {
         return canEdit;
     }
 
-    public Boolean sprintSupportEnabled() {
+    public Boolean isSprintSupportEnabled() {
         return sprintSupportEnabled;
     }
 }

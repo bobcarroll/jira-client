@@ -26,44 +26,31 @@ import java.util.Map;
 import net.sf.json.JSONObject;
 
 /**
- * GreenHopper estimate statistics for rapid views.
+ * GreenHopper estimate sum for rapid views.
  */
-public final class EstimateStatistic {
+public final class EstimateSum {
 
-    private String statFieldId = null;
-    private int statFieldValue = 0;
-    private String statFieldText = null;
+    private Double value = null;
+    private String text = null;
 
     /**
-     * Creates an estimate statistic from a JSON payload.
+     * Creates an estimate sum from a JSON payload.
      *
      * @param json JSON payload
      */
-    protected EstimateStatistic(JSONObject json) {
+    protected EstimateSum(JSONObject json) {
         Map map = json;
 
-        statFieldId = Field.getString(map.get("statFieldId"));
-
-        if (map.containsKey("statFieldValue") &&
-            map.get("statFieldValue") instanceof JSONObject) {
-
-            Map val = (Map)json.get("statFieldValue");
-
-            statFieldValue = Field.getInteger(map.get("value"));
-            statFieldText = Field.getString(map.get("text"));
-        }
+        value = Field.getDouble(map.get("value"));
+        text = Field.getString(map.get("text"));
     }
 
-    public String getFieldId() {
-        return statFieldId;
+    public Double getValue() {
+        return value;
     }
 
-    public int getFieldValue() {
-        return statFieldValue;
-    }
-
-    public String getFieldText() {
-        return statFieldText;
+    public String getText() {
+        return text;
     }
 }
 

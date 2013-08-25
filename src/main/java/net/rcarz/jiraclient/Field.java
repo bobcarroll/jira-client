@@ -147,6 +147,22 @@ public final class Field {
     }
 
     /**
+     * Gets an floating-point number from the given object.
+     *
+     * @param i an Double instance
+     *
+     * @return an floating-point number or null if i isn't a Double instance
+     */
+    public static Double getDouble(Object i) {
+        Double result = null;
+
+        if (i instanceof Double)
+            result = (Double)i;
+
+        return result;
+    }
+
+    /**
      * Gets an integer from the given object.
      *
      * @param i an Integer instance

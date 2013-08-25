@@ -42,6 +42,11 @@ public final class SprintReport {
     private List<SprintIssue> completedIssues = null;
     private List<SprintIssue> incompletedIssues = null;
     private List<SprintIssue> puntedIssues = null;
+    private EstimateSum completedIssuesEstimateSum = null;
+    private EstimateSum incompletedIssuesEstimateSum = null;
+    private EstimateSum allIssuesEstimateSum = null;
+    private EstimateSum puntedIssuesEstimateSum = null;
+    private List<String> issueKeysAddedDuringSprint = null;
 
     /**
      * Creates a sprint report from a JSON payload.
@@ -72,6 +77,16 @@ public final class SprintReport {
             SprintIssue.class,
             map.get("puntedIssues"),
             restclient);
+        completedIssuesEstimateSum = GreenHopperField.getEstimateSum(
+            map.get("completedIssuesEstimateSum"));
+        incompletedIssuesEstimateSum = GreenHopperField.getEstimateSum(
+            map.get("incompletedIssuesEstimateSum"));
+        allIssuesEstimateSum = GreenHopperField.getEstimateSum(
+            map.get("allIssuesEstimateSum"));
+        puntedIssuesEstimateSum = GreenHopperField.getEstimateSum(
+            map.get("puntedIssuesEstimateSum"));
+        issueKeysAddedDuringSprint = GreenHopperField.getStringArray(
+            map.get("issueKeysAddedDuringSprint"));
     }
 
     /**
@@ -129,6 +144,26 @@ public final class SprintReport {
 
     public List<SprintIssue> getPuntedIssues() {
         return puntedIssues;
+    }
+
+    public EstimateSum getCompletedIssuesEstimateSum() {
+        return completedIssuesEstimateSum;
+    }
+
+    public EstimateSum getIncompletedIssuesEstimateSum() {
+        return incompletedIssuesEstimateSum;
+    }
+
+    public EstimateSum getAllIssuesEstimateSum() {
+        return allIssuesEstimateSum;
+    }
+
+    public EstimateSum getPuntedIssuesEstimateSum() {
+        return puntedIssuesEstimateSum;
+    }
+
+    public List<String> getIssueKeysAddedDuringSprint() {
+        return issueKeysAddedDuringSprint;
     }
 }
 

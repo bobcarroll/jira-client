@@ -53,6 +53,38 @@ public final class GreenHopperField {
     }
 
     /**
+     * Gets an estimate statistic object from the given object.
+     *
+     * @param es a JSONObject instance
+     *
+     * @return a EstimateStatistic instance or null if es isn't a JSONObject instance
+     */
+    public static EstimateStatistic getEstimateStatistic(Object es) {
+        EstimateStatistic result = null;
+
+        if (es instanceof JSONObject && !((JSONObject)es).isNullObject())
+            result = new EstimateStatistic((JSONObject)es);
+
+        return result;
+    }
+
+    /**
+     * Gets an estimate sum object from the given object.
+     *
+     * @param es a JSONObject instance
+     *
+     * @return a EstimateSum instance or null if es isn't a JSONObject instance
+     */
+    public static EstimateSum getEstimateSum(Object es) {
+        EstimateSum result = null;
+
+        if (es instanceof JSONObject && !((JSONObject)es).isNullObject())
+            result = new EstimateSum((JSONObject)es);
+
+        return result;
+    }
+
+    /**
      * Gets a list of integers from the given object.
      *
      * @param ia a JSONArray instance
@@ -85,9 +117,7 @@ public final class GreenHopperField {
         T result = null;
 
         if (r instanceof JSONObject && !((JSONObject)r).isNullObject()) {
-            if (type == EstimateStatistic.class)
-                result = (T)new EstimateStatistic(restclient, (JSONObject)r);
-            else if (type == RapidView.class)
+            if (type == RapidView.class)
                 result = (T)new RapidView(restclient, (JSONObject)r);
             else if (type == Sprint.class)
                 result = (T)new Sprint(restclient, (JSONObject)r);
@@ -118,6 +148,24 @@ public final class GreenHopperField {
                 if (item != null)
                     results.add(item);
             }
+        }
+
+        return results;
+    }
+
+    /**
+     * Gets a list of strings from the given object.
+     *
+     * @param ia a JSONArray instance
+     *
+     * @return a list of strings
+     */
+    public static List<String> getStringArray(Object ia) {
+        List<String> results = new ArrayList<String>();
+
+        if (ia instanceof JSONArray) {
+            for (Object v : (JSONArray)ia)
+                results.add((String)v);
         }
 
         return results;
