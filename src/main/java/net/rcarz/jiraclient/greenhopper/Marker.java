@@ -17,40 +17,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.rcarz.jiraclient;
+package net.rcarz.jiraclient.greenhopper;
+
+import net.rcarz.jiraclient.Field;
+import net.rcarz.jiraclient.RestClient;
+
+import java.util.Map;
+
+import net.sf.json.JSONObject;
 
 /**
- * A base class for JIRA resources.
+ * Represents a GreenHopper marker (a sprint that hasn't started).
  */
-public abstract class Resource {
+public final class Marker extends GreenHopperResource {
 
-    protected static final String RESOURCE_URI = "/rest/api/2/";
-
-    protected RestClient restclient = null;
-    protected String id = null;
-    protected String self = null;
+    private String name = null;
 
     /**
-     * Creates a new JIRA resource.
+     * Creates a marker from a JSON payload.
      *
      * @param restclient REST client instance
+     * @param json JSON payload
      */
-    public Resource(RestClient restclient) {
-        this.restclient = restclient;
+    protected Marker(RestClient restclient, JSONObject json) {
+        super(restclient);
+
+        if (json != null)
+            deserialise(json);
     }
 
-    /**
-     * Internal JIRA ID.
-     */
-    public String getId() {
-        return id;
+    private void deserialise(JSONObject json) {
+        Map map = json;
+
+        id = Field.getInteger(map.get("id"));
+        name = Field.getString(map.get("name"));
     }
 
-    /**
-     * REST API resource URL.
-     */
-    public String getUrl() {
-        return self;
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public String getName() {
+        return name;
     }
 }
 

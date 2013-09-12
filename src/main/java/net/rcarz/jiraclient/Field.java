@@ -147,6 +147,22 @@ public final class Field {
     }
 
     /**
+     * Gets an floating-point number from the given object.
+     *
+     * @param i an Double instance
+     *
+     * @return an floating-point number or null if i isn't a Double instance
+     */
+    public static Double getDouble(Object i) {
+        Double result = null;
+
+        if (i instanceof Double)
+            result = (Double)i;
+
+        return result;
+    }
+
+    /**
      * Gets an integer from the given object.
      *
      * @param i an Integer instance
@@ -293,41 +309,11 @@ public final class Field {
         List<T> results = new ArrayList<T>();
 
         if (ra instanceof JSONArray) {
-            for (Object v : (JSONArray)ra)
-                if (type == Attachment.class)
-                    results.add((T)new Attachment(restclient, (JSONObject)v));
-                else if (type == Comment.class)
-                    results.add((T)new Comment(restclient, (JSONObject)v));
-                else if (type == Component.class)
-                    results.add((T)new Component(restclient, (JSONObject)v));
-                else if (type == CustomFieldOption.class)
-                    results.add((T)new CustomFieldOption(restclient, (JSONObject)v));
-                else if (type == Issue.class)
-                    results.add((T)new Issue(restclient, (JSONObject)v));
-                else if (type == IssueLink.class)
-                    results.add((T)new IssueLink(restclient, (JSONObject)v));
-                else if (type == IssueType.class)
-                    results.add((T)new IssueType(restclient, (JSONObject)v));
-                else if (type == LinkType.class)
-                    results.add((T)new LinkType(restclient, (JSONObject)v));
-                else if (type == Priority.class)
-                    results.add((T)new Priority(restclient, (JSONObject)v));
-                else if (type == Project.class)
-                    results.add((T)new Project(restclient, (JSONObject)v));
-                else if (type == Resolution.class)
-                    results.add((T)new Resolution(restclient, (JSONObject)v));
-                else if (type == Status.class)
-                    results.add((T)new Status(restclient, (JSONObject)v));
-                else if (type == User.class)
-                    results.add((T)new User(restclient, (JSONObject)v));
-                else if (type == Version.class)
-                    results.add((T)new Version(restclient, (JSONObject)v));
-                else if (type == Votes.class)
-                    results.add((T)new Votes(restclient, (JSONObject)v));
-                else if (type == Watches.class)
-                    results.add((T)new Watches(restclient, (JSONObject)v));
-                else if (type == WorkLog.class)
-                    results.add((T)new WorkLog(restclient, (JSONObject)v));
+            for (Object v : (JSONArray)ra) {
+                T item = getResource(type, v, restclient);
+                if (item != null)
+                    results.add(item);
+            }
         }
 
         return results;

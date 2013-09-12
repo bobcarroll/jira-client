@@ -113,17 +113,17 @@ public class JiraClient {
      *
      * @throws JiraException when the search fails
      */
-	public List<CustomFieldOption> getCustomFieldAllowedValues(String field, String project, String issueType) throws JiraException {
-		JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
- 		JSONObject fieldMetadata = (JSONObject) createMetadata.get(field);
- 		List<CustomFieldOption> customFieldOptions = Field.getResourceArray(
-			CustomFieldOption.class,
-			fieldMetadata.get("allowedValues"),
-			restclient
+    public List<CustomFieldOption> getCustomFieldAllowedValues(String field, String project, String issueType) throws JiraException {
+        JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
+        JSONObject fieldMetadata = (JSONObject) createMetadata.get(field);
+        List<CustomFieldOption> customFieldOptions = Field.getResourceArray(
+            CustomFieldOption.class,
+            fieldMetadata.get("allowedValues"),
+            restclient
         );
- 		return customFieldOptions;
-	}
-	
+        return customFieldOptions;
+    }
+    
     /**
      * Get a list of options for a components
      *
@@ -134,16 +134,16 @@ public class JiraClient {
      *
      * @throws JiraException when the search fails
      */
-	public List<Component> getComponentsAllowedValues(String project, String issueType) throws JiraException {
-		JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
- 		JSONObject fieldMetadata = (JSONObject) createMetadata.get(Field.COMPONENTS);
- 		List<Component> componentOptions = Field.getResourceArray(
-			Component.class,
-			fieldMetadata.get("allowedValues"),
-			restclient
+    public List<Component> getComponentsAllowedValues(String project, String issueType) throws JiraException {
+        JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
+        JSONObject fieldMetadata = (JSONObject) createMetadata.get(Field.COMPONENTS);
+        List<Component> componentOptions = Field.getResourceArray(
+            Component.class,
+            fieldMetadata.get("allowedValues"),
+            restclient
         );
- 		return componentOptions;
-	}
+        return componentOptions;
+    }
 
     public RestClient getRestClient() {
         return restclient;

@@ -17,40 +17,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.rcarz.jiraclient;
+package net.rcarz.jiraclient.greenhopper;
+
+import net.rcarz.jiraclient.RestClient;
 
 /**
- * A base class for JIRA resources.
+ * A base class for GreenHopper resources.
  */
-public abstract class Resource {
+public abstract class GreenHopperResource {
 
-    protected static final String RESOURCE_URI = "/rest/api/2/";
+    protected static final String RESOURCE_URI = "/rest/greenhopper/1.0/";
 
     protected RestClient restclient = null;
-    protected String id = null;
-    protected String self = null;
+    protected int id = 0;
 
     /**
-     * Creates a new JIRA resource.
+     * Creates a new GreenHopper resource.
      *
      * @param restclient REST client instance
      */
-    public Resource(RestClient restclient) {
+    public GreenHopperResource(RestClient restclient) {
         this.restclient = restclient;
     }
 
     /**
      * Internal JIRA ID.
      */
-    public String getId() {
+    public int getId() {
         return id;
-    }
-
-    /**
-     * REST API resource URL.
-     */
-    public String getUrl() {
-        return self;
     }
 }
 

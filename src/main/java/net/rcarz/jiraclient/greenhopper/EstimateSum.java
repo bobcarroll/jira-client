@@ -17,40 +17,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.rcarz.jiraclient;
+package net.rcarz.jiraclient.greenhopper;
+
+import net.rcarz.jiraclient.Field;
+
+import java.util.Map;
+
+import net.sf.json.JSONObject;
 
 /**
- * A base class for JIRA resources.
+ * GreenHopper estimate sum for rapid views.
  */
-public abstract class Resource {
+public final class EstimateSum {
 
-    protected static final String RESOURCE_URI = "/rest/api/2/";
-
-    protected RestClient restclient = null;
-    protected String id = null;
-    protected String self = null;
+    private Double value = null;
+    private String text = null;
 
     /**
-     * Creates a new JIRA resource.
+     * Creates an estimate sum from a JSON payload.
      *
-     * @param restclient REST client instance
+     * @param json JSON payload
      */
-    public Resource(RestClient restclient) {
-        this.restclient = restclient;
+    protected EstimateSum(JSONObject json) {
+        Map map = json;
+
+        value = Field.getDouble(map.get("value"));
+        text = Field.getString(map.get("text"));
     }
 
-    /**
-     * Internal JIRA ID.
-     */
-    public String getId() {
-        return id;
+    public Double getValue() {
+        return value;
     }
 
-    /**
-     * REST API resource URL.
-     */
-    public String getUrl() {
-        return self;
+    public String getText() {
+        return text;
     }
 }
 
