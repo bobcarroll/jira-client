@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue component.
  */
-public final class Component extends Resource {
+public class Component extends Resource {
 
     private String name = null;
     private boolean isAssigneeTypeValid = false;

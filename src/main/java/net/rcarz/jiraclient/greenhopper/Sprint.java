@@ -31,7 +31,7 @@ import org.joda.time.DateTime;
 /**
  * Represents a GreenHopper sprint.
  */
-public final class Sprint extends GreenHopperResource {
+public class Sprint extends GreenHopperResource {
 
     private String name = null;
     private boolean closed = false;

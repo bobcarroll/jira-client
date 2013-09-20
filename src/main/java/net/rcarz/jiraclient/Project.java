@@ -29,7 +29,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a JIRA project.
  */
-public final class Project extends Resource {
+public class Project extends Resource {
 
     private Map<String, String> avatarUrls = null;
     private String key = null;

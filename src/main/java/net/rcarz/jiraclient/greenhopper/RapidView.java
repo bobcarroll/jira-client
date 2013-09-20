@@ -33,7 +33,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a GreenHopper Rapid Board.
  */
-public final class RapidView extends GreenHopperResource {
+public class RapidView extends GreenHopperResource {
 
     private String name = null;
     private boolean canEdit = false;

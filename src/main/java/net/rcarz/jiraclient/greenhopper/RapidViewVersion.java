@@ -31,7 +31,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a GreenHopper JIRA project version.
  */
-public final class RapidViewVersion extends GreenHopperResource {
+public class RapidViewVersion extends GreenHopperResource {
 
     private String name = null;
     private int sequence = 0;

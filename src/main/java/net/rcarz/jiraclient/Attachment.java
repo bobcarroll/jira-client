@@ -28,7 +28,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue attachment.
  */
-public final class Attachment extends Resource {
+public class Attachment extends Resource {
 
     private User author = null;
     private String filename = null;

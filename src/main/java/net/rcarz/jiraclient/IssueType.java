@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue type.
  */
-public final class IssueType extends Resource {
+public class IssueType extends Resource {
 
     private String description = null;
     private String iconUrl = null;

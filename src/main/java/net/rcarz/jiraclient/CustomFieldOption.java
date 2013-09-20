@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an custom field option.
  */
-public final class CustomFieldOption extends Resource {
+public class CustomFieldOption extends Resource {
 
     private String value = null;
 

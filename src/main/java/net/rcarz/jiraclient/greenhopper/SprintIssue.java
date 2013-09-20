@@ -29,7 +29,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a GreenHopper sprint issue.
  */
-public final class SprintIssue extends GreenHopperIssue {
+public class SprintIssue extends GreenHopperIssue {
 
     private String epic = null;
     private EstimateStatistic estimateStatistic = null;

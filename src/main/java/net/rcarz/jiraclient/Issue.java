@@ -33,7 +33,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a JIRA issue.
  */
-public final class Issue extends Resource {
+public class Issue extends Resource {
 
     /**
      * Used to chain fields to a create action.

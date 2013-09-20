@@ -36,7 +36,7 @@ import net.sf.json.JSONObject;
 /**
  * GreenHopper backlog data.
  */
-public final class Backlog {
+public class Backlog {
 
     private RestClient restclient = null;
     private List<SprintIssue> issues = null;

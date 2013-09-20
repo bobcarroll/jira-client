@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue priority.
  */
-public final class Priority extends Resource {
+public class Priority extends Resource {
 
     private String iconUrl = null;
     private String name = null;

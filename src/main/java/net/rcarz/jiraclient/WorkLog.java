@@ -28,7 +28,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue work log.
  */
-public final class WorkLog extends Resource {
+public class WorkLog extends Resource {
 
     private User author = null;
     private String comment = null;
