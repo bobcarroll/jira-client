@@ -30,7 +30,7 @@ import net.sf.json.JSONObject;
 public final class IssueLink extends Resource {
 
     private LinkType type = null;
-    private Issue inwardIssue = null;
+    private Issue outwardIssue = null;
 
     /**
      * Creates a issue link from a JSON payload.
@@ -51,7 +51,7 @@ public final class IssueLink extends Resource {
         self = Field.getString(map.get("self"));
         id = Field.getString(map.get("id"));
         type = Field.getResource(LinkType.class, map.get("type"), restclient);
-        inwardIssue = Field.getResource(Issue.class, map.get("inwardIssue"), restclient);
+        outwardIssue = Field.getResource(Issue.class, map.get("outwardIssue"), restclient);
     }
 
     /**
@@ -97,15 +97,15 @@ public final class IssueLink extends Resource {
 
     @Override
     public String toString() {
-        return String.format("%s %s", getType().getInward(), getInwardIssue());
+        return String.format("%s %s", getType().getInward(), getOutwardIssue());
     }
 
     public LinkType getType() {
         return type;
     }
 
-    public Issue getInwardIssue() {
-        return inwardIssue;
+    public Issue getOutwardIssue() {
+        return outwardIssue;
     }
 }
 
