@@ -55,7 +55,7 @@ public final class User extends Resource {
         id = Field.getString(map.get("id"));
         active = Field.getBoolean(map.get("active"));
         avatarUrls = Field.getMap(String.class, String.class, map.get("avatarUrls"));
-        displayName = Field.getString(map.get("displayname"));
+        displayName = Field.getString(map.get("displayName"));
         email = Field.getString(map.get("email"));
         name = Field.getString(map.get("name"));
     }
