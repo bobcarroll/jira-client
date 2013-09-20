@@ -14,6 +14,7 @@ jira-client is still under heavy development. Here's what works:
 * Search for issues with JQL
 * Create issues
 * Update issues (both system fields and custom fields)
+* Finding allowed values for components and custom fields
 * Transition issues to new states
 * Add comments to issues
 * Add attachments to issues
