@@ -133,6 +133,11 @@ public class Example {
             );
             for (CustomFieldOption cfo : cfselect)
                 System.out.println("Custom Field Select: " + cfo.getValue());
+               
+            /* Print out allowed values for the custom multi-select box. */
+            List<CustomFieldOption> allowedValues = jira.getCustomFieldAllowedValues("customfield_5678", "TEST", "Task");
+            for (CustomFieldOption customFieldOption : allowedValues)
+                System.out.println(customFieldOption.getValue());
 
             /* Set two new values for customfield_5678. */
             issue.update()
