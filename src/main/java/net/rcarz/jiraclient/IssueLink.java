@@ -30,6 +30,7 @@ import net.sf.json.JSONObject;
 public final class IssueLink extends Resource {
 
     private LinkType type = null;
+    private Issue inwardIssue = null;
     private Issue outwardIssue = null;
 
     /**
@@ -52,6 +53,7 @@ public final class IssueLink extends Resource {
         id = Field.getString(map.get("id"));
         type = Field.getResource(LinkType.class, map.get("type"), restclient);
         outwardIssue = Field.getResource(Issue.class, map.get("outwardIssue"), restclient);
+        inwardIssue = Field.getResource(Issue.class, map.get("inwardIssue"), restclient);
     }
 
     /**
@@ -106,6 +108,10 @@ public final class IssueLink extends Resource {
 
     public Issue getOutwardIssue() {
         return outwardIssue;
+    }
+    
+    public Issue getInwardIssue() {
+        return inwardIssue;
     }
 }
 
