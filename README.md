@@ -14,6 +14,7 @@ jira-client is still under heavy development. Here's what works:
 * Search for issues with JQL
 * Create issues
 * Update issues (both system fields and custom fields)
+* Finding allowed values for components and custom fields
 * Transition issues to new states
 * Add comments to issues
 * Add attachments to issues
@@ -133,6 +134,11 @@ public class Example {
             );
             for (CustomFieldOption cfo : cfselect)
                 System.out.println("Custom Field Select: " + cfo.getValue());
+               
+            /* Print out allowed values for the custom multi-select box. */
+            List<CustomFieldOption> allowedValues = jira.getCustomFieldAllowedValues("customfield_5678", "TEST", "Task");
+            for (CustomFieldOption customFieldOption : allowedValues)
+                System.out.println(customFieldOption.getValue());
 
             /* Set two new values for customfield_5678. */
             issue.update()
