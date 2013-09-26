@@ -50,6 +50,25 @@ public final class Field {
         public int customId;
     }
 
+    /**
+     * Field update operation.
+     */
+    public static final class Operation {
+        public String name;
+        public Object value;
+
+        /**
+         * Initialises a new update operation.
+         *
+         * @param name Operation name
+         * @param value Field value
+         */
+        public Operation(String name, Object value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+
     public static final String ASSIGNEE = "assignee";
     public static final String ATTACHMENT = "attachment";
     public static final String COMMENT = "comment";
@@ -442,7 +461,25 @@ public final class Field {
             if (!(value instanceof Iterable))
                 throw new JiraException("Field expects an Iterable value");
 
-            return toArray((Iterable)value, m.items);
+            boolean isOper = false;
+            for (Object v : (Iterable)value) {
+                isOper = v instanceof Operation;
+                break;
+            }
+
+            if (isOper) {
+                List results = new ArrayList();
+
+                for (Object v : (Iterable)value) {
+                    Operation oper = (Operation)v;
+                    JSONObject json = new JSONObject();
+                    json.put(oper.name, oper.value.toString());
+                    results.add(json.toString());
+                }
+
+                return toArray(results, m.items);
+            } else
+                return toArray((Iterable)value, m.items);
         } else if (m.type.equals("date")) {
             Date d = toDate(value);
 

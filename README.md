@@ -107,6 +107,12 @@ public class Example {
                 }})
                 .execute();
 
+            /* You can also update values with field operations. */
+            issue.update()
+                .fieldAdd(Field.LABELS, "baz")
+                .fieldRemove(Field.LABELS, "foo")
+                .execute();
+
             /* Print the summary. We have to refresh first to pickup the new value. */
             issue.refresh();
             System.out.println("New Summary: " + issue.getSummary());
@@ -145,6 +151,7 @@ public class Example {
                 .field("customfield_5678", new HashMap() {{
                     put("value", "foo");
                     put("value", "bar");
+                    put("id", "1234");  /* you can also update using the value ID */
                 }})
                 .execute();
                 
