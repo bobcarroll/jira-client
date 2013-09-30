@@ -19,11 +19,18 @@
 
 package net.rcarz.jiraclient;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 
 /**
  * Represents an issue attachment.
@@ -88,6 +95,35 @@ public class Attachment extends Resource {
             throw new JiraException("JSON payload is malformed");
 
         return new Attachment(restclient, (JSONObject)result);
+    }
+    
+    /**
+     * Downloads attachment to byte array
+     *
+     * @return a byte[]
+     *
+     * @throws JiraException when the download fails
+     */
+    public byte[] download() 
+    	throws JiraException{
+    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    	try{
+        	HttpGet get = new HttpGet(content);
+        	HttpResponse response = restclient.getHttpClient().execute(get);
+        	HttpEntity entity = response.getEntity();
+        	if (entity != null) {
+        	    InputStream inputStream = entity.getContent();
+        	    int next = inputStream.read();
+        	    while (next > -1) {
+        	        bos.write(next);
+        	        next = inputStream.read();
+        	    }
+        	    bos.flush();
+        	}
+    	}catch(IOException e){
+    		  throw new JiraException(String.format("Failed downloading attachment from %s: %s", this.content, e.getMessage()));
+    	}
+    	return bos.toByteArray();
     }
 
     @Override
