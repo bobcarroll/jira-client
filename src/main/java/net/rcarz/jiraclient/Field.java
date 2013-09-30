@@ -423,12 +423,22 @@ public final class Field {
             if (type.equals("component") || type.equals("group") ||
                 type.equals("user") || type.equals("version")) {
 
-                JSONObject json = new JSONObject();
-                json.put("name", val.toString());
-
-                result.add(json.toString());
+				if (val instanceof Map) {
+					result.add(toJsonMap((Map)val).toString());
+				} else {
+					JSONObject json = new JSONObject();
+					json.put("name", val.toString());
+					result.add(json.toString());
+				}
+				
             } else if (type.equals("string"))
-                result.add(val.toString());
+                if (val instanceof Map) {
+					result.add(toJsonMap((Map)val).toString());
+				} else {
+					JSONObject json = new JSONObject();
+					json.put("name", val.toString());
+					result.add(json.toString());
+				}
         }
 
         return result;
@@ -504,6 +514,7 @@ public final class Field {
 
             return json.toString();
         } else if (m.type.equals("string")) {
+		
             if (value instanceof Map)
                 return toJsonMap((Map)value);
 
