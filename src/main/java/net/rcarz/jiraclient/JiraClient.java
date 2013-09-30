@@ -1,7 +1,7 @@
 /**
  * jira-client - a simple JIRA REST client
  * Copyright (c) 2013 Bob Carroll (bob.carroll@alum.rit.edu)
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -20,10 +20,11 @@
 package net.rcarz.jiraclient;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
-
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
@@ -56,7 +57,7 @@ public class JiraClient {
 
         if (creds != null)
             username = creds.getLogonName();
-    }
+        }
 
     /**
      * Creates a new issue in the given project.
@@ -69,7 +70,7 @@ public class JiraClient {
      * @throws JiraException when something goes wrong
      */
     public Issue.FluentCreate createIssue(String project, String issueType)
-        throws JiraException {
+            throws JiraException {
 
         return Issue.create(restclient, project, issueType);
     }
@@ -154,6 +155,29 @@ public class JiraClient {
     }
 
     /**
+     *
+     * @return a list of all priorities available in the Jira installation
+     * @throws JiraException
+     */
+    public List<Priority> getPriorities() throws JiraException {
+        try {
+            URI uri = restclient.buildURI(Resource.RESOURCE_URI + "priority");
+            JSON response = restclient.get(uri);
+            JSONArray prioritiesArray = JSONArray.fromObject(response);
+
+            List<Priority> priorities = new ArrayList<Priority>(prioritiesArray.size());
+            for (int i = 0; i < prioritiesArray.size(); i++) {
+                JSONObject p = prioritiesArray.getJSONObject(i);
+                priorities.add(new Priority(restclient, p));
+            }
+
+            return priorities;
+        } catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Get a list of options for a custom field
      *
      * @param field field id
@@ -168,18 +192,18 @@ public class JiraClient {
         JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
         JSONObject fieldMetadata = (JSONObject) createMetadata.get(field);
         List<CustomFieldOption> customFieldOptions = Field.getResourceArray(
-            CustomFieldOption.class,
-            fieldMetadata.get("allowedValues"),
+                CustomFieldOption.class,
+                fieldMetadata.get("allowedValues"),
             restclient
         );
         return customFieldOptions;
     }
-    
+
     /**
      * Get a list of options for a components
      *
      * @param project Key of the project context
-     * @param issueType Name of the issue type 
+     * @param issueType Name of the issue type
      *
      * @return a search result structure with results
      *
@@ -189,8 +213,8 @@ public class JiraClient {
         JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
         JSONObject fieldMetadata = (JSONObject) createMetadata.get(Field.COMPONENTS);
         List<Component> componentOptions = Field.getResourceArray(
-            Component.class,
-            fieldMetadata.get("allowedValues"),
+                Component.class,
+                fieldMetadata.get("allowedValues"),
             restclient
         );
         return componentOptions;
