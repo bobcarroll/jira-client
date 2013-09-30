@@ -28,7 +28,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue comment.
  */
-public final class Comment extends Resource {
+public class Comment extends Resource {
 
     private User author = null;
     private String body = null;

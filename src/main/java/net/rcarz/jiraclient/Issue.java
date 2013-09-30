@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a JIRA issue.
  */
-public final class Issue extends Resource {
+public class Issue extends Resource {
 
     /**
      * Used to chain fields to a create action.
@@ -103,6 +104,7 @@ public final class Issue extends Resource {
     public final class FluentUpdate {
 
         Map<String, Object> fields = new HashMap<String, Object>();
+        Map<String, List> fieldOpers = new HashMap<String, List>();
         JSONObject editmeta = null;
 
         private FluentUpdate(JSONObject editmeta) {
@@ -116,8 +118,9 @@ public final class Issue extends Resource {
          */
         public void execute() throws JiraException {
             JSONObject fieldmap = new JSONObject();
+            JSONObject updatemap = new JSONObject();
 
-            if (fields.size() == 0)
+            if (fields.size() == 0 && fieldOpers.size() == 0)
                 throw new JiraException("No fields were given for update");
 
             for (Map.Entry<String, Object> ent : fields.entrySet()) {
@@ -125,8 +128,18 @@ public final class Issue extends Resource {
                 fieldmap.put(ent.getKey(), newval);
             }
 
+            for (Map.Entry<String, List> ent : fieldOpers.entrySet()) {
+                Object newval = Field.toJson(ent.getKey(), ent.getValue(), editmeta);
+                updatemap.put(ent.getKey(), newval);
+            }
+
             JSONObject req = new JSONObject();
-            req.put("fields", fieldmap);
+
+            if (fieldmap.size() > 0)
+                req.put("fields", fieldmap);
+
+            if (updatemap.size() > 0)
+                req.put("update", updatemap);
 
             try {
                 restclient.put(getRestUri(key), req);
@@ -146,6 +159,38 @@ public final class Issue extends Resource {
         public FluentUpdate field(String name, Object value) {
             fields.put(name, value);
             return this;
+        }
+
+        private FluentUpdate fieldOperation(String oper, String name, Object value) {
+            if (!fieldOpers.containsKey(name))
+                fieldOpers.put(name, new ArrayList());
+
+            fieldOpers.get(name).add(new Field.Operation(oper, value));
+            return this;
+        }
+
+        /**
+         *  Adds a field value to the existing value set.
+         *
+         *  @param name Name of the field
+         *  @param value Field value to append
+         *
+         *  @return the current fluent update instance
+         */
+        public FluentUpdate fieldAdd(String name, Object value) {
+            return fieldOperation("add", name, value);
+        }
+
+        /**
+         *  Removes a field value from the existing value set.
+         *
+         *  @param name Name of the field
+         *  @param value Field value to remove
+         *
+         *  @return the current fluent update instance
+         */
+        public FluentUpdate fieldRemove(String name, Object value) {
+            return fieldOperation("remove", name, value);
         }
     }
 

@@ -28,7 +28,7 @@ import net.sf.json.JSONObject;
 /**
  * GreenHopper estimate statistics for rapid views.
  */
-public final class EstimateStatistic {
+public class EstimateStatistic {
 
     private String statFieldId = null;
     private int statFieldValue = 0;

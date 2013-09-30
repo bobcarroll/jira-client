@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue resolution.
  */
-public final class Resolution extends Resource {
+public class Resolution extends Resource {
 
     private String description = null;
     private String name = null;

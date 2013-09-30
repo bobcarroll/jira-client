@@ -28,7 +28,7 @@ import net.sf.json.JSONObject;
 /**
  * GreenHopper epic statistics.
  */
-public final class EpicStats {
+public class EpicStats {
 
     private Double notDoneEstimate = null;
     private Double doneEstimate = null;

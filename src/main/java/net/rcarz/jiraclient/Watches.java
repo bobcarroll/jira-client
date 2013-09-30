@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents issue watches.
  */
-public final class Watches extends Resource {
+public class Watches extends Resource {
 
     private String name = null;
     private int watchCount = 0;

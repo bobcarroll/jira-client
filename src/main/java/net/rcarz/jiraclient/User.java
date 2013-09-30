@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a JIRA user.
  */
-public final class User extends Resource {
+public class User extends Resource {
 
     private boolean active = false;
     private Map<String, String> avatarUrls = null;

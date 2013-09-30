@@ -32,7 +32,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a GreenHopper epic issue.
  */
-public final class Epic extends GreenHopperIssue {
+public class Epic extends GreenHopperIssue {
 
     public String epicLabel = null;
     public String epicColour = null;

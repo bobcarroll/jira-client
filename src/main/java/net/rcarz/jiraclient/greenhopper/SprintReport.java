@@ -35,7 +35,7 @@ import net.sf.json.JSONObject;
 /**
  * GreenHopper sprint statistics.
  */
-public final class SprintReport {
+public class SprintReport {
 
     private RestClient restclient = null;
     private Sprint sprint = null;

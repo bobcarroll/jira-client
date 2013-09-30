@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a product version.
  */
-public final class Version extends Resource {
+public class Version extends Resource {
 
     private String name = null;
     private boolean archived = false;

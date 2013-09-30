@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue link.
  */
-public final class IssueLink extends Resource {
+public class IssueLink extends Resource {
 
     private LinkType type = null;
     private Issue inwardIssue = null;

@@ -29,7 +29,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents a GreenHopper marker (a sprint that hasn't started).
  */
-public final class Marker extends GreenHopperResource {
+public class Marker extends GreenHopperResource {
 
     private String name = null;
 

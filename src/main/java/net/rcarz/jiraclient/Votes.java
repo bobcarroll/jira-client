@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents issue votes.
  */
-public final class Votes extends Resource {
+public class Votes extends Resource {
 
     private String name = null;
     private int votes = 0;

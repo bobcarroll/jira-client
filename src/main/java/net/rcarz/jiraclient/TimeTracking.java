@@ -26,7 +26,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents issue time tracking data.
  */
-public final class TimeTracking {
+public class TimeTracking {
 
     private String originalEstimate = null;
     private String remainingEstimate = null;

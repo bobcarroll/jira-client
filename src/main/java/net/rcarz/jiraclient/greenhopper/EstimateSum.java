@@ -28,7 +28,7 @@ import net.sf.json.JSONObject;
 /**
  * GreenHopper estimate sum for rapid views.
  */
-public final class EstimateSum {
+public class EstimateSum {
 
     private Double value = null;
     private String text = null;

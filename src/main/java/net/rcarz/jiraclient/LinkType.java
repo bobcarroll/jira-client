@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue link type.
  */
-public final class LinkType extends Resource {
+public class LinkType extends Resource {
 
     private String name = null;
     private String inward = null;
