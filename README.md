@@ -105,6 +105,7 @@ public class Example {
                     add("foo");
                     add("bar");
                 }})
+                .field(Field.PRIORITY, Field.valueById("1")) /* you can also set the value by ID */
                 .execute();
 
             /* You can also update values with field operations. */

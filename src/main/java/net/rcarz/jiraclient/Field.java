@@ -69,6 +69,47 @@ public final class Field {
         }
     }
 
+    /**
+     * Allowed value types.
+     */
+    public enum ValueType {
+        KEY("key"), NAME("name"), ID_NUMBER("id");
+        private String value;
+
+        private ValueType(String value) {
+            this.value = value;
+        }
+    };
+
+    /**
+     * Value and value type pair.
+     */
+    public static final class ValueTuple {
+        public final String type;
+        public final Object value;
+
+        /**
+         * Initialises the value tuple.
+         *
+         * @param type
+         * @param value
+         */
+        public ValueTuple(String type, Object value) {
+            this.type = type;
+            this.value = value;
+        }
+
+        /**
+         * Initialises the value tuple.
+         *
+         * @param type
+         * @param value
+         */
+        public ValueTuple(ValueType type, Object value) {
+            this(type.value, value);
+        }
+    }
+
     public static final String ASSIGNEE = "assignee";
     public static final String ATTACHMENT = "attachment";
     public static final String COMMENT = "comment";
@@ -424,7 +465,12 @@ public final class Field {
                 type.equals("user") || type.equals("version")) {
 
                 JSONObject json = new JSONObject();
-                json.put("name", val.toString());
+
+                if (val instanceof ValueTuple) {
+                    ValueTuple tuple = (ValueTuple)val;
+                    json.put(tuple.type, tuple.value.toString());
+                } else
+                    json.put(ValueType.NAME.value, val.toString());
 
                 result.add(json.toString());
             } else if (type.equals("string"))
@@ -491,12 +537,22 @@ public final class Field {
         } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
                 m.type.equals("user") || m.type.equals("resolution")) {
             JSONObject json = new JSONObject();
-            json.put("name", value.toString());
+
+            if (value instanceof ValueTuple) {
+                ValueTuple tuple = (ValueTuple)value;
+                json.put(tuple.type, tuple.value.toString());
+            } else
+                json.put(ValueType.NAME.value, value.toString());
 
             return json.toString();
         } else if (m.type.equals("project") || m.type.equals("issuelink")) {
             JSONObject json = new JSONObject();
-            json.put("key", value.toString());
+
+            if (value instanceof ValueTuple) {
+                ValueTuple tuple = (ValueTuple)value;
+                json.put(tuple.type, tuple.value.toString());
+            } else
+                json.put(ValueType.KEY.value, value.toString());
 
             return json.toString();
         } else if (m.type.equals("string")) {
@@ -523,6 +579,39 @@ public final class Field {
             json.put(k, map.get(k));
 
         return json.toString();
+    }
+
+    /**
+     * Create a value tuple with value type of key.
+     *
+     * @param key The key value
+     *
+     * @return a value tuple
+     */
+    public static ValueTuple valueByKey(String key) {
+        return new ValueTuple(ValueType.KEY, key);
+    }
+
+    /**
+     * Create a value tuple with value type of name.
+     *
+     * @param key The name value
+     *
+     * @return a value tuple
+     */
+    public static ValueTuple valueByName(String name) {
+        return new ValueTuple(ValueType.NAME, name);
+    }
+
+    /**
+     * Create a value tuple with value type of ID number.
+     *
+     * @param key The ID number value
+     *
+     * @return a value tuple
+     */
+    public static ValueTuple valueById(String id) {
+        return new ValueTuple(ValueType.ID_NUMBER, id);
     }
 }
 
