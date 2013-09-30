@@ -473,7 +473,7 @@ public final class Field {
                 for (Object v : (Iterable)value) {
                     Operation oper = (Operation)v;
                     JSONObject json = new JSONObject();
-                    json.put(oper.name, oper.value.toString());
+					json.put(oper.name, oper.value.toString());
                     results.add(json.toString());
                 }
 
@@ -490,6 +490,10 @@ public final class Field {
             return df.format(d);
         } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
                 m.type.equals("user") || m.type.equals("resolution")) {
+			
+	    if (value instanceof Map)
+                return toJsonMap((Map)value);
+				
             JSONObject json = new JSONObject();
             json.put("name", value.toString());
 
