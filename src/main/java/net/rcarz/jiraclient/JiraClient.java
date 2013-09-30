@@ -79,7 +79,7 @@ public class JiraClient {
      *
      * @param key Issue key (PROJECT-123)
      *
-     * @return an issue instance
+     * @return an issue instance (issue includes all fields)
      *
      * @throws JiraException when something goes wrong
      */
@@ -88,26 +88,77 @@ public class JiraClient {
     }
 
     /**
+     * Retreives the issue with the given key.
+     *
+     * @param key Issue key (PROJECT-123)
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     * @return an issue instance
+     *
+     * @throws JiraException when something goes wrong
+     */
+    public Issue getIssue(String key, String includedFields) throws JiraException {
+        return Issue.get(restclient, key, includedFields);
+    }
+
+    /**
      * Search for issues with the given query.
      *
      * @param jql JQL statement
+     *
+     * @return a search result structure with results (issues include all
+     * navigable fields)
+     *
+     * @throws JiraException when the search fails
+     */
+    public Issue.SearchResult searchIssues(String jql)
+            throws JiraException {
+
+        return Issue.search(restclient, jql);
+    }
+
+    /**
+     * Search for issues with the given query and specify which fields to
+     * retrieve.
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
      *
      * @return a search result structure with results
      *
      * @throws JiraException when the search fails
      */
-    public Issue.SearchResult searchIssues(String jql)
-        throws JiraException {
+    public Issue.SearchResult searchIssues(String jql, String includedFields)
+            throws JiraException {
 
-        return Issue.search(restclient, jql);
+        return Issue.search(restclient, jql, includedFields);
     }
-    
+
     /**
      * Get a list of options for a custom field
      *
      * @param field field id
      * @param project Key of the project context
-     * @param issueType Name of the issue type 
+     * @param issueType Name of the issue type
      *
      * @return a search result structure with results
      *
