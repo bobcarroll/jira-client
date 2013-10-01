@@ -761,7 +761,7 @@ public class Issue extends Resource {
      */
     public static SearchResult search(RestClient restclient, String jql)
             throws JiraException {
-        return issueSearch(restclient, jql, null);
+        return search(restclient, jql, null);
     }
 
     /**
@@ -788,31 +788,6 @@ public class Issue extends Resource {
      */
     public static SearchResult search(RestClient restclient, String jql, String includedFields)
             throws JiraException {
-        return issueSearch(restclient, jql, includedFields);
-    }
-
-    /**
-     * Search for issues with the given query and specify which fields to
-     * retrieve.
-     *
-     * @param restclient REST client instance
-     *
-     * @param jql JQL statement
-     *
-     * @param includedFields Specifies which issue fields will be included in
-     * the result.
-     * <br>Some examples how this parameter works:
-     * <ul>
-     * <li>*all - include all fields</li>
-     * <li>*navigable - include just navigable fields</li>
-     * <li>summary,comment - include just the summary and comments</li>
-     * <li>*all,-comment - include all fields</li>
-     * </ul>
-     *
-     * @return
-     * @throws JiraException
-     */
-    private static SearchResult issueSearch(RestClient restclient, String jql, String includedFields) throws JiraException {
 
         final String j = jql;
         JSON result = null;
