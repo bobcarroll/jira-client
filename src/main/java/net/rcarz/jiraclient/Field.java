@@ -556,10 +556,12 @@ public final class Field {
 
             return json.toString();
         } else if (m.type.equals("string")) {
-            if (value instanceof Map)
-                return toJsonMap((Map)value);
-
-            return value.toString();
+            if (value instanceof ValueTuple) {
+                ValueTuple tuple = (ValueTuple) value;
+                return new JSONObject().put(tuple.type, tuple.value.toString()).toString();
+            } else {
+				return value.toString();
+			}
         }
 
         throw new UnsupportedOperationException(m.type + " is not a supported field type");
