@@ -51,15 +51,54 @@ public class Issue extends Resource {
         }
 
         /**
-         * Executes the create action.
+         * Executes the create action (issue includes all fields).
          *
          * @throws JiraException when the create fails
          */
         public Issue execute() throws JiraException {
+            return executeCreate(null);
+        }
+
+        /**
+         * Executes the create action and specify which fields to retrieve.
+         *
+         * @param includedFields Specifies which issue fields will be included
+         * in the result.
+         * <br>Some examples how this parameter works:
+         * <ul>
+         * <li>*all - include all fields</li>
+         * <li>*navigable - include just navigable fields</li>
+         * <li>summary,comment - include just the summary and comments</li>
+         * <li>*all,-comment - include all fields</li>
+         * </ul>
+         *
+         * @throws JiraException when the create fails
+         */
+        public Issue execute(String includedFields) throws JiraException {
+            return executeCreate(includedFields);
+        }
+
+        /**
+         * Executes the create action and specify which fields to retrieve.
+         *
+         * @param includedFields Specifies which issue fields will be included
+         * in the result.
+         * <br>Some examples how this parameter works:
+         * <ul>
+         * <li>*all - include all fields</li>
+         * <li>*navigable - include just navigable fields</li>
+         * <li>summary,comment - include just the summary and comments</li>
+         * <li>*all,-comment - include all fields</li>
+         * </ul>
+         *
+         * @throws JiraException when the create fails
+         */
+        private Issue executeCreate(String includedFields) throws JiraException {
             JSONObject fieldmap = new JSONObject();
 
-            if (fields.size() == 0)
+            if (fields.size() == 0) {
                 throw new JiraException("No fields were given for create");
+            }
 
             for (Map.Entry<String, Object> ent : fields.entrySet()) {
                 Object newval = Field.toJson(ent.getKey(), ent.getValue(), createmeta);
@@ -77,11 +116,16 @@ public class Issue extends Resource {
                 throw new JiraException("Failed to create issue", ex);
             }
 
-            if (!(result instanceof JSONObject) || !((JSONObject)result).containsKey("key") ||
-                    !(((JSONObject)result).get("key") instanceof String))
+            if (!(result instanceof JSONObject) || !((JSONObject) result).containsKey("key")
+                    || !(((JSONObject) result).get("key") instanceof String)) {
                 throw new JiraException("Unexpected result on create issue");
+            }
 
-            return Issue.get(restclient, (String)((JSONObject)result).get("key"));
+            if (includedFields != null) {
+                return Issue.get(restclient, (String) ((JSONObject) result).get("key"), includedFields);
+            } else {
+                return Issue.get(restclient, (String) ((JSONObject) result).get("key"));
+            }
         }
 
         /**
@@ -633,24 +677,26 @@ public class Issue extends Resource {
     public FluentCreate createSubtask() throws JiraException {
 
         return Issue.create(restclient, getProject().getKey(), "Sub-task")
-            .field("parent", getKey());
+                .field("parent", getKey());
     }
 
-    private static JSONObject realGet(RestClient restclient, String key)
-        throws JiraException {
+    private static JSONObject realGet(RestClient restclient, String key, Map<String, String> queryParams)
+            throws JiraException {
 
         JSON result = null;
 
         try {
-            result = restclient.get(getRestUri(key));
+            URI uri = restclient.buildURI(RESOURCE_URI + "issue/" + key, queryParams);
+            result = restclient.get(uri);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve issue " + key, ex);
         }
 
-        if (!(result instanceof JSONObject))
+        if (!(result instanceof JSONObject)) {
             throw new JiraException("JSON payload is malformed");
+        }
 
-        return (JSONObject)result;
+        return (JSONObject) result;
     }
 
     /**
@@ -659,48 +705,114 @@ public class Issue extends Resource {
      * @param restclient REST client instance
      * @param key Issue key (PROJECT-123)
      *
-     * @return an issue instance
+     * @return an issue instance (issue includes all navigable fields)
      *
      * @throws JiraException when the retrieval fails
      */
     public static Issue get(RestClient restclient, String key)
-        throws JiraException {
+            throws JiraException {
 
-        return new Issue(restclient, realGet(restclient, key));
+        return new Issue(restclient, realGet(restclient, key, new HashMap<String, String>()));
+    }
+
+    /**
+     * Retrieves the given issue record.
+     *
+     * @param restclient REST client instance
+     *
+     * @param key Issue key (PROJECT-123)
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     * @return an issue instance
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public static Issue get(RestClient restclient, String key, final String includedFields)
+            throws JiraException {
+
+        Map<String, String> queryParams = new HashMap<String, String>() {
+            {
+                put("fields", includedFields);
+            }
+        };
+        return new Issue(restclient, realGet(restclient, key, queryParams));
     }
 
     /**
      * Search for issues with the given query.
      *
      * @param restclient REST client instance
+     *
      * @param jql JQL statement
+     *
+     * @return a search result structure with results (issues include all
+     * navigable fields)
+     *
+     * @throws JiraException when the search fails
+     */
+    public static SearchResult search(RestClient restclient, String jql)
+            throws JiraException {
+        return search(restclient, jql, null);
+    }
+
+    /**
+     * Search for issues with the given query and specify which fields to
+     * retrieve.
+     *
+     * @param restclient REST client instance
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
      *
      * @return a search result structure with results
      *
      * @throws JiraException when the search fails
      */
-    public static SearchResult search(RestClient restclient, String jql)
-        throws JiraException {
+    public static SearchResult search(RestClient restclient, String jql, String includedFields)
+            throws JiraException {
 
         final String j = jql;
         JSON result = null;
 
         try {
-            URI searchUri = restclient.buildURI(
-                RESOURCE_URI + "search",
-                new HashMap<String, String>() {{
+            Map<String, String> queryParams = new HashMap<String, String>() {
+                {
                     put("jql", j);
-                }});
+                }
+            };
+            if (includedFields != null) {
+                queryParams.put("fields", includedFields);
+            }
+            URI searchUri = restclient.buildURI(RESOURCE_URI + "search", queryParams);
             result = restclient.get(searchUri);
         } catch (Exception ex) {
             throw new JiraException("Failed to search issues", ex);
         }
 
-        if (!(result instanceof JSONObject))
+        if (!(result instanceof JSONObject)) {
             throw new JiraException("JSON payload is malformed");
+        }
 
         SearchResult sr = new SearchResult();
-        Map map = (Map)result;
+        Map map = (Map) result;
 
         sr.start = Field.getInteger(map.get("startAt"));
         sr.max = Field.getInteger(map.get("maxResults"));
@@ -711,12 +823,40 @@ public class Issue extends Resource {
     }
 
     /**
-     * Reloads issue data from the JIRA server.
+     * Reloads issue data from the JIRA server (issue includes all navigable
+     * fields).
      *
      * @throws JiraException when the retrieval fails
      */
     public void refresh() throws JiraException {
-        JSONObject result = realGet(restclient, key);
+        JSONObject result = realGet(restclient, key, new HashMap<String, String>());
+        deserialise(result);
+    }
+
+    /**
+     * Reloads issue data from the JIRA server and specify which fields to
+     * retrieve.
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public void refresh(final String includedFields) throws JiraException {
+
+        Map<String, String> queryParams = new HashMap<String, String>() {
+            {
+                put("fields", includedFields);
+            }
+        };
+        JSONObject result = realGet(restclient, key, queryParams);
         deserialise(result);
     }
 
