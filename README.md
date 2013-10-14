@@ -45,7 +45,6 @@ Patches are welcome and appreciated. Please try to follow existing styles, and s
 
 ```java
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import net.rcarz.jiraclient.BasicCredentials;
@@ -149,10 +148,10 @@ public class Example {
 
             /* Set two new values for customfield_5678. */
             issue.update()
-                .field("customfield_5678", new HashMap() {{
-                    put("value", "foo");
-                    put("value", "bar");
-                    put("id", "1234");  /* you can also update using the value ID */
+                .field("customfield_5678", new ArrayList() {{
+                    add("foo");
+                    add("bar");
+                    add(Field.valueById("1234")); /* you can also update using the value ID */
                 }})
                 .execute();
                 

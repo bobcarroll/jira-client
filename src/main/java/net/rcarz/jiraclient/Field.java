@@ -73,11 +73,16 @@ public final class Field {
      * Allowed value types.
      */
     public enum ValueType {
-        KEY("key"), NAME("name"), ID_NUMBER("id");
-        private String value;
+        KEY("key"), NAME("name"), ID_NUMBER("id"), VALUE("value");
+        private String typeName;
 
-        private ValueType(String value) {
-            this.value = value;
+        private ValueType(String typeName) {
+            this.typeName = typeName;
+        }
+
+        @Override
+        public String toString() {
+            return typeName;
         }
     };
 
@@ -106,7 +111,7 @@ public final class Field {
          * @param value
          */
         public ValueTuple(ValueType type, Object value) {
-            this(type.value, value);
+            this(type.toString(), value);
         }
     }
 
@@ -470,7 +475,7 @@ public final class Field {
                     ValueTuple tuple = (ValueTuple)val;
                     json.put(tuple.type, tuple.value.toString());
                 } else
-                    json.put(ValueType.NAME.value, val.toString());
+                    json.put(ValueType.NAME.toString(), val.toString());
 
                 result.add(json.toString());
             } else if (type.equals("string"))
@@ -542,7 +547,7 @@ public final class Field {
                 ValueTuple tuple = (ValueTuple)value;
                 json.put(tuple.type, tuple.value.toString());
             } else
-                json.put(ValueType.NAME.value, value.toString());
+                json.put(ValueType.NAME.toString(), value.toString());
 
             return json.toString();
         } else if (m.type.equals("project") || m.type.equals("issuelink")) {
@@ -552,12 +557,12 @@ public final class Field {
                 ValueTuple tuple = (ValueTuple)value;
                 json.put(tuple.type, tuple.value.toString());
             } else
-                json.put(ValueType.KEY.value, value.toString());
+                json.put(ValueType.KEY.toString(), value.toString());
 
             return json.toString();
         } else if (m.type.equals("string")) {
-            if (value instanceof Map)
-                return toJsonMap((Map)value);
+            if (value instanceof List)
+                return toJsonMap((List)value);
 
             return value.toString();
         }
@@ -568,15 +573,20 @@ public final class Field {
     /**
      * Converts the given map to a JSON object.
      *
-     * @param map Map to be converted
+     * @param list List of values to be converted
      *
      * @return a JSON-encoded map
      */
-    public static Object toJsonMap(Map map) {
+    public static Object toJsonMap(List list) {
         JSONObject json = new JSONObject();
 
-        for (Object k : map.keySet())
-            json.put(k, map.get(k));
+        for (Object item : list) {
+            if (item instanceof ValueTuple) {
+                ValueTuple vt = (ValueTuple)item;
+                json.put(vt.type, vt.value.toString());
+            } else
+                json.put(ValueType.VALUE.toString(), item.toString());
+        }
 
         return json.toString();
     }
