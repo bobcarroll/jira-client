@@ -22,9 +22,11 @@ package net.rcarz.jiraclient;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
 import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
@@ -124,7 +126,24 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql)
             throws JiraException {
 
-        return Issue.search(restclient, jql);
+        return Issue.search(restclient, jql, null, null);
+    }
+    
+    /**
+     * Search for issues with the given query and max results.
+     *
+     * @param jql JQL statement
+     * @param maxResults limit the number of results
+     *
+     * @return a search result structure with results (issues include all
+     * navigable fields)
+     *
+     * @throws JiraException when the search fails
+     */
+    public Issue.SearchResult searchIssues(String jql, Integer maxResults)
+            throws JiraException {
+
+        return Issue.search(restclient, jql, null, maxResults);
     }
 
     /**
@@ -151,7 +170,35 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields)
             throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields);
+        return Issue.search(restclient, jql, includedFields, null);
+    }
+    
+    /**
+     * Search for issues with the given query and specify which fields to
+     * retrieve.
+     *
+     * @param jql JQL statement
+     * @param maxResults limit the number of results
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public Issue.SearchResult searchIssues(String jql, String includedFields, Integer maxResults)
+            throws JiraException {
+
+        return Issue.search(restclient, jql, includedFields, maxResults);
     }
 
     /**
