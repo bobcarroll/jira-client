@@ -134,7 +134,6 @@ public class RapidView extends GreenHopperResource {
         JSON result = null;
 
         try {
-            System.out.println(getId());
             result = restclient.get(RESOURCE_URI + "sprintquery/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve sprints", ex);
