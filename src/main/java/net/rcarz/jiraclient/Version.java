@@ -1,7 +1,7 @@
 /**
  * jira-client - a simple JIRA REST client
  * Copyright (c) 2013 Bob Carroll (bob.carroll@alum.rit.edu)
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,10 +19,10 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents a product version.
@@ -32,12 +32,14 @@ public class Version extends Resource {
     private String name = null;
     private boolean archived = false;
     private boolean released = false;
+    private String releaseDate;
+    private String description = null;
 
     /**
      * Creates a version from a JSON payload.
      *
      * @param restclient REST client instance
-     * @param json JSON payload
+     * @param json       JSON payload
      */
     protected Version(RestClient restclient, JSONObject json) {
         super(restclient);
@@ -46,28 +48,16 @@ public class Version extends Resource {
             deserialise(json);
     }
 
-    private void deserialise(JSONObject json) {
-        Map map = json;
-
-        self = Field.getString(map.get("self"));
-        id = Field.getString(map.get("id"));
-        name = Field.getString(map.get("name"));
-        archived = Field.getBoolean(map.get("archived"));
-        released = Field.getBoolean(map.get("released"));
-    }
-
     /**
      * Retrieves the given version record.
      *
      * @param restclient REST client instance
-     * @param id Internal JIRA ID of the version
-     *
+     * @param id         Internal JIRA ID of the version
      * @return a version instance
-     *
      * @throws JiraException when the retrieval fails
      */
     public static Version get(RestClient restclient, String id)
-        throws JiraException {
+            throws JiraException {
 
         JSON result = null;
 
@@ -80,7 +70,19 @@ public class Version extends Resource {
         if (!(result instanceof JSONObject))
             throw new JiraException("JSON payload is malformed");
 
-        return new Version(restclient, (JSONObject)result);
+        return new Version(restclient, (JSONObject) result);
+    }
+
+    private void deserialise(JSONObject json) {
+        Map map = json;
+
+        self = Field.getString(map.get("self"));
+        id = Field.getString(map.get("id"));
+        name = Field.getString(map.get("name"));
+        archived = Field.getBoolean(map.get("archived"));
+        released = Field.getBoolean(map.get("released"));
+        releaseDate = Field.getString(map.get("releaseDate"));
+        description = Field.getString(map.get("description"));
     }
 
     @Override
@@ -98,6 +100,15 @@ public class Version extends Resource {
 
     public boolean isReleased() {
         return released;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public String getDescription() {
+        return description;
+
     }
 }
 
