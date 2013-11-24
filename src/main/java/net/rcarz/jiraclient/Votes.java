@@ -19,10 +19,10 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents issue votes.
@@ -85,6 +85,10 @@ public class Votes extends Resource {
     @Override
     public String toString() {
         return Integer.toString(getVotes());
+    }
+
+    public String getSelf(){
+        return self;
     }
 
     public int getVotes() {

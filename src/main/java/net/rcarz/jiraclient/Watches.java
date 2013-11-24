@@ -19,10 +19,10 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents issue watches.
@@ -93,6 +93,10 @@ public class Watches extends Resource {
 
     public boolean isWatching() {
         return isWatching;
+    }
+
+    public String getSelf() {
+        return self;
     }
 }
 
