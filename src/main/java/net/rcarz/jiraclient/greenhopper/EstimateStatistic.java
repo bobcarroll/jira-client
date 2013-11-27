@@ -31,7 +31,7 @@ import net.sf.json.JSONObject;
 public class EstimateStatistic {
 
     private String statFieldId = null;
-    private int statFieldValue = 0;
+    private Double statFieldValue = 0.0;
     private String statFieldText = null;
 
     /**
@@ -49,8 +49,8 @@ public class EstimateStatistic {
 
             Map val = (Map)json.get("statFieldValue");
 
-            statFieldValue = Field.getInteger(map.get("value"));
-            statFieldText = Field.getString(map.get("text"));
+            statFieldValue = Field.getDouble(val.get("value"));
+            statFieldText = Field.getString(val.get("text"));
         }
     }
 
@@ -58,7 +58,7 @@ public class EstimateStatistic {
         return statFieldId;
     }
 
-    public int getFieldValue() {
+    public Double getFieldValue() {
         return statFieldValue;
     }
 
