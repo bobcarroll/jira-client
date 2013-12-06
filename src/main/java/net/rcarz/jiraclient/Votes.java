@@ -87,10 +87,6 @@ public class Votes extends Resource {
         return Integer.toString(getVotes());
     }
 
-    public String getSelf(){
-        return self;
-    }
-
     public int getVotes() {
         return votes;
     }

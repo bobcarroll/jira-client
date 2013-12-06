@@ -52,5 +52,12 @@ public abstract class Resource {
     public String getUrl() {
         return self;
     }
+
+    /**
+     * Resource URL.
+     */
+    public String getSelf() {
+        return self;
+    }
 }
 

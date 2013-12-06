@@ -94,9 +94,5 @@ public class Watches extends Resource {
     public boolean isWatching() {
         return isWatching;
     }
-
-    public String getSelf() {
-        return self;
-    }
 }
 
