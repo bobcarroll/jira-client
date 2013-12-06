@@ -93,10 +93,6 @@ public class Sprint extends GreenHopperResource {
         return completeDate;
     }
 
-    public void setIssues(List<SprintIssue> _issues){
-        issues = _issues;
-    }
-
     public List<SprintIssue> getIssues(){
         if(issues == null){
             issues = new ArrayList<SprintIssue>();
