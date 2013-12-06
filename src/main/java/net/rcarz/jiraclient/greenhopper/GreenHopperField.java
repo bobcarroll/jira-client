@@ -37,6 +37,8 @@ public final class GreenHopperField {
 
     public static final String DATE_TIME_FORMAT = "d/MMM/yy h:m a";
 
+    public static final String NO_DATE = "None";
+
     private GreenHopperField() { }
 
     /**
@@ -47,9 +49,10 @@ public final class GreenHopperField {
      * @return the date-time or null
      */
     public static DateTime getDateTime(Object dt) {
-        return dt != null ?
-            DateTime.parse((String)dt, DateTimeFormat.forPattern(DATE_TIME_FORMAT)) :
-            null;
+        if(dt == null || ((String)dt).equals(NO_DATE)){
+            return null;
+        }
+        return DateTime.parse((String)dt, DateTimeFormat.forPattern(DATE_TIME_FORMAT));
     }
 
     /**
