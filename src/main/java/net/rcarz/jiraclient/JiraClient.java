@@ -126,7 +126,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql)
             throws JiraException {
 
-        return Issue.search(restclient, jql, null, null);
+        return Issue.search(restclient, jql, null,null,null);
     }
     
     /**
@@ -143,9 +143,13 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, Integer maxResults)
             throws JiraException {
 
-        return Issue.search(restclient, jql, null, maxResults);
+        return Issue.search(restclient, jql, null, maxResults,null);
     }
 
+    public Issue.SearchResult searchIssues(String jql, Integer maxResults, Integer startAt) throws JiraException {
+    	return Issue.search(restclient, jql, null, maxResults,startAt);
+    	
+    }
     /**
      * Search for issues with the given query and specify which fields to
      * retrieve.
@@ -170,7 +174,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields)
             throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields, null);
+        return Issue.search(restclient, jql, includedFields, null,null);
     }
     
     /**
@@ -198,9 +202,15 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields, Integer maxResults)
             throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields, maxResults);
+        return Issue.search(restclient, jql, includedFields, maxResults,null);
     }
 
+    public Issue.SearchResult searchIssues(String jql, String includedFields, Integer maxResults, Integer startAt)
+            throws JiraException {
+
+        return Issue.search(restclient, jql, includedFields, maxResults,startAt);
+    }
+    
     /**
      *
      * @return a list of all priorities available in the Jira installation

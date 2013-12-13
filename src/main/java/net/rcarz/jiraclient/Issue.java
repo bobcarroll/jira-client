@@ -761,7 +761,7 @@ public class Issue extends Resource {
      */
     public static SearchResult search(RestClient restclient, String jql)
             throws JiraException {
-        return search(restclient, jql, null, null);
+        return search(restclient, jql, null, null, null);
     }
 
     /**
@@ -786,7 +786,7 @@ public class Issue extends Resource {
      *
      * @throws JiraException when the search fails
      */
-    public static SearchResult search(RestClient restclient, String jql, String includedFields, Integer maxResults)
+    public static SearchResult search(RestClient restclient, String jql, String includedFields, Integer maxResults, Integer startAt)
             throws JiraException {
 
         final String j = jql;
@@ -798,9 +798,14 @@ public class Issue extends Resource {
                     put("jql", j);
                 }
             };
+            
             if(maxResults != null){
-            	queryParams.put("maxResults", String.valueOf(maxResults));
+            	queryParams.put("maxResults", String.valueOf(maxResults));	
             }
+            if (startAt != null) {
+            	queryParams.put("startAt", String.valueOf(startAt));
+            }
+            
             if (includedFields != null) {
                 queryParams.put("fields", includedFields);
             }
