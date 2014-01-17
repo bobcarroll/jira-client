@@ -208,7 +208,7 @@ public class JiraClient {
      */
     public List<Priority> getPriorities() throws JiraException {
         try {
-            URI uri = restclient.buildURI(Resource.RESOURCE_URI + "priority");
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "priority");
             JSON response = restclient.get(uri);
             JSONArray prioritiesArray = JSONArray.fromObject(response);
 

@@ -70,7 +70,7 @@ public class Priority extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "priority/" + id);
+            result = restclient.get(getBaseUri() + "priority/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve priority " + id, ex);
         }

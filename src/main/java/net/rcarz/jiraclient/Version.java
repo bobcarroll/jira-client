@@ -62,7 +62,7 @@ public class Version extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "version/" + id);
+            result = restclient.get(getBaseUri() + "version/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve version " + id, ex);
         }

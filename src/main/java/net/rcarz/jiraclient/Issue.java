@@ -426,7 +426,7 @@ public class Issue extends Resource {
     }
 
     private static String getRestUri(String key) {
-        return RESOURCE_URI + "issue/" + (key != null ? key : "");
+        return getBaseUri() + "issue/" + (key != null ? key : "");
     }
 
     public static JSONObject getCreateMetadata(
@@ -438,7 +438,7 @@ public class Issue extends Resource {
 
         try {
             URI createuri = restclient.buildURI(
-                RESOURCE_URI + "issue/createmeta",
+                getBaseUri() + "issue/createmeta",
                 new HashMap<String, String>() {{
                     put("expand", "projects.issuetypes.fields");
                     put("projectKeys", pval);
@@ -638,7 +638,7 @@ public class Issue extends Resource {
         }
 
         try {
-            restclient.post(RESOURCE_URI + "issueLink", req);
+            restclient.post(getBaseUri() + "issueLink", req);
         } catch (Exception ex) {
             throw new JiraException("Failed to link issue " + key + " with issue " + issue, ex);
         }
@@ -686,7 +686,7 @@ public class Issue extends Resource {
         JSON result = null;
 
         try {
-            URI uri = restclient.buildURI(RESOURCE_URI + "issue/" + key, queryParams);
+            URI uri = restclient.buildURI(getBaseUri() + "issue/" + key, queryParams);
             result = restclient.get(uri);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve issue " + key, ex);
@@ -804,7 +804,7 @@ public class Issue extends Resource {
             if (includedFields != null) {
                 queryParams.put("fields", includedFields);
             }
-            URI searchUri = restclient.buildURI(RESOURCE_URI + "search", queryParams);
+            URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
             result = restclient.get(searchUri);
         } catch (Exception ex) {
             throw new JiraException("Failed to search issues", ex);

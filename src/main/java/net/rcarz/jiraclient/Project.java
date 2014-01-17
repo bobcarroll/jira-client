@@ -91,7 +91,7 @@ public class Project extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "project/" + key);
+            result = restclient.get(getBaseUri() + "project/" + key);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve project " + key, ex);
         }
@@ -115,7 +115,7 @@ public class Project extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "project");
+            result = restclient.get(getBaseUri() + "project");
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve projects", ex);
         }

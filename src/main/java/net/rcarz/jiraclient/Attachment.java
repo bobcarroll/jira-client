@@ -86,7 +86,7 @@ public class Attachment extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "attachment/" + id);
+            result = restclient.get(getBaseUri() + "attachment/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve attachment " + id, ex);
         }

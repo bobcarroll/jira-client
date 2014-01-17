@@ -62,7 +62,7 @@ public class User extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "user?username=" + username);
+            result = restclient.get(getBaseUri() + "user?username=" + username);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve user " + username, ex);
         }

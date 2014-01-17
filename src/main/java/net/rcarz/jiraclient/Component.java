@@ -70,7 +70,7 @@ public class Component extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "component/" + id);
+            result = restclient.get(getBaseUri() + "component/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve component " + id, ex);
         }

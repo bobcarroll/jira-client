@@ -78,7 +78,7 @@ public class IssueType extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "issuetype/" + id);
+            result = restclient.get(getBaseUri() + "issuetype/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve issue type " + id, ex);
         }
