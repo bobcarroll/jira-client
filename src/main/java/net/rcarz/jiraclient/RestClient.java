@@ -125,7 +125,10 @@ public class RestClient {
         StringBuilder result = new StringBuilder();
 
         if (ent != null) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(ent.getContent()));
+            InputStreamReader isr =  ent.getContentEncoding() != null ?
+                new InputStreamReader(ent.getContent(), ent.getContentEncoding().getValue()) :
+                new InputStreamReader(ent.getContent());
+            BufferedReader br = new BufferedReader(isr);
             String line = "";
 
             while ((line = br.readLine()) != null)
