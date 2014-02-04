@@ -18,7 +18,12 @@ public class Utils {
                         "    },\n" +
                         "    \"summary\": \"Maintain Company Details\",\n" +
                         "    \"timetracking\": {\n" +
-                        "      \n" +
+                        "      \"originalEstimate\": \"1w\",\n" +
+                        "      \"remainingEstimate\": \"2d\",\n" +
+                        "      \"timeSpent\": \"3d\",\n" +
+                        "      \"originalEstimateSeconds\": 144000,\n" +
+                        "      \"remainingEstimateSeconds\": 57600,\n" +
+                        "      \"timeSpentSeconds\": 86400\n" +
                         "    },\n" +
                         "    \"issuetype\": {\n" +
                         "      \"self\": \"https://brainbubble.atlassian.net/rest/api/2/issuetype/7\",\n" +
