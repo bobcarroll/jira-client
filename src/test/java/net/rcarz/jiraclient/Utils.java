@@ -51,7 +51,7 @@ public class Utils {
         "      }\n" +
         "    ],\n" +
         "    \"resolutiondate\": null,\n" +
-        "    \"timespent\": null,\n" +
+        "    \"timespent\": 86400,\n" +
         "    \"reporter\": {\n" +
         "      \"self\": \"https://brainbubble.atlassian.net/rest/api/2/user?username=joseph\",\n" +
         "      \"name\": \"joseph\",\n" +
@@ -136,7 +136,7 @@ public class Utils {
         "      \n" +
         "    ],\n" +
         "    \"environment\": null,\n" +
-        "    \"timeestimate\": null,\n" +
+        "    \"timeestimate\": 144000,\n" +
         "    \"lastViewed\": \"2013-11-24T16:37:50.358+0000\",\n" +
         "    \"aggregateprogress\": {\n" +
         "      \"progress\": 0,\n" +

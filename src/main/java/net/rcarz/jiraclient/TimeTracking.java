@@ -31,9 +31,9 @@ public class TimeTracking {
     private String originalEstimate = null;
     private String remainingEstimate = null;
     private String timeSpent = null;
-    private int originalEstimateSeconds = 0;
-    private int remainingEstimateSeconds = 0;
-    private int timeSpentSeconds = 0;
+    private Integer originalEstimateSeconds = null;
+    private Integer remainingEstimateSeconds = null;
+    private Integer timeSpentSeconds = null;
 
     /**
      * Creates a time tracking structure from a JSON payload.
@@ -74,5 +74,4 @@ public class TimeTracking {
     public int getTimeSpentSeconds() {
         return timeSpentSeconds;
     }
-
 }

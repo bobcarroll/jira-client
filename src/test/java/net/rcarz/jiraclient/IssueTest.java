@@ -1,14 +1,15 @@
 package net.rcarz.jiraclient;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class IssueTest {
 
@@ -17,7 +18,7 @@ public class IssueTest {
      */
     @Test
     public void testCreateIssue() {
-        Issue issue = new Issue(null, Utils.getTestIssue());
+        new Issue(null, Utils.getTestIssue());
     }
 
     @Test
@@ -111,5 +112,13 @@ public class IssueTest {
         assertFalse(version.isReleased());
         Assert.assertEquals(version.getReleaseDate(), "2013-12-01");
         Assert.assertEquals(version.getDescription(), "First Full Functional Build");
+    }
+
+    @Test
+    public void testPlainTimeTracking() {
+        Issue issue = new Issue(null,Utils.getTestIssue());
+
+        assertEquals(new Integer(144000), issue.getTimeEstimate());
+        assertEquals(new Integer(86400), issue.getTimeSpent());
     }
 }
