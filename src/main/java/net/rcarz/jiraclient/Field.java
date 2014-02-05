@@ -138,7 +138,9 @@ public final class Field {
     public static final String VOTES = "votes";
     public static final String WATCHES = "watches";
     public static final String WORKLOG = "worklog";
-
+    public static final String TIME_ESTIMATE = "timeestimate";
+    public static final String TIME_SPENT = "timespent";
+    
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     private Field() { }
