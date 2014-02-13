@@ -356,6 +356,7 @@ public class Issue extends Resource {
     /* system fields */
     private User assignee = null;
     private List<Attachment> attachments = null;
+    private ChangeLog changeLog = null;
     private List<Comment> comments = null;
     private List<Component> components = null;
     private String description = null;
@@ -404,6 +405,7 @@ public class Issue extends Resource {
 
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
         attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ATTACHMENT), restclient);
+        changeLog = Field.getResource(ChangeLog.class, map.get(Field.CHANGE_LOG), restclient);
         comments = Field.getComments(fields.get(Field.COMMENT), restclient);
         components = Field.getResourceArray(Component.class, fields.get(Field.COMPONENTS), restclient);
         description = Field.getString(fields.get(Field.DESCRIPTION));
@@ -516,7 +518,7 @@ public class Issue extends Resource {
 
         return (JSONArray)jo.get("transitions");
     }
-    
+
     /**
      * Adds an attachment to this issue.
      *
@@ -752,6 +754,43 @@ public class Issue extends Resource {
     }
 
     /**
+     * Retrieves the given issue record.
+     *
+     * @param restclient REST client instance
+     *
+     * @param key Issue key (PROJECT-123)
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     * 
+     * @param expand fields to expand when obtaining the issue
+     *
+     * @return an issue instance
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public static Issue get(RestClient restclient, String key, final String includedFields,
+            final String expand) throws JiraException {
+
+        Map<String, String> queryParams = new HashMap<String, String>() {
+            {
+                put("fields", includedFields);
+                if (expand != null) {
+                    put("expand", expand);
+                }
+            }
+        };
+        return new Issue(restclient, realGet(restclient, key, queryParams));
+    }
+
+    /**
      * Search for issues with the given query.
      *
      * @param restclient REST client instance
@@ -792,6 +831,42 @@ public class Issue extends Resource {
      */
     public static SearchResult search(RestClient restclient, String jql, String includedFields, Integer maxResults)
             throws JiraException {
+        return search(restclient, jql, includedFields, maxResults, null);
+    }
+
+    /**
+     * Search for issues with the given query and specify which fields to
+     * retrieve. If the total results is bigger than the maximum returned
+     * results, then further calls can be made using different values for
+     * the <code>startAt</code> field to obtain all the results.
+     *
+     * @param restclient REST client instance
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     * 
+     * @param maxResults if non-<code>null</code>, defines the maximum number of
+     * results that can be returned 
+     * 
+     * @param startAt if non-<code>null</code>, defines the first issue to
+     * return
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public static SearchResult search(RestClient restclient, String jql,
+            String includedFields, Integer maxResults, Integer startAt)
+                    throws JiraException {
 
         final String j = jql;
         JSON result = null;
@@ -803,11 +878,15 @@ public class Issue extends Resource {
                 }
             };
             if(maxResults != null){
-            	queryParams.put("maxResults", String.valueOf(maxResults));
+                queryParams.put("maxResults", String.valueOf(maxResults));
             }
             if (includedFields != null) {
                 queryParams.put("fields", includedFields);
             }
+            if (startAt != null) {
+                queryParams.put("startAt", String.valueOf(startAt));
+            }
+
             URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
             result = restclient.get(searchUri);
         } catch (Exception ex) {
@@ -977,6 +1056,10 @@ public class Issue extends Resource {
         return getKey();
     }
 
+    public ChangeLog getChangeLog() {
+        return changeLog;
+    }
+
     public String getKey() {
         return key;
     }
@@ -1071,6 +1154,20 @@ public class Issue extends Resource {
 
     public List<WorkLog> getWorkLogs() {
         return workLogs;
+    }
+
+    public List<WorkLog> getAllWorkLogs() throws JiraException {
+        JSONObject obj;
+        try {
+            URI uri = restclient.buildURI(getRestUri(key) + "/worklog");
+            JSON json = restclient.get(uri);
+            obj = (JSONObject) json;
+        } catch (Exception ex) {
+            throw new JiraException("Failed to get worklog for issue "
+                    + key, ex);
+        }
+
+        return Field.getWorkLogs(obj, restclient);
     }
 
     public Integer getTimeSpent() {

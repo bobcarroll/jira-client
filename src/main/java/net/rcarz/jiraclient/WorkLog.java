@@ -119,5 +119,9 @@ public class WorkLog extends Resource {
     public Date getUpdatedDate() {
         return updated;
     }
+
+    public int getTimeSpentSeconds() {
+        return timeSpentSeconds;
+    }
 }
 

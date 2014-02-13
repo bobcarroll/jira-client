@@ -117,6 +117,9 @@ public final class Field {
 
     public static final String ASSIGNEE = "assignee";
     public static final String ATTACHMENT = "attachment";
+    public static final String CHANGE_LOG = "changelog";
+    public static final String CHANGE_LOG_ENTRIES = "histories";
+    public static final String CHANGE_LOG_ITEMS = "items";
     public static final String COMMENT = "comment";
     public static final String COMPONENTS = "components";
     public static final String DESCRIPTION = "description";
@@ -288,6 +291,12 @@ public final class Field {
         if (r instanceof JSONObject && !((JSONObject)r).isNullObject()) {
             if (type == Attachment.class)
                 result = (T)new Attachment(restclient, (JSONObject)r);
+            else if (type == ChangeLog.class)
+                result = (T)new ChangeLog(restclient, (JSONObject)r);
+            else if (type == ChangeLogEntry.class)
+                result = (T)new ChangeLogEntry(restclient, (JSONObject)r);
+            else if (type == ChangeLogItem.class)
+                result = (T)new ChangeLogItem(restclient, (JSONObject)r);
             else if (type == Comment.class)
                 result = (T)new Comment(restclient, (JSONObject)r);
             else if (type == Component.class)
@@ -567,6 +576,9 @@ public final class Field {
                 return toJsonMap((List)value);
 
             return value.toString();
+        } else if (m.type.equals("timetracking")) {
+            if (value instanceof TimeTracking)
+                return ((TimeTracking) value).toJsonObject();
         }
 
         throw new UnsupportedOperationException(m.type + " is not a supported field type");
