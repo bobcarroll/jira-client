@@ -32,8 +32,11 @@ import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -125,8 +128,24 @@ public class RestClient {
         StringBuilder result = new StringBuilder();
 
         if (ent != null) {
-            InputStreamReader isr =  ent.getContentEncoding() != null ?
-                new InputStreamReader(ent.getContent(), ent.getContentEncoding().getValue()) :
+            String encoding = null;
+            if (ent.getContentEncoding() != null) {
+            	encoding = ent.getContentEncoding().getValue();
+            }
+            
+            if (encoding == null) {
+    	        Header contentTypeHeader = resp.getFirstHeader("Content-Type");
+    	        HeaderElement[] contentTypeElements = contentTypeHeader.getElements();
+    	        for (HeaderElement he : contentTypeElements) {
+    	        	NameValuePair nvp = he.getParameterByName("charset");
+    	        	if (nvp != null) {
+    	        		encoding = nvp.getValue();
+    	        	}
+    	        }
+            }
+            
+            InputStreamReader isr =  encoding != null ?
+                new InputStreamReader(ent.getContent(), encoding) :
                 new InputStreamReader(ent.getContent());
             BufferedReader br = new BufferedReader(isr);
             String line = "";
