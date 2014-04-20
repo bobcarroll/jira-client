@@ -337,6 +337,66 @@ public class JiraClient {
         return username;
     }
 
+    /**
+     * Obtains the list of all projects in Jira.
+     * @return all projects; not all data is returned for each project; to get
+     * the extra data use {@link #getProject(String)}
+     * @throws JiraException failed to obtain the project list.
+     */
+    public List<Project> getProjects() throws JiraException {
+        try {
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "project");
+            JSON response = restclient.get(uri);
+            JSONArray projectsArray = JSONArray.fromObject(response);
 
+            List<Project> projects = new ArrayList<Project>(projectsArray.size());
+            for (int i = 0; i < projectsArray.size(); i++) {
+                JSONObject p = projectsArray.getJSONObject(i);
+                projects.add(new Project(restclient, p));
+            }
+
+            return projects;
+        } catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+        }
+    }
+    
+    /**
+     * Obtains information about a project, given its project key.
+     * @param key the project key
+     * @return the project
+     * @throws JiraException failed to obtain the project
+     */
+    public Project getProject(String key) throws JiraException {
+        try {
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "project/" + key);
+            JSON response = restclient.get(uri);
+            return new Project(restclient, (JSONObject) response);
+        } catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+        }
+    }
+    
+    /**
+     * Obtains the list of all issue types in Jira.
+     * @return all issue types
+     * @throws JiraException failed to obtain the issue type list.
+     */
+    public List<IssueType> getIssueTypes() throws JiraException {
+        try {
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "issuetype");
+            JSON response = restclient.get(uri);
+            JSONArray issueTypeArray = JSONArray.fromObject(response);
+
+            List<IssueType> issueTypes = new ArrayList<IssueType>(issueTypeArray.size());
+            for (int i = 0; i < issueTypeArray.size(); i++) {
+                JSONObject it = issueTypeArray.getJSONObject(i);
+                issueTypes.add(new IssueType(restclient, it));
+            }
+
+            return issueTypes;
+        } catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+        }
+    }
 }
-
