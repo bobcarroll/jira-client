@@ -22,6 +22,7 @@ package net.rcarz.jiraclient;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -61,8 +62,11 @@ public class User extends Resource {
 
         JSON result = null;
 
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("username", username);
+
         try {
-            result = restclient.get(getBaseUri() + "user?username=" + username);
+            result = restclient.get(getBaseUri() + "user", params);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve user " + username, ex);
         }
