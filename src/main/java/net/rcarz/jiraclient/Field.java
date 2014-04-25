@@ -574,6 +574,12 @@ public final class Field {
         } else if (m.type.equals("string")) {
             if (value instanceof List)
                 return toJsonMap((List)value);
+            else if (value instanceof ValueTuple) {
+                JSONObject json = new JSONObject();
+                ValueTuple tuple = (ValueTuple)value;
+                json.put(tuple.type, tuple.value.toString());
+                return json.toString();
+            }
 
             return value.toString();
         } else if (m.type.equals("timetracking")) {
