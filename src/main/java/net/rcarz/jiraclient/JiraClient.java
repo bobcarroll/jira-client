@@ -399,4 +399,52 @@ public class JiraClient {
             throw new JiraException(ex.getMessage(), ex);
         }
     }
+    
+    /**
+     * Creates a new component in the given project.
+     *
+     * @param project Key of the project to create in
+     *
+     * @return a fluent create instance
+     */
+    public Component.FluentCreate createComponent(String project) {
+        return Component.create(restclient, project);
+    }
+    
+    /**
+     * Obtains a component given its ID.
+     * 
+     * @param id the component ID
+     * 
+     * @return the component
+     * 
+     * @throws JiraException failed to obtain the component
+     */
+    public Component getComponent(String id) throws JiraException {
+    	try {
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "/component/"
+            		+ id);
+            JSON response = restclient.get(uri);
+            return new Component(restclient, ((JSONObject) response));
+    	} catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+    	}
+    }
+    
+    /**
+     * Deletes a component from a project.
+     * 
+     * @param id the component ID
+     * 
+     * @throws JiraException failed to delete the component
+     */
+    public void deleteComponent(String id) throws JiraException {
+        try {
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "component/"
+                    + id);
+            JSON response = restclient.delete(uri);
+        } catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+        }
+    }
 }
