@@ -171,7 +171,7 @@ public class Component extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(getBaseUri() + "component/" + id);
+            result = restclient.get(getRestUri(id));
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve component " + id, ex);
         }
@@ -198,7 +198,7 @@ public class Component extends Resource {
     private static String getRestUri(String id) {
         return getBaseUri() + "component/" + (id != null ? id : "");
     }
-    
+
     /**
      * Creates a new JIRA component.
      *
@@ -210,6 +210,19 @@ public class Component extends Resource {
     public static FluentCreate create(RestClient restclient, String project) {
         FluentCreate fc = new FluentCreate(restclient, project);
         return fc;
+    }
+
+    /**
+     * Deletes a component from a project.
+     * 
+     * @throws JiraException failed to delete the component
+     */
+    public void delete() throws JiraException {
+        try {
+            restclient.delete(getRestUri(id));
+        } catch (Exception ex) {
+            throw new JiraException("Failed to delete component " + id, ex);
+        }
     }
 }
 
