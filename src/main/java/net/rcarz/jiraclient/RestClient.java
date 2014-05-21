@@ -247,6 +247,22 @@ public class RestClient {
      * Executes an HTTP GET with the given path.
      *
      * @param path Path to be appended to the URI supplied in the construtor
+     * @param params Map of key value pairs
+     *
+     * @return JSON-encoded result or null when there's no content returned
+     *
+     * @throws RestException when an HTTP-level error occurs
+     * @throws IOException when an error reading the response occurs
+     * @throws URISyntaxException when an error occurred appending the path to the URI
+     */
+    public JSON get(String path, Map<String, String> params) throws RestException, IOException, URISyntaxException {
+        return get(buildURI(path, params));
+    }
+
+    /**
+     * Executes an HTTP GET with the given path.
+     *
+     * @param path Path to be appended to the URI supplied in the construtor
      *
      * @return JSON-encoded result or null when there's no content returned
      *
@@ -255,8 +271,9 @@ public class RestClient {
      * @throws URISyntaxException when an error occurred appending the path to the URI
      */
     public JSON get(String path) throws RestException, IOException, URISyntaxException {
-        return get(buildURI(path));
+        return get(path, null);
     }
+
 
     /**
      * Executes an HTTP POST with the given URI and payload.
