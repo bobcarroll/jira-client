@@ -128,6 +128,7 @@ public final class Field {
     public static final String ISSUE_LINKS = "issuelinks";
     public static final String ISSUE_TYPE = "issuetype";
     public static final String LABELS = "labels";
+    public static final String PARENT = "parent";
     public static final String PRIORITY = "priority";
     public static final String PROJECT = "project";
     public static final String REPORTER = "reporter";
