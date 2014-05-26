@@ -31,6 +31,7 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONNull;
 
 /**
  * Utility functions for translating between JSON and fields.
@@ -512,16 +513,14 @@ public final class Field {
     public static Object toJson(String name, Object value, JSONObject editmeta)
         throws JiraException, UnsupportedOperationException {
 
-        if (value == null)
-            return null;
-
         Meta m = getFieldMetadata(name, editmeta);
-
         if (m.type == null)
             throw new JiraException("Field metadata is missing a type");
 
         if (m.type.equals("array")) {
-            if (!(value instanceof Iterable))
+            if (value == null)
+                value = new ArrayList();
+            else if (!(value instanceof Iterable))
                 throw new JiraException("Field expects an Iterable value");
 
             boolean isOper = false;
@@ -544,8 +543,10 @@ public final class Field {
             } else
                 return toArray((Iterable)value, m.items);
         } else if (m.type.equals("date")) {
-            Date d = toDate(value);
+            if (value == null)
+                return JSONNull.getInstance();
 
+            Date d = toDate(value);
             if (d == null)
                 throw new JiraException("Field expects a date value or format is invalid");
 
@@ -555,7 +556,9 @@ public final class Field {
                 m.type.equals("user") || m.type.equals("resolution")) {
             JSONObject json = new JSONObject();
 
-            if (value instanceof ValueTuple) {
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (value instanceof ValueTuple) {
                 ValueTuple tuple = (ValueTuple)value;
                 json.put(tuple.type, tuple.value.toString());
             } else
@@ -565,7 +568,9 @@ public final class Field {
         } else if (m.type.equals("project") || m.type.equals("issuelink")) {
             JSONObject json = new JSONObject();
 
-            if (value instanceof ValueTuple) {
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (value instanceof ValueTuple) {
                 ValueTuple tuple = (ValueTuple)value;
                 json.put(tuple.type, tuple.value.toString());
             } else
@@ -573,7 +578,9 @@ public final class Field {
 
             return json.toString();
         } else if (m.type.equals("string")) {
-            if (value instanceof List)
+            if (value == null)
+                return "";
+            else if (value instanceof List)
                 return toJsonMap((List)value);
             else if (value instanceof ValueTuple) {
                 JSONObject json = new JSONObject();
@@ -584,7 +591,9 @@ public final class Field {
 
             return value.toString();
         } else if (m.type.equals("timetracking")) {
-            if (value instanceof TimeTracking)
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (value instanceof TimeTracking)
                 return ((TimeTracking) value).toJsonObject();
         }
 
