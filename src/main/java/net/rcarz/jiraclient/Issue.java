@@ -365,6 +365,7 @@ public class Issue extends Resource {
     private List<IssueLink> issueLinks = null;
     private IssueType issueType = null;
     private List<String> labels = null;
+    private Issue parent = null;
     private Priority priority = null;
     private Project project = null;
     private User reporter = null;
@@ -414,6 +415,7 @@ public class Issue extends Resource {
         issueLinks = Field.getResourceArray(IssueLink.class, fields.get(Field.ISSUE_LINKS), restclient);
         issueType = Field.getResource(IssueType.class, fields.get(Field.ISSUE_TYPE), restclient);
         labels = Field.getStringArray(fields.get(Field.LABELS));
+        parent = Field.getResource(Issue.class, fields.get(Field.PARENT), restclient);
         priority = Field.getResource(Priority.class, fields.get(Field.PRIORITY), restclient);
         project = Field.getResource(Project.class, fields.get(Field.PROJECT), restclient);
         reporter = Field.getResource(User.class, fields.get(Field.REPORTER), restclient);
@@ -1102,6 +1104,10 @@ public class Issue extends Resource {
 
     public List<String> getLabels() {
         return labels;
+    }
+
+    public Issue getParent() {
+        return parent;
     }
 
     public Priority getPriority() {
