@@ -473,29 +473,46 @@ public final class Field {
      * @return a JSON-encoded array of items
      */
     public static JSONArray toArray(Iterable iter, String type) throws JiraException {
-        JSONArray result = new JSONArray();
+        JSONArray results = new JSONArray();
 
         if (type == null)
             throw new JiraException("Array field metadata is missing item type");
 
         for (Object val : iter) {
+            Operation oper = null;
+            Object realValue = null;
+            Object realResult = null;
+
+            if (val instanceof Operation) {
+                oper = (Operation)val;
+                realValue = oper.value;
+            } else
+                realValue = val;
+
             if (type.equals("component") || type.equals("group") ||
                 type.equals("user") || type.equals("version")) {
 
-                JSONObject json = new JSONObject();
+                JSONObject itemMap = new JSONObject();
 
-                if (val instanceof ValueTuple) {
-                    ValueTuple tuple = (ValueTuple)val;
-                    json.put(tuple.type, tuple.value.toString());
+                if (realValue instanceof ValueTuple) {
+                    ValueTuple tuple = (ValueTuple)realValue;
+                    itemMap.put(tuple.type, tuple.value.toString());
                 } else
-                    json.put(ValueType.NAME.toString(), val.toString());
+                    itemMap.put(ValueType.NAME.toString(), realValue.toString());
 
-                result.add(json.toString());
+                realResult = itemMap;
             } else if (type.equals("string"))
-                result.add(val.toString());
+                realResult = realValue.toString();
+
+            if (oper != null) {
+                JSONObject operMap = new JSONObject();
+                operMap.put(oper.name, realResult);
+                results.add(operMap);
+            } else
+                results.add(realResult);
         }
 
-        return result;
+        return results;
     }
 
     /**
@@ -523,25 +540,7 @@ public final class Field {
             else if (!(value instanceof Iterable))
                 throw new JiraException("Field expects an Iterable value");
 
-            boolean isOper = false;
-            for (Object v : (Iterable)value) {
-                isOper = v instanceof Operation;
-                break;
-            }
-
-            if (isOper) {
-                List results = new ArrayList();
-
-                for (Object v : (Iterable)value) {
-                    Operation oper = (Operation)v;
-                    JSONObject json = new JSONObject();
-                    json.put(oper.name, oper.value.toString());
-                    results.add(json.toString());
-                }
-
-                return toArray(results, m.items);
-            } else
-                return toArray((Iterable)value, m.items);
+            return toArray((Iterable)value, m.items);
         } else if (m.type.equals("date")) {
             if (value == null)
                 return JSONNull.getInstance();
