@@ -683,9 +683,8 @@ public class Issue extends Resource {
      * @throws JiraException when the client fails to retrieve issue metadata
      */
     public FluentCreate createSubtask() throws JiraException {
-
         return Issue.create(restclient, getProject().getKey(), "Sub-task")
-                .field("parent", getKey());
+                .field(Field.PARENT, getKey());
     }
 
     private static JSONObject realGet(RestClient restclient, String key, Map<String, String> queryParams)
