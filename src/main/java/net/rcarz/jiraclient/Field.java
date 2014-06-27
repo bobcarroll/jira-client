@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.lang.Iterable;
 import java.lang.UnsupportedOperationException;
+import java.sql.Timestamp;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -147,6 +148,7 @@ public final class Field {
     public static final String TIME_SPENT = "timespent";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     private Field() { }
 
@@ -551,6 +553,14 @@ public final class Field {
 
             SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
             return df.format(d);
+        } else if (m.type.equals("datetime")) {
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (!(value instanceof Timestamp))
+                throw new JiraException("Field expects a Timestamp value");
+
+            SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
+            return df.format(value);
         } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
                 m.type.equals("user") || m.type.equals("resolution")) {
             JSONObject json = new JSONObject();
@@ -641,7 +651,7 @@ public final class Field {
     /**
      * Create a value tuple with value type of name.
      *
-     * @param key The name value
+     * @param name The name value
      *
      * @return a value tuple
      */
@@ -652,7 +662,7 @@ public final class Field {
     /**
      * Create a value tuple with value type of ID number.
      *
-     * @param key The ID number value
+     * @param id The ID number value
      *
      * @return a value tuple
      */
