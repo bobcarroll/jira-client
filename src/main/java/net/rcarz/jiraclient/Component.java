@@ -131,6 +131,7 @@ public class Component extends Resource {
     }
 
     private String name = null;
+    private String description = null;
     private boolean isAssigneeTypeValid = false;
 
     /**
@@ -152,6 +153,7 @@ public class Component extends Resource {
         self = Field.getString(map.get("self"));
         id = Field.getString(map.get("id"));
         name = Field.getString(map.get("name"));
+        description = Field.getString(map.get("description"));
         isAssigneeTypeValid = Field.getBoolean(map.get("isAssigneeTypeValid"));
     }
 
@@ -189,6 +191,10 @@ public class Component extends Resource {
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public boolean isAssigneeTypeValid() {
