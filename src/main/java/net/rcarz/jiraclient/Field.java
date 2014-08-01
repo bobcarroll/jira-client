@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONNull;
@@ -559,6 +558,9 @@ public final class Field {
                 return JSONNull.getInstance();
             else if (value instanceof ValueTuple) {
                 ValueTuple tuple = (ValueTuple)value;
+                if(tuple.value == null)
+                    throw new IllegalArgumentException("Value in ValueTuple for field '" + name + "' can't be null");
+
                 json.put(tuple.type, tuple.value.toString());
             } else
                 json.put(ValueType.NAME.toString(), value.toString());
@@ -571,6 +573,9 @@ public final class Field {
                 return JSONNull.getInstance();
             else if (value instanceof ValueTuple) {
                 ValueTuple tuple = (ValueTuple)value;
+                if(tuple.value == null)
+                    throw new IllegalArgumentException("Value in value tuple for field '" + name + "' can't be null");
+
                 json.put(tuple.type, tuple.value.toString());
             } else
                 json.put(ValueType.KEY.toString(), value.toString());
@@ -594,6 +599,13 @@ public final class Field {
                 return JSONNull.getInstance();
             else if (value instanceof TimeTracking)
                 return ((TimeTracking) value).toJsonObject();
+        } else if (m.type.equals("number")) {
+            if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
+                    instanceof java.lang.Float) && !(value instanceof java.lang.Long) )
+            {
+                throw new JiraException("Field expects a Numeric value");
+            }
+            return value;
         }
 
         throw new UnsupportedOperationException(m.type + " is not a supported field type");

@@ -19,6 +19,8 @@
 
 package net.rcarz.jiraclient;
 
+import net.rcarz.jiraclient.Field.ValueTuple;
+
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -26,7 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -137,6 +138,10 @@ public class Issue extends Resource {
          * @return the current fluent update instance
          */
         public FluentCreate field(String name, Object value) {
+            // Fail fast
+            if(value == null)
+                throw new IllegalArgumentException("Value for field '" + name + "' can't be null");
+
             fields.put(name, value);
             return this;
         }
@@ -472,7 +477,8 @@ public class Issue extends Resource {
             restclient);
 
         if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty())
-            throw new JiraException("Project or issue type missing from create metadata");
+            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType + 
+                    "' missing from create metadata. Do you have enough permissions?");
 
         return projects.get(0).getIssueTypes().get(0).getFields();
     }
