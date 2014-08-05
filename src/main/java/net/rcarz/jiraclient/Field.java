@@ -103,7 +103,7 @@ public final class Field {
          */
         public ValueTuple(String type, Object value) {
             this.type = type;
-            this.value = value;
+            this.value = (value != null ? value : JSONNull.getInstance());
         }
 
         /**
