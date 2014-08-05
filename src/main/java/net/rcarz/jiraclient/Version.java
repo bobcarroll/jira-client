@@ -47,6 +47,52 @@ public class Version extends Resource {
         if (json != null)
             deserialise(json);
     }
+    
+    /**
+     * Merges the given version with current version
+     * 
+     * @param version
+     *            The version to merge
+     */
+    public void mergeWith(Version version) {
+    
+        JSONObject req = new JSONObject();
+        req.put("description", version.getDescription());
+        req.put("name", version.getName());
+        req.put("archived", version.isArchived());
+        req.put("released", version.isReleased());
+        req.put("releaseDate", version.getReleaseDate());
+
+        try {
+            restclient.put(Resource.getBaseUri() + "version/" + id, req);
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to merge", ex);
+        }
+    }
+
+    /**
+    * Copies the version to the given project
+    * 
+    * @param project
+    *            The project the version will be copied to
+    */
+    public void copyTo(Project project) {
+    
+        JSONObject req = new JSONObject();
+        req.put("description", getDescription());
+        req.put("name", getName());
+        req.put("archived", isArchived());
+        req.put("released", isReleased());
+        req.put("releaseDate", getReleaseDate());
+        req.put("project", project.getKey());
+        req.put("projectId", project.getId());
+      
+        try {
+            restclient.post(Resource.getBaseUri() + "version/", req);
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to copy to project '" + project.getKey() + "'", ex);
+        }
+    }
 
     /**
      * Retrieves the given version record.
