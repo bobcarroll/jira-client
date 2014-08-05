@@ -472,7 +472,8 @@ public class Issue extends Resource {
             restclient);
 
         if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty())
-            throw new JiraException("Project or issue type missing from create metadata");
+            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType + 
+                    "' missing from create metadata. Do you have enough permissions?");
 
         return projects.get(0).getIssueTypes().get(0).getFields();
     }

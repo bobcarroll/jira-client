@@ -604,6 +604,13 @@ public final class Field {
                 return JSONNull.getInstance();
             else if (value instanceof TimeTracking)
                 return ((TimeTracking) value).toJsonObject();
+        } else if (m.type.equals("number")) {
+            if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
+                    instanceof java.lang.Float) && !(value instanceof java.lang.Long) )
+            {
+                throw new JiraException("Field expects a Numeric value");
+            }
+            return value;
         }
 
         throw new UnsupportedOperationException(m.type + " is not a supported field type");
