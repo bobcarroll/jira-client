@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONNull;
@@ -569,6 +568,9 @@ public final class Field {
                 return JSONNull.getInstance();
             else if (value instanceof ValueTuple) {
                 ValueTuple tuple = (ValueTuple)value;
+                if(tuple.value == null)
+                    throw new IllegalArgumentException("Value in ValueTuple for field '" + name + "' can't be null");
+
                 json.put(tuple.type, tuple.value.toString());
             } else
                 json.put(ValueType.NAME.toString(), value.toString());
@@ -581,6 +583,9 @@ public final class Field {
                 return JSONNull.getInstance();
             else if (value instanceof ValueTuple) {
                 ValueTuple tuple = (ValueTuple)value;
+                if(tuple.value == null)
+                    throw new IllegalArgumentException("Value in value tuple for field '" + name + "' can't be null");
+
                 json.put(tuple.type, tuple.value.toString());
             } else
                 json.put(ValueType.KEY.toString(), value.toString());

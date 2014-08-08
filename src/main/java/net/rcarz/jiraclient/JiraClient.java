@@ -48,6 +48,9 @@ public class JiraClient {
 
     /**
      * Creates an authenticated JIRA client.
+     * 
+     * Client is not threadsafe, attempts to use a shared instance of {@link JiraClient} by concurrent threads
+     * will eventually result in the underlying Apache Http client library throwing an exception  
      *
      * @param uri Base URI of the JIRA server
      * @param creds Credentials to authenticate with
