@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1051,6 +1052,34 @@ public class Issue extends Resource {
                 "Failed to remove watch (" + username + ") from issue " + key, ex
             );
         }
+    }
+
+
+    /**
+     * Creates a simple remotelink on the target rest client,
+     *
+     * @param restclient
+     * @param url: The url to the object where the remote link should point to
+     * @param title: The title of the remote object
+     */
+    public void remoteLink(RestClient restclient, URL url, String title) throws JiraException {
+        JSONObject object = new JSONObject();
+
+        object.put("url", url.toString());
+        object.put("title", title);
+
+        JSONObject req = new JSONObject();
+        req.put("object", object);
+
+        try {
+            URI uri = restclient.buildURI(getRestUri(key) + "/remotelink");
+            restclient.post(uri, req);
+        } catch (Exception ex) {
+            throw new JiraException(
+                    "Failed to create a remotelink on issue '" + key + "' ", ex)
+            ;
+        }
+
     }
 
     @Override
