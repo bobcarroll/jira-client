@@ -586,7 +586,7 @@ public final class Field {
                 json.put(ValueType.KEY.toString(), value.toString());
 
             return json.toString();
-        } else if (m.type.equals("string")) {
+        } else if (m.type.equals("string") || (m.type.equals("securitylevel"))) {
             if (value == null)
                 return "";
             else if (value instanceof List)
