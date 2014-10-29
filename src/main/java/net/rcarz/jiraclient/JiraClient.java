@@ -127,7 +127,7 @@ public class JiraClient {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param expand issue fields to expand when getting issue data
      *
      * @return an issue instance
@@ -198,7 +198,7 @@ public class JiraClient {
 
         return Issue.search(restclient, jql, includedFields, null);
     }
-    
+
     /**
      * Search for issues with the given query and specify which fields to
      * retrieve.
@@ -246,10 +246,10 @@ public class JiraClient {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param maxResults if non-<code>null</code>, defines the maximum number of
-     * results that can be returned 
-     * 
+     * results that can be returned
+     *
      * @param startAt if non-<code>null</code>, defines the first issue to
      * return
      *
@@ -263,6 +263,87 @@ public class JiraClient {
         return Issue.search(restclient, jql, includedFields, maxResults,
                 startAt);
     }
+
+    /**
+     * Search for issues with the given query and specify which fields and
+     * an expand string to tailor output. If the total results is bigger
+     * than the maximum returned results, then further calls can be made
+     * using different values for the <code>startAt</code> field to obtain
+     * all the results.
+     *
+     * @param restclient REST client instance
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     * @param maxResults if non-<code>null</code>, defines the maximum number of
+     * results that can be returned
+     *
+     * @param startAt if non-<code>null</code>, defines the first issue to
+     * return
+     *
+     * @param expand issue fields to expand when getting issue data
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public Issue.SearchResult searchIssuesExhaustively(String jql, String includedFields,
+                                                       String expand, Integer batchSize)
+                                         throws JiraException {
+
+        return Issue.exhaustiveSearch(restclient, jql, includedFields, expand, batchSize);
+    }
+
+    /**
+     * Search for issues with the given query and specify which fields and
+     * an expand string to tailor output. If the total results is bigger
+     * than the maximum returned results, then further calls can be made
+     * using different values for the <code>startAt</code> field to obtain
+     * all the results.
+     *
+     * @param restclient REST client instance
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     * @param maxResults if non-<code>null</code>, defines the maximum number of
+     * results that can be returned
+     *
+     * @param startAt if non-<code>null</code>, defines the first issue to
+     * return
+     *
+     * @param expand issue fields to expand when getting issue data
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public Issue.SearchResult searchIssues(String jql, String includedFields,
+            Integer maxResults, Integer startAt, String expand) throws JiraException {
+
+        return Issue.search(restclient, jql, includedFields, maxResults,
+                startAt, expand);
+    }
+
    /**
      *
      * @return a list of all priorities available in the Jira installation
@@ -360,7 +441,7 @@ public class JiraClient {
             throw new JiraException(ex.getMessage(), ex);
         }
     }
-    
+
     /**
      * Obtains information about a project, given its project key.
      * @param key the project key
@@ -376,7 +457,7 @@ public class JiraClient {
             throw new JiraException(ex.getMessage(), ex);
         }
     }
-    
+
     /**
      * Obtains the list of all issue types in Jira.
      * @return all issue types
@@ -399,7 +480,7 @@ public class JiraClient {
             throw new JiraException(ex.getMessage(), ex);
         }
     }
-    
+
     /**
      * Creates a new component in the given project.
      *
@@ -410,14 +491,14 @@ public class JiraClient {
     public Component.FluentCreate createComponent(String project) {
         return Component.create(restclient, project);
     }
-    
+
     /**
      * Obtains a component given its ID.
-     * 
+     *
      * @param id the component ID
-     * 
+     *
      * @return the component
-     * 
+     *
      * @throws JiraException failed to obtain the component
      */
     public Component getComponent(String id) throws JiraException {
