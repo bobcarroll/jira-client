@@ -1,7 +1,7 @@
 /**
  * jira-client - a simple JIRA REST client
  * Copyright (c) 2013 Bob Carroll (bob.carroll@alum.rit.edu)
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -472,7 +472,7 @@ public class Issue extends Resource {
             restclient);
 
         if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty())
-            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType + 
+            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType +
                     "' missing from create metadata. Do you have enough permissions?");
 
         return projects.get(0).getIssueTypes().get(0).getFields();
@@ -771,7 +771,7 @@ public class Issue extends Resource {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param expand fields to expand when obtaining the issue
      *
      * @return an issue instance
@@ -833,8 +833,9 @@ public class Issue extends Resource {
      */
     public static SearchResult search(RestClient restclient, String jql, String includedFields, Integer maxResults)
             throws JiraException {
-        return search(restclient, jql, includedFields, maxResults, null);
+        return search(restclient, jql, includedFields, maxResults, null, null);
     }
+
 
     /**
      * Search for issues with the given query and specify which fields to
@@ -855,10 +856,10 @@ public class Issue extends Resource {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param maxResults if non-<code>null</code>, defines the maximum number of
-     * results that can be returned 
-     * 
+     * results that can be returned
+     *
      * @param startAt if non-<code>null</code>, defines the first issue to
      * return
      *
@@ -866,8 +867,79 @@ public class Issue extends Resource {
      *
      * @throws JiraException when the search fails
      */
+    public static SearchResult search(RestClient restclient, String jql, String includedFields,
+                                      Integer maxResults, Integer startAt)
+            throws JiraException {
+        return search(restclient, jql, includedFields, maxResults, startAt, null);
+    }
+
+    /**
+     * Exhaustively search for issues with the given query, includedFields,
+     * and expand option for additional data.
+     *
+     * @param restclient REST client instance
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     *
+     * @param expand
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public static SearchResult exhaustiveSearch(RestClient restclient, String jql, String includedFields,
+                                      String expand, Integer batchSize)
+            throws JiraException {
+        batchSize = batchSize == null ? 30 : batchSize;
+        Integer startAt = 0;
+        SearchResult out = search(restclient, jql, includedFields, batchSize, startAt, expand);
+        while (out.issues.size() - startAt >= batchSize) {
+            startAt = startAt + batchSize;
+            SearchResult sr = search(restclient, jql, includedFields, batchSize, startAt, expand);
+            out.max = Integer.MAX_VALUE;
+            out.issues.addAll(sr.issues);
+        }
+        return out;
+    }
+
+    /**
+     * Search for issues with the given query and specify which fields to
+     * retrieve and which extra data to include by way of expand. If the
+     * total results is bigger than the maximum returned results, then
+     * further calls can be made using different values for the
+     * <code>startAt</code> field to obtain all the results.
+     *
+     * @param restclient REST client instance
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     * @param maxResults if non-<code>null</code>, defines the maximum number of
+     * results that can be returned
+     *
+     * @param startAt if non-<code>null</code>, defines the first issue to
+     * return
+     *
+     * @param expand issue fields to expand when getting issue data
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
     public static SearchResult search(RestClient restclient, String jql,
-            String includedFields, Integer maxResults, Integer startAt)
+            String includedFields, Integer maxResults, Integer startAt, String expand)
                     throws JiraException {
 
         final String j = jql;
@@ -888,8 +960,12 @@ public class Issue extends Resource {
             if (startAt != null) {
                 queryParams.put("startAt", String.valueOf(startAt));
             }
+            if (expand != null) {
+                queryParams.put("expand", expand);
+            }
 
             URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
+            System.out.println(searchUri.toURL());
             result = restclient.get(searchUri);
         } catch (Exception ex) {
             throw new JiraException("Failed to search issues", ex);
@@ -1184,4 +1260,3 @@ public class Issue extends Resource {
         return timeEstimate;
     }
 }
-
