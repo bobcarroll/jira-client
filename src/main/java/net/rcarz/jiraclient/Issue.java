@@ -1121,6 +1121,20 @@ public class Issue extends Resource {
     public User getReporter() {
         return reporter;
     }
+    
+    public List<RemoteLink> getRemoteLinks() throws JiraException {
+        JSONArray obj;
+        try {
+            URI uri = restclient.buildURI(getRestUri(key) + "/remotelink");
+            JSON json = restclient.get(uri);
+            obj = (JSONArray) json;
+        } catch (Exception ex) {
+            throw new JiraException("Failed to get remote links for issue "
+                    + key, ex);
+        }
+
+        return Field.getRemoteLinks(obj, restclient);
+    }
 
     public Resolution getResolution() {
         return resolution;
