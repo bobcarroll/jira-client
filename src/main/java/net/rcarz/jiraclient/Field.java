@@ -201,6 +201,23 @@ public final class Field {
 
         return results;
     }
+    
+    /**
+     * Gets a list of remote links from the given object.
+     *
+     * @param c a JSONObject instance
+     * @param restclient REST client instance
+     *
+     * @return a list of remote links found in c
+     */
+    public static List<RemoteLink> getRemoteLinks(Object c, RestClient restclient) {
+        List<RemoteLink> results = new ArrayList<RemoteLink>();
+
+        if (c instanceof JSONArray)
+            results = getResourceArray(RemoteLink.class, c, restclient);
+
+        return results;
+    }
 
     /**
      * Gets a date from the given object.
@@ -319,6 +336,8 @@ public final class Field {
                 result = (T)new Priority(restclient, (JSONObject)r);
             else if (type == Project.class)
                 result = (T)new Project(restclient, (JSONObject)r);
+            else if (type == RemoteLink.class)
+                result = (T)new RemoteLink(restclient, (JSONObject)r);
             else if (type == Resolution.class)
                 result = (T)new Resolution(restclient, (JSONObject)r);
             else if (type == Status.class)
