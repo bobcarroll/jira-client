@@ -146,6 +146,8 @@ public final class Field {
     public static final String WORKLOG = "worklog";
     public static final String TIME_ESTIMATE = "timeestimate";
     public static final String TIME_SPENT = "timespent";
+    public static final String CREATED_DATE = "created";
+    public static final String UPDATED_DATE = "updated";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
@@ -231,6 +233,24 @@ public final class Field {
 
         if (d instanceof String) {
             SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
+            result = df.parse((String)d, new ParsePosition(0));
+        }
+
+        return result;
+    }
+
+    /**
+     * Gets a date with a time from the given object.
+     *
+     * @param d a string representation of a date
+     *
+     * @return a Date instance or null if d isn't a string
+     */
+    public static Date getDateTime(Object d) {
+        Date result = null;
+
+        if (d instanceof String) {
+            SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
             result = df.parse((String)d, new ParsePosition(0));
         }
 
