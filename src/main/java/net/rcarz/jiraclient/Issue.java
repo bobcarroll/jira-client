@@ -381,6 +381,8 @@ public class Issue extends Resource {
     private List<WorkLog> workLogs = null;
     private Integer timeEstimate = null;
     private Integer timeSpent = null;
+    private Date createdDate = null;
+    private Date updatedDate = null;
 
     /**
      * Creates an issue from a JSON payload.
@@ -431,6 +433,8 @@ public class Issue extends Resource {
         workLogs = Field.getWorkLogs(fields.get(Field.WORKLOG), restclient);
         timeEstimate = Field.getInteger(fields.get(Field.TIME_ESTIMATE));
         timeSpent = Field.getInteger(fields.get(Field.TIME_SPENT));
+        createdDate = Field.getDateTime(fields.get(Field.CREATED_DATE));
+        updatedDate = Field.getDateTime(fields.get(Field.UPDATED_DATE));
     }
 
     private static String getRestUri(String key) {
@@ -1197,5 +1201,14 @@ public class Issue extends Resource {
     public Integer getTimeEstimate() {
         return timeEstimate;
     }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
 }
 
