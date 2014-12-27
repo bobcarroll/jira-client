@@ -323,7 +323,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields, String expandFields,
                                            Integer maxResults, Integer startAt) throws JiraException {
 
-      return Issue.search(restclient, jql, includedFields, null, maxResults,
+      return Issue.search(restclient, jql, includedFields, expandFields, maxResults,
           startAt);
     }
    /**
