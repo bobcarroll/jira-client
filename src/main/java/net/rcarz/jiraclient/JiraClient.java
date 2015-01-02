@@ -198,6 +198,34 @@ public class JiraClient {
 
         return Issue.search(restclient, jql, includedFields, null);
     }
+
+    /**
+     * Search for issues with the given query and specify which fields to
+     * retrieve and expand.
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     * @param expandFields Specifies with issue fields should be expanded
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public Issue.SearchResult searchIssues(String jql, String includedFields, String expandFields)
+        throws JiraException {
+
+      return Issue.search(restclient, jql, includedFields, expandFields, null, null);
+    }
     
     /**
      * Search for issues with the given query and specify which fields to
@@ -233,8 +261,6 @@ public class JiraClient {
      * results, then further calls can be made using different values for
      * the <code>startAt</code> field to obtain all the results.
      *
-     * @param restclient REST client instance
-     *
      * @param jql JQL statement
      *
      * @param includedFields Specifies which issue fields will be included in
@@ -260,8 +286,45 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields,
             Integer maxResults, Integer startAt) throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields, maxResults,
+        return Issue.search(restclient, jql, includedFields, null, maxResults,
                 startAt);
+    }
+
+    /**
+     * Search for issues with the given query and specify which fields to
+     * retrieve. If the total results is bigger than the maximum returned
+     * results, then further calls can be made using different values for
+     * the <code>startAt</code> field to obtain all the results.
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     * @param expandFields Specifies with issue fields should be expanded
+     *
+     * @param maxResults if non-<code>null</code>, defines the maximum number of
+     * results that can be returned
+     *
+     * @param startAt if non-<code>null</code>, defines the first issue to
+     * return
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public Issue.SearchResult searchIssues(String jql, String includedFields, String expandFields,
+                                           Integer maxResults, Integer startAt) throws JiraException {
+
+      return Issue.search(restclient, jql, includedFields, expandFields, maxResults,
+          startAt);
     }
    /**
      *
