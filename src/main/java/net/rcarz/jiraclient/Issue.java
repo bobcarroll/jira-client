@@ -143,6 +143,51 @@ public class Issue extends Resource {
     }
 
     /**
+     * Search for issues with the given query and specify which fields to
+     * retrieve.
+     *
+     * @param restclient REST client instance
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public static int count(RestClient restclient, String jql) throws JiraException {
+        final String j = jql;
+        JSON result = null;
+        try {
+            Map<String, String> queryParams = new HashMap<String, String>() {
+                {
+                    put("jql", j);
+                }
+            };
+        	queryParams.put("maxResults", "1");
+            URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
+            result = restclient.get(searchUri);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to search issues", ex);
+        }
+
+        if (!(result instanceof JSONObject)) {
+            throw new JiraException("JSON payload is malformed");
+        }
+        Map map = (Map) result;
+        return Field.getInteger(map.get("total"));
+    }
+
+    /**
      * Used to chain fields to an update action.
      */
     public final class FluentUpdate {

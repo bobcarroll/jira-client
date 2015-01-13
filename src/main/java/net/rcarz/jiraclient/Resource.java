@@ -62,6 +62,13 @@ public abstract class Resource {
     }
 
     /**
+     * Resource base URI with API revision number.
+     */
+    public static String getAuthUri() {
+        return String.format("/rest/auth/%s/", apirev);
+    }
+
+    /**
      * Internal JIRA ID.
      */
     public String getId() {
