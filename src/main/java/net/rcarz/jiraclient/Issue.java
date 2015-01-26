@@ -143,24 +143,13 @@ public class Issue extends Resource {
     }
 
     /**
-     * Search for issues with the given query and specify which fields to
-     * retrieve.
+     * count issues with the given query.
      *
      * @param restclient REST client instance
      *
      * @param jql JQL statement
      *
-     * @param includedFields Specifies which issue fields will be included in
-     * the result.
-     * <br>Some examples how this parameter works:
-     * <ul>
-     * <li>*all - include all fields</li>
-     * <li>*navigable - include just navigable fields</li>
-     * <li>summary,comment - include just the summary and comments</li>
-     * <li>*all,-comment - include all fields</li>
-     * </ul>
-     *
-     * @return a search result structure with results
+     * @return the count
      *
      * @throws JiraException when the search fails
      */
@@ -173,7 +162,7 @@ public class Issue extends Resource {
                     put("jql", j);
                 }
             };
-        	queryParams.put("maxResults", "1");
+            queryParams.put("maxResults", "1");
             URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
             result = restclient.get(searchUri);
         } catch (Exception ex) {

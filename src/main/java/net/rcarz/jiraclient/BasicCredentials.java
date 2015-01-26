@@ -63,11 +63,11 @@ public class BasicCredentials implements ICredentials {
         return username;
     }
     
-	@Override
+    @Override
     public void initialize(RestClient client) throws JiraException {
     }
 
-	@Override
+    @Override
     public void logout(RestClient client) throws JiraException {
     }
     

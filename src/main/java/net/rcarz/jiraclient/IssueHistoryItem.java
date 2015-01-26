@@ -6,21 +6,18 @@ import net.sf.json.JSONObject;
 
 public class IssueHistoryItem extends Resource {
 
-	private String field;
-	private String from;
-	private String to;
-	private String fromStr;
-	private String toStr;
+    private String field;
+    private String from;
+    private String to;
+    private String fromStr;
+    private String toStr;
 
-	/*
-	 * {"field":"assignee","fieldtype":"jira","from":"rbagga","fromString":"Rajpaul Bagga","to":"GGadyatskiy","toString":"Gleb Gadyatskiy"}
-	 */
-	public IssueHistoryItem(RestClient restclient) {
-	    super(restclient);
+    public IssueHistoryItem(RestClient restclient) {
+        super(restclient);
     }
 
-	public IssueHistoryItem(RestClient restclient, JSONObject json) {
-		this(restclient);
+    public IssueHistoryItem(RestClient restclient, JSONObject json) {
+        this(restclient);
         if (json != null) {
             deserialise(restclient,json);
         }
@@ -37,24 +34,24 @@ public class IssueHistoryItem extends Resource {
         toStr = Field.getString(map.get("toString"));
     }
 
-	public String getField() {
-    	return field;
+    public String getField() {
+        return field;
     }
 
-	public String getFrom() {
-    	return from;
+    public String getFrom() {
+        return from;
     }
 
-	public String getTo() {
-    	return to;
+    public String getTo() {
+        return to;
     }
 
-	public String getFromStr() {
-    	return fromStr;
+    public String getFromStr() {
+        return fromStr;
     }
 
-	public String getToStr() {
-    	return toStr;
+    public String getToStr() {
+        return toStr;
     }
     
 }
