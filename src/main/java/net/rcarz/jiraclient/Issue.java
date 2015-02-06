@@ -575,7 +575,7 @@ public class Issue extends Resource {
         }
     }
     
-        /**
+    /**
      * Adds a remote link to this issue.
      *
      * @param url Url of the remote link
@@ -590,14 +590,14 @@ public class Issue extends Resource {
         
         obj.put("url", url);
         obj.put("title", title);
-        obj.put("summary", summary); 
+        obj.put("summary", summary);
         
         req.put("object", obj);
 
         try {
             restclient.post(getRestUri(key) + "/remotelink", req);
         } catch (Exception ex) {
-            throw new JiraException("Failed add comment to issue " + key, ex);
+            throw new JiraException("Failed add remote link to issue " + key, ex);
         }
     }
 
