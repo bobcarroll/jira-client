@@ -61,7 +61,7 @@ public class Sprint extends GreenHopperResource {
 
         id = Field.getInteger(map.get("id"));
         name = Field.getString(map.get("name"));
-        closed = Field.getBoolean(map.get("closed"));
+        closed = map.containsValue("CLOSED");
         startDate = GreenHopperField.getDateTime(map.get("startDate"));
         endDate = GreenHopperField.getDateTime(map.get("endDate"));
         completeDate = GreenHopperField.getDateTime(map.get("completeDate"));
