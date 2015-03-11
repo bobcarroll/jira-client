@@ -456,7 +456,7 @@ public class Issue extends Resource {
         project = Field.getResource(Project.class, fields.get(Field.PROJECT), restclient);
         reporter = Field.getResource(User.class, fields.get(Field.REPORTER), restclient);
         resolution = Field.getResource(Resolution.class, fields.get(Field.RESOLUTION), restclient);
-        resolutionDate = Field.getDate(fields.get(Field.RESOLUTION_DATE));
+        resolutionDate = Field.getDateTime(fields.get(Field.RESOLUTION_DATE));
         status = Field.getResource(Status.class, fields.get(Field.STATUS), restclient);
         subtasks = Field.getResourceArray(Issue.class, fields.get(Field.SUBTASKS), restclient);
         summary = Field.getString(fields.get(Field.SUMMARY));

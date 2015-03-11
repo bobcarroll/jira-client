@@ -56,8 +56,8 @@ public class Comment extends Resource {
         id = Field.getString(map.get("id"));
         author = Field.getResource(User.class, map.get("author"), restclient);
         body = Field.getString(map.get("body"));
-        created = Field.getDate(map.get("created"));
-        updated = Field.getDate(map.get("updated"));
+        created = Field.getDateTime(map.get("created"));
+        updated = Field.getDateTime(map.get("updated"));
         updatedAuthor = Field.getResource(User.class, map.get("updatedAuthor"), restclient);
     }
 
