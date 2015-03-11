@@ -19,7 +19,6 @@
 
 package net.rcarz.jiraclient;
 
-import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -51,7 +50,7 @@ public class BasicCredentials implements ICredentials {
      */
     public void authenticate(HttpRequest req) {
         Credentials creds = new UsernamePasswordCredentials(username, password);
-        req.addHeader(new BasicScheme().authenticate(creds, "utf-8", false));
+        req.addHeader(BasicScheme.authenticate(creds, "utf-8", false));
     }
 
     /**
@@ -63,11 +62,9 @@ public class BasicCredentials implements ICredentials {
         return username;
     }
     
-    @Override
     public void initialize(RestClient client) throws JiraException {
     }
 
-    @Override
     public void logout(RestClient client) throws JiraException {
     }
     
