@@ -68,7 +68,7 @@ public class CustomFieldOption extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "customFieldOption/" + id);
+            result = restclient.get(getBaseUri() + "customFieldOption/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve custom field option " + id, ex);
         }

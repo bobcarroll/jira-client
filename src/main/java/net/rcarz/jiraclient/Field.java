@@ -21,6 +21,7 @@ package net.rcarz.jiraclient;
 
 import java.lang.Iterable;
 import java.lang.UnsupportedOperationException;
+import java.sql.Timestamp;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONNull;
 
 /**
  * Utility functions for translating between JSON and fields.
@@ -73,11 +75,16 @@ public final class Field {
      * Allowed value types.
      */
     public enum ValueType {
-        KEY("key"), NAME("name"), ID_NUMBER("id");
-        private String value;
+        KEY("key"), NAME("name"), ID_NUMBER("id"), VALUE("value");
+        private String typeName;
 
-        private ValueType(String value) {
-            this.value = value;
+        private ValueType(String typeName) {
+            this.typeName = typeName;
+        }
+
+        @Override
+        public String toString() {
+            return typeName;
         }
     };
 
@@ -96,7 +103,7 @@ public final class Field {
          */
         public ValueTuple(String type, Object value) {
             this.type = type;
-            this.value = value;
+            this.value = (value != null ? value : JSONNull.getInstance());
         }
 
         /**
@@ -106,12 +113,15 @@ public final class Field {
          * @param value
          */
         public ValueTuple(ValueType type, Object value) {
-            this(type.value, value);
+            this(type.toString(), value);
         }
     }
 
     public static final String ASSIGNEE = "assignee";
     public static final String ATTACHMENT = "attachment";
+    public static final String CHANGE_LOG = "changelog";
+    public static final String CHANGE_LOG_ENTRIES = "histories";
+    public static final String CHANGE_LOG_ITEMS = "items";
     public static final String COMMENT = "comment";
     public static final String COMPONENTS = "components";
     public static final String DESCRIPTION = "description";
@@ -120,6 +130,7 @@ public final class Field {
     public static final String ISSUE_LINKS = "issuelinks";
     public static final String ISSUE_TYPE = "issuetype";
     public static final String LABELS = "labels";
+    public static final String PARENT = "parent";
     public static final String PRIORITY = "priority";
     public static final String PROJECT = "project";
     public static final String REPORTER = "reporter";
@@ -133,8 +144,13 @@ public final class Field {
     public static final String VOTES = "votes";
     public static final String WATCHES = "watches";
     public static final String WORKLOG = "worklog";
+    public static final String TIME_ESTIMATE = "timeestimate";
+    public static final String TIME_SPENT = "timespent";
+    public static final String CREATED_DATE = "created";
+    public static final String UPDATED_DATE = "updated";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     private Field() { }
 
@@ -187,6 +203,23 @@ public final class Field {
 
         return results;
     }
+    
+    /**
+     * Gets a list of remote links from the given object.
+     *
+     * @param c a JSONObject instance
+     * @param restclient REST client instance
+     *
+     * @return a list of remote links found in c
+     */
+    public static List<RemoteLink> getRemoteLinks(Object c, RestClient restclient) {
+        List<RemoteLink> results = new ArrayList<RemoteLink>();
+
+        if (c instanceof JSONArray)
+            results = getResourceArray(RemoteLink.class, c, restclient);
+
+        return results;
+    }
 
     /**
      * Gets a date from the given object.
@@ -200,6 +233,24 @@ public final class Field {
 
         if (d instanceof String) {
             SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
+            result = df.parse((String)d, new ParsePosition(0));
+        }
+
+        return result;
+    }
+
+    /**
+     * Gets a date with a time from the given object.
+     *
+     * @param d a string representation of a date
+     *
+     * @return a Date instance or null if d isn't a string
+     */
+    public static Date getDateTime(Object d) {
+        Date result = null;
+
+        if (d instanceof String) {
+            SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
             result = df.parse((String)d, new ParsePosition(0));
         }
 
@@ -281,6 +332,12 @@ public final class Field {
         if (r instanceof JSONObject && !((JSONObject)r).isNullObject()) {
             if (type == Attachment.class)
                 result = (T)new Attachment(restclient, (JSONObject)r);
+            else if (type == ChangeLog.class)
+                result = (T)new ChangeLog(restclient, (JSONObject)r);
+            else if (type == ChangeLogEntry.class)
+                result = (T)new ChangeLogEntry(restclient, (JSONObject)r);
+            else if (type == ChangeLogItem.class)
+                result = (T)new ChangeLogItem(restclient, (JSONObject)r);
             else if (type == Comment.class)
                 result = (T)new Comment(restclient, (JSONObject)r);
             else if (type == Component.class)
@@ -299,6 +356,8 @@ public final class Field {
                 result = (T)new Priority(restclient, (JSONObject)r);
             else if (type == Project.class)
                 result = (T)new Project(restclient, (JSONObject)r);
+            else if (type == RemoteLink.class)
+                result = (T)new RemoteLink(restclient, (JSONObject)r);
             else if (type == Resolution.class)
                 result = (T)new Resolution(restclient, (JSONObject)r);
             else if (type == Status.class)
@@ -455,29 +514,46 @@ public final class Field {
      * @return a JSON-encoded array of items
      */
     public static JSONArray toArray(Iterable iter, String type) throws JiraException {
-        JSONArray result = new JSONArray();
+        JSONArray results = new JSONArray();
 
         if (type == null)
             throw new JiraException("Array field metadata is missing item type");
 
         for (Object val : iter) {
+            Operation oper = null;
+            Object realValue = null;
+            Object realResult = null;
+
+            if (val instanceof Operation) {
+                oper = (Operation)val;
+                realValue = oper.value;
+            } else
+                realValue = val;
+
             if (type.equals("component") || type.equals("group") ||
                 type.equals("user") || type.equals("version")) {
 
-                JSONObject json = new JSONObject();
+                JSONObject itemMap = new JSONObject();
 
-                if (val instanceof ValueTuple) {
-                    ValueTuple tuple = (ValueTuple)val;
-                    json.put(tuple.type, tuple.value.toString());
+                if (realValue instanceof ValueTuple) {
+                    ValueTuple tuple = (ValueTuple)realValue;
+                    itemMap.put(tuple.type, tuple.value.toString());
                 } else
-                    json.put(ValueType.NAME.value, val.toString());
+                    itemMap.put(ValueType.NAME.toString(), realValue.toString());
 
-                result.add(json.toString());
+                realResult = itemMap;
             } else if (type.equals("string"))
-                result.add(val.toString());
+                realResult = realValue.toString();
+
+            if (oper != null) {
+                JSONObject operMap = new JSONObject();
+                operMap.put(oper.name, realResult);
+                results.add(operMap);
+            } else
+                results.add(realResult);
         }
 
-        return result;
+        return results;
     }
 
     /**
@@ -495,71 +571,85 @@ public final class Field {
     public static Object toJson(String name, Object value, JSONObject editmeta)
         throws JiraException, UnsupportedOperationException {
 
-        if (value == null)
-            return null;
-
         Meta m = getFieldMetadata(name, editmeta);
-
         if (m.type == null)
             throw new JiraException("Field metadata is missing a type");
 
         if (m.type.equals("array")) {
-            if (!(value instanceof Iterable))
+            if (value == null)
+                value = new ArrayList();
+            else if (!(value instanceof Iterable))
                 throw new JiraException("Field expects an Iterable value");
 
-            boolean isOper = false;
-            for (Object v : (Iterable)value) {
-                isOper = v instanceof Operation;
-                break;
-            }
-
-            if (isOper) {
-                List results = new ArrayList();
-
-                for (Object v : (Iterable)value) {
-                    Operation oper = (Operation)v;
-                    JSONObject json = new JSONObject();
-                    json.put(oper.name, oper.value.toString());
-                    results.add(json.toString());
-                }
-
-                return toArray(results, m.items);
-            } else
-                return toArray((Iterable)value, m.items);
+            return toArray((Iterable)value, m.items);
         } else if (m.type.equals("date")) {
-            Date d = toDate(value);
+            if (value == null)
+                return JSONNull.getInstance();
 
+            Date d = toDate(value);
             if (d == null)
                 throw new JiraException("Field expects a date value or format is invalid");
 
             SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
             return df.format(d);
+        } else if (m.type.equals("datetime")) {
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (!(value instanceof Timestamp))
+                throw new JiraException("Field expects a Timestamp value");
+
+            SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
+            return df.format(value);
         } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
                 m.type.equals("user") || m.type.equals("resolution")) {
             JSONObject json = new JSONObject();
 
-            if (value instanceof ValueTuple) {
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (value instanceof ValueTuple) {
                 ValueTuple tuple = (ValueTuple)value;
                 json.put(tuple.type, tuple.value.toString());
             } else
-                json.put(ValueType.NAME.value, value.toString());
+                json.put(ValueType.NAME.toString(), value.toString());
 
             return json.toString();
         } else if (m.type.equals("project") || m.type.equals("issuelink")) {
             JSONObject json = new JSONObject();
 
-            if (value instanceof ValueTuple) {
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (value instanceof ValueTuple) {
                 ValueTuple tuple = (ValueTuple)value;
                 json.put(tuple.type, tuple.value.toString());
             } else
-                json.put(ValueType.KEY.value, value.toString());
+                json.put(ValueType.KEY.toString(), value.toString());
 
             return json.toString();
-        } else if (m.type.equals("string")) {
-            if (value instanceof Map)
-                return toJsonMap((Map)value);
+        } else if (m.type.equals("string") || (m.type.equals("securitylevel"))) {
+            if (value == null)
+                return "";
+            else if (value instanceof List)
+                return toJsonMap((List)value);
+            else if (value instanceof ValueTuple) {
+                JSONObject json = new JSONObject();
+                ValueTuple tuple = (ValueTuple)value;
+                json.put(tuple.type, tuple.value.toString());
+                return json.toString();
+            }
 
             return value.toString();
+        } else if (m.type.equals("timetracking")) {
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (value instanceof TimeTracking)
+                return ((TimeTracking) value).toJsonObject();
+        } else if (m.type.equals("number")) {
+            if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
+                    instanceof java.lang.Float) && !(value instanceof java.lang.Long) )
+            {
+                throw new JiraException("Field expects a Numeric value");
+            }
+            return value;
         }
 
         throw new UnsupportedOperationException(m.type + " is not a supported field type");
@@ -568,15 +658,20 @@ public final class Field {
     /**
      * Converts the given map to a JSON object.
      *
-     * @param map Map to be converted
+     * @param list List of values to be converted
      *
      * @return a JSON-encoded map
      */
-    public static Object toJsonMap(Map map) {
+    public static Object toJsonMap(List list) {
         JSONObject json = new JSONObject();
 
-        for (Object k : map.keySet())
-            json.put(k, map.get(k));
+        for (Object item : list) {
+            if (item instanceof ValueTuple) {
+                ValueTuple vt = (ValueTuple)item;
+                json.put(vt.type, vt.value.toString());
+            } else
+                json.put(ValueType.VALUE.toString(), item.toString());
+        }
 
         return json.toString();
     }
@@ -595,7 +690,7 @@ public final class Field {
     /**
      * Create a value tuple with value type of name.
      *
-     * @param key The name value
+     * @param name The name value
      *
      * @return a value tuple
      */
@@ -606,7 +701,7 @@ public final class Field {
     /**
      * Create a value tuple with value type of ID number.
      *
-     * @param key The ID number value
+     * @param id The ID number value
      *
      * @return a value tuple
      */

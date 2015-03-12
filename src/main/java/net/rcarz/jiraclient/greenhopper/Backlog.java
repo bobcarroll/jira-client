@@ -40,8 +40,9 @@ public class Backlog {
 
     private RestClient restclient = null;
     private List<SprintIssue> issues = null;
+    private List<SprintIssue> backlogIssues = null;
     private int rankCustomFieldId = 0;
-    private List<Sprint> openSprints = null;
+    private List<Sprint> sprints = null;
     private List<RapidViewProject> projects = null;
     private List<Marker> markers = null;
     private List<Epic> epics = null;
@@ -72,9 +73,9 @@ public class Backlog {
             map.get("issues"),
             restclient);
         rankCustomFieldId = Field.getInteger(map.get("rankCustomFieldId"));
-        openSprints = GreenHopperField.getResourceArray(
+        sprints = GreenHopperField.getResourceArray(
             Sprint.class,
-            map.get("openSprints"),
+            map.get("sprints"),
             restclient);
         projects = GreenHopperField.getResourceArray(
             RapidViewProject.class,
@@ -124,6 +125,25 @@ public class Backlog {
                 }
             }
         }
+
+        //determining which issues are actually in the backlog vs the sprints
+        //fill in the issues into the single sprints and the backlog issue list respectively
+        for(SprintIssue issue : issues){
+            boolean addedToSprint = false;
+            for(Sprint sprint : sprints){
+                if(sprint.getIssuesIds().contains(issue.getId())){
+                    sprint.getIssues().add(issue);
+                    addedToSprint = true;
+                }
+            }
+            if(!addedToSprint){
+                if(backlogIssues == null){
+                    backlogIssues = new ArrayList<SprintIssue>();
+                }
+                backlogIssues.add(issue);
+            }
+        }
+
     }
 
     /**
@@ -163,12 +183,16 @@ public class Backlog {
         return issues;
     }
 
+    public List<SprintIssue> getBacklogIssues() {
+        return backlogIssues;
+    }
+
     public int getRankCustomFieldId() {
         return rankCustomFieldId;
     }
 
-    public List<Sprint> getOpenSprints() {
-        return openSprints;
+    public List<Sprint> getSprints() {
+        return sprints;
     }
 
     public List<RapidViewProject> getProjects() {

@@ -72,7 +72,7 @@ public class LinkType extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "issueLinkType/" + id);
+            result = restclient.get(getBaseUri() + "issueLinkType/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve issue link type " + id, ex);
         }

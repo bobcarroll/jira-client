@@ -19,10 +19,10 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents issue watches.
@@ -71,7 +71,7 @@ public class Watches extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "issue/" + issue + "/watches");
+            result = restclient.get(getBaseUri() + "issue/" + issue + "/watches");
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve watches for issue " + issue, ex);
         }

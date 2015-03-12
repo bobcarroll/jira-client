@@ -1,7 +1,7 @@
 /**
  * jira-client - a simple JIRA REST client
  * Copyright (c) 2013 Bob Carroll (bob.carroll@alum.rit.edu)
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,10 +19,11 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a JIRA user.
@@ -39,13 +40,41 @@ public class User extends Resource {
      * Creates a user from a JSON payload.
      *
      * @param restclient REST client instance
-     * @param json JSON payload
+     * @param json       JSON payload
      */
     protected User(RestClient restclient, JSONObject json) {
         super(restclient);
 
         if (json != null)
             deserialise(json);
+    }
+
+    /**
+     * Retrieves the given user record.
+     *
+     * @param restclient REST client instance
+     * @param username   User logon name
+     * @return a user instance
+     * @throws JiraException when the retrieval fails
+     */
+    public static User get(RestClient restclient, String username)
+            throws JiraException {
+
+        JSON result = null;
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("username", username);
+
+        try {
+            result = restclient.get(getBaseUri() + "user", params);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to retrieve user " + username, ex);
+        }
+
+        if (!(result instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        return new User(restclient, (JSONObject) result);
     }
 
     private void deserialise(JSONObject json) {
@@ -56,35 +85,22 @@ public class User extends Resource {
         active = Field.getBoolean(map.get("active"));
         avatarUrls = Field.getMap(String.class, String.class, map.get("avatarUrls"));
         displayName = Field.getString(map.get("displayName"));
-        email = Field.getString(map.get("email"));
+        email = getEmailFromMap(map);
         name = Field.getString(map.get("name"));
     }
 
     /**
-     * Retrieves the given user record.
+     * API changes email address might be represented as either "email" or "emailAddress"
      *
-     * @param restclient REST client instance
-     * @param username User logon name
-     *
-     * @return a user instance
-     *
-     * @throws JiraException when the retrieval fails
+     * @param map JSON object for the User
+     * @return String email address of the JIRA user.
      */
-    public static User get(RestClient restclient, String username)
-        throws JiraException {
-
-        JSON result = null;
-
-        try {
-            result = restclient.get(RESOURCE_URI + "user?username=" + username);
-        } catch (Exception ex) {
-            throw new JiraException("Failed to retrieve user " + username, ex);
+    private String getEmailFromMap(Map map) {
+        if (map.containsKey("email")) {
+            return Field.getString(map.get("email"));
+        } else {
+            return Field.getString(map.get("emailAddress"));
         }
-
-        if (!(result instanceof JSONObject))
-            throw new JiraException("JSON payload is malformed");
-
-        return new User(restclient, (JSONObject)result);
     }
 
     @Override

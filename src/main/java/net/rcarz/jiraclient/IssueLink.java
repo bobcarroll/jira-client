@@ -64,7 +64,7 @@ public class IssueLink extends Resource {
     public void delete() throws JiraException {
 
         try {
-            restclient.delete(RESOURCE_URI + "issueLink/" + id);
+            restclient.delete(getBaseUri() + "issueLink/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to delete issue link " + id, ex);
         }
@@ -86,7 +86,7 @@ public class IssueLink extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "issueLink/" + id);
+            result = restclient.get(getBaseUri() + "issueLink/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve issue link " + id, ex);
         }

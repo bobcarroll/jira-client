@@ -143,6 +143,40 @@ public class Issue extends Resource {
     }
 
     /**
+     * count issues with the given query.
+     *
+     * @param restclient REST client instance
+     *
+     * @param jql JQL statement
+     *
+     * @return the count
+     *
+     * @throws JiraException when the search fails
+     */
+    public static int count(RestClient restclient, String jql) throws JiraException {
+        final String j = jql;
+        JSON result = null;
+        try {
+            Map<String, String> queryParams = new HashMap<String, String>() {
+                {
+                    put("jql", j);
+                }
+            };
+            queryParams.put("maxResults", "1");
+            URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
+            result = restclient.get(searchUri);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to search issues", ex);
+        }
+
+        if (!(result instanceof JSONObject)) {
+            throw new JiraException("JSON payload is malformed");
+        }
+        Map map = (Map) result;
+        return Field.getInteger(map.get("total"));
+    }
+
+    /**
      * Used to chain fields to an update action.
      */
     public final class FluentUpdate {
@@ -356,6 +390,7 @@ public class Issue extends Resource {
     /* system fields */
     private User assignee = null;
     private List<Attachment> attachments = null;
+    private ChangeLog changeLog = null;
     private List<Comment> comments = null;
     private List<Component> components = null;
     private String description = null;
@@ -364,6 +399,7 @@ public class Issue extends Resource {
     private List<IssueLink> issueLinks = null;
     private IssueType issueType = null;
     private List<String> labels = null;
+    private Issue parent = null;
     private Priority priority = null;
     private Project project = null;
     private User reporter = null;
@@ -377,6 +413,10 @@ public class Issue extends Resource {
     private Votes votes = null;
     private Watches watches = null;
     private List<WorkLog> workLogs = null;
+    private Integer timeEstimate = null;
+    private Integer timeSpent = null;
+    private Date createdDate = null;
+    private Date updatedDate = null;
 
     /**
      * Creates an issue from a JSON payload.
@@ -402,6 +442,7 @@ public class Issue extends Resource {
 
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
         attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ATTACHMENT), restclient);
+        changeLog = Field.getResource(ChangeLog.class, map.get(Field.CHANGE_LOG), restclient);
         comments = Field.getComments(fields.get(Field.COMMENT), restclient);
         components = Field.getResourceArray(Component.class, fields.get(Field.COMPONENTS), restclient);
         description = Field.getString(fields.get(Field.DESCRIPTION));
@@ -410,6 +451,7 @@ public class Issue extends Resource {
         issueLinks = Field.getResourceArray(IssueLink.class, fields.get(Field.ISSUE_LINKS), restclient);
         issueType = Field.getResource(IssueType.class, fields.get(Field.ISSUE_TYPE), restclient);
         labels = Field.getStringArray(fields.get(Field.LABELS));
+        parent = Field.getResource(Issue.class, fields.get(Field.PARENT), restclient);
         priority = Field.getResource(Priority.class, fields.get(Field.PRIORITY), restclient);
         project = Field.getResource(Project.class, fields.get(Field.PROJECT), restclient);
         reporter = Field.getResource(User.class, fields.get(Field.REPORTER), restclient);
@@ -423,10 +465,14 @@ public class Issue extends Resource {
         votes = Field.getResource(Votes.class, fields.get(Field.VOTES), restclient);
         watches = Field.getResource(Watches.class, fields.get(Field.WATCHES), restclient);
         workLogs = Field.getWorkLogs(fields.get(Field.WORKLOG), restclient);
+        timeEstimate = Field.getInteger(fields.get(Field.TIME_ESTIMATE));
+        timeSpent = Field.getInteger(fields.get(Field.TIME_SPENT));
+        createdDate = Field.getDateTime(fields.get(Field.CREATED_DATE));
+        updatedDate = Field.getDateTime(fields.get(Field.UPDATED_DATE));
     }
 
     private static String getRestUri(String key) {
-        return RESOURCE_URI + "issue/" + (key != null ? key : "");
+        return getBaseUri() + "issue/" + (key != null ? key : "");
     }
 
     public static JSONObject getCreateMetadata(
@@ -438,7 +484,7 @@ public class Issue extends Resource {
 
         try {
             URI createuri = restclient.buildURI(
-                RESOURCE_URI + "issue/createmeta",
+                getBaseUri() + "issue/createmeta",
                 new HashMap<String, String>() {{
                     put("expand", "projects.issuetypes.fields");
                     put("projectKeys", pval);
@@ -464,7 +510,8 @@ public class Issue extends Resource {
             restclient);
 
         if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty())
-            throw new JiraException("Project or issue type missing from create metadata");
+            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType + 
+                    "' missing from create metadata. Do you have enough permissions?");
 
         return projects.get(0).getIssueTypes().get(0).getFields();
     }
@@ -512,7 +559,7 @@ public class Issue extends Resource {
 
         return (JSONArray)jo.get("transitions");
     }
-    
+
     /**
      * Adds an attachment to this issue.
      *
@@ -638,7 +685,7 @@ public class Issue extends Resource {
         }
 
         try {
-            restclient.post(RESOURCE_URI + "issueLink", req);
+            restclient.post(getBaseUri() + "issueLink", req);
         } catch (Exception ex) {
             throw new JiraException("Failed to link issue " + key + " with issue " + issue, ex);
         }
@@ -675,9 +722,8 @@ public class Issue extends Resource {
      * @throws JiraException when the client fails to retrieve issue metadata
      */
     public FluentCreate createSubtask() throws JiraException {
-
         return Issue.create(restclient, getProject().getKey(), "Sub-task")
-                .field("parent", getKey());
+                .field(Field.PARENT, getKey());
     }
 
     private static JSONObject realGet(RestClient restclient, String key, Map<String, String> queryParams)
@@ -686,7 +732,7 @@ public class Issue extends Resource {
         JSON result = null;
 
         try {
-            URI uri = restclient.buildURI(RESOURCE_URI + "issue/" + key, queryParams);
+            URI uri = restclient.buildURI(getBaseUri() + "issue/" + key, queryParams);
             result = restclient.get(uri);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve issue " + key, ex);
@@ -748,6 +794,43 @@ public class Issue extends Resource {
     }
 
     /**
+     * Retrieves the given issue record.
+     *
+     * @param restclient REST client instance
+     *
+     * @param key Issue key (PROJECT-123)
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     * 
+     * @param expand fields to expand when obtaining the issue
+     *
+     * @return an issue instance
+     *
+     * @throws JiraException when the retrieval fails
+     */
+    public static Issue get(RestClient restclient, String key, final String includedFields,
+            final String expand) throws JiraException {
+
+        Map<String, String> queryParams = new HashMap<String, String>() {
+            {
+                put("fields", includedFields);
+                if (expand != null) {
+                    put("expand", expand);
+                }
+            }
+        };
+        return new Issue(restclient, realGet(restclient, key, queryParams));
+    }
+
+    /**
      * Search for issues with the given query.
      *
      * @param restclient REST client instance
@@ -788,6 +871,44 @@ public class Issue extends Resource {
      */
     public static SearchResult search(RestClient restclient, String jql, String includedFields, Integer maxResults)
             throws JiraException {
+        return search(restclient, jql, includedFields, null, maxResults, null);
+    }
+
+    /**
+     * Search for issues with the given query and specify which fields to
+     * retrieve. If the total results is bigger than the maximum returned
+     * results, then further calls can be made using different values for
+     * the <code>startAt</code> field to obtain all the results.
+     *
+     * @param restclient REST client instance
+     *
+     * @param jql JQL statement
+     *
+     * @param includedFields Specifies which issue fields will be included in
+     * the result.
+     * <br>Some examples how this parameter works:
+     * <ul>
+     * <li>*all - include all fields</li>
+     * <li>*navigable - include just navigable fields</li>
+     * <li>summary,comment - include just the summary and comments</li>
+     * <li>*all,-comment - include all fields</li>
+     * </ul>
+     * 
+     * @param maxResults if non-<code>null</code>, defines the maximum number of
+     * results that can be returned 
+     * 
+     * @param startAt if non-<code>null</code>, defines the first issue to
+     * return
+     *
+     * @param expandFields fields to expand when obtaining the issue
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public static SearchResult search(RestClient restclient, String jql,
+            String includedFields, String expandFields, Integer maxResults, Integer startAt)
+                    throws JiraException {
 
         final String j = jql;
         JSON result = null;
@@ -799,12 +920,19 @@ public class Issue extends Resource {
                 }
             };
             if(maxResults != null){
-            	queryParams.put("maxResults", String.valueOf(maxResults));
+                queryParams.put("maxResults", String.valueOf(maxResults));
             }
             if (includedFields != null) {
                 queryParams.put("fields", includedFields);
             }
-            URI searchUri = restclient.buildURI(RESOURCE_URI + "search", queryParams);
+            if (expandFields != null) {
+                queryParams.put("expand", expandFields);
+            }
+            if (startAt != null) {
+                queryParams.put("startAt", String.valueOf(startAt));
+            }
+
+            URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
             result = restclient.get(searchUri);
         } catch (Exception ex) {
             throw new JiraException("Failed to search issues", ex);
@@ -973,6 +1101,10 @@ public class Issue extends Resource {
         return getKey();
     }
 
+    public ChangeLog getChangeLog() {
+        return changeLog;
+    }
+
     public String getKey() {
         return key;
     }
@@ -1017,6 +1149,10 @@ public class Issue extends Resource {
         return labels;
     }
 
+    public Issue getParent() {
+        return parent;
+    }
+
     public Priority getPriority() {
         return priority;
     }
@@ -1027,6 +1163,20 @@ public class Issue extends Resource {
 
     public User getReporter() {
         return reporter;
+    }
+    
+    public List<RemoteLink> getRemoteLinks() throws JiraException {
+        JSONArray obj;
+        try {
+            URI uri = restclient.buildURI(getRestUri(key) + "/remotelink");
+            JSON json = restclient.get(uri);
+            obj = (JSONArray) json;
+        } catch (Exception ex) {
+            throw new JiraException("Failed to get remote links for issue "
+                    + key, ex);
+        }
+
+        return Field.getRemoteLinks(obj, restclient);
     }
 
     public Resolution getResolution() {
@@ -1068,5 +1218,36 @@ public class Issue extends Resource {
     public List<WorkLog> getWorkLogs() {
         return workLogs;
     }
+
+    public List<WorkLog> getAllWorkLogs() throws JiraException {
+        JSONObject obj;
+        try {
+            URI uri = restclient.buildURI(getRestUri(key) + "/worklog");
+            JSON json = restclient.get(uri);
+            obj = (JSONObject) json;
+        } catch (Exception ex) {
+            throw new JiraException("Failed to get worklog for issue "
+                    + key, ex);
+        }
+
+        return Field.getWorkLogs(obj, restclient);
+    }
+
+    public Integer getTimeSpent() {
+        return timeSpent;
+    }
+
+    public Integer getTimeEstimate() {
+        return timeEstimate;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
 }
 

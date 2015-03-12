@@ -17,53 +17,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.rcarz.jiraclient.greenhopper;
+package net.rcarz.jiraclient;
 
-import net.rcarz.jiraclient.Field;
-
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
 
 /**
- * GreenHopper estimate statistics for rapid views.
+ * Issue change log.
  */
-public class EstimateStatistic {
-
-    private String statFieldId = null;
-    private Double statFieldValue = 0.0;
-    private String statFieldText = null;
+public class ChangeLog extends Resource {
+    /**
+     * List of change log entries.
+     */
+    private List<ChangeLogEntry> entries = null;
 
     /**
-     * Creates an estimate statistic from a JSON payload.
+     * Creates a change log from a JSON payload.
      *
+     * @param restclient REST client instance
      * @param json JSON payload
      */
-    protected EstimateStatistic(JSONObject json) {
+    protected ChangeLog(RestClient restclient, JSONObject json) {
+        super(restclient);
+
+        if (json != null)
+            deserialise(json);
+    }
+
+    /**
+     * Deserializes a change log from a json payload.
+     * @param json the json payload
+     */
+    private void deserialise(JSONObject json) {
         Map map = json;
 
-        statFieldId = Field.getString(map.get("statFieldId"));
-
-        if (map.containsKey("statFieldValue") &&
-            map.get("statFieldValue") instanceof JSONObject) {
-
-            Map val = (Map)json.get("statFieldValue");
-
-            statFieldValue = Field.getDouble(val.get("value"));
-            statFieldText = Field.getString(val.get("text"));
-        }
+        entries = Field.getResourceArray(ChangeLogEntry.class, map.get(
+                Field.CHANGE_LOG_ENTRIES), restclient);
     }
 
-    public String getFieldId() {
-        return statFieldId;
-    }
-
-    public Double getFieldValue() {
-        return statFieldValue;
-    }
-
-    public String getFieldText() {
-        return statFieldText;
+    /**
+     * Returns the list of change log entries in the change log.
+     * @return the list of entries
+     */
+    public List<ChangeLogEntry> getEntries() {
+        return entries;
     }
 }
-

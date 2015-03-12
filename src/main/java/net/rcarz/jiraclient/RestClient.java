@@ -32,8 +32,11 @@ import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -125,7 +128,26 @@ public class RestClient {
         StringBuilder result = new StringBuilder();
 
         if (ent != null) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(ent.getContent()));
+            String encoding = null;
+            if (ent.getContentEncoding() != null) {
+            	encoding = ent.getContentEncoding().getValue();
+            }
+            
+            if (encoding == null) {
+    	        Header contentTypeHeader = resp.getFirstHeader("Content-Type");
+    	        HeaderElement[] contentTypeElements = contentTypeHeader.getElements();
+    	        for (HeaderElement he : contentTypeElements) {
+    	        	NameValuePair nvp = he.getParameterByName("charset");
+    	        	if (nvp != null) {
+    	        		encoding = nvp.getValue();
+    	        	}
+    	        }
+            }
+            
+            InputStreamReader isr =  encoding != null ?
+                new InputStreamReader(ent.getContent(), encoding) :
+                new InputStreamReader(ent.getContent());
+            BufferedReader br = new BufferedReader(isr);
             String line = "";
 
             while ((line = br.readLine()) != null)
@@ -225,6 +247,22 @@ public class RestClient {
      * Executes an HTTP GET with the given path.
      *
      * @param path Path to be appended to the URI supplied in the construtor
+     * @param params Map of key value pairs
+     *
+     * @return JSON-encoded result or null when there's no content returned
+     *
+     * @throws RestException when an HTTP-level error occurs
+     * @throws IOException when an error reading the response occurs
+     * @throws URISyntaxException when an error occurred appending the path to the URI
+     */
+    public JSON get(String path, Map<String, String> params) throws RestException, IOException, URISyntaxException {
+        return get(buildURI(path, params));
+    }
+
+    /**
+     * Executes an HTTP GET with the given path.
+     *
+     * @param path Path to be appended to the URI supplied in the construtor
      *
      * @return JSON-encoded result or null when there's no content returned
      *
@@ -233,8 +271,9 @@ public class RestClient {
      * @throws URISyntaxException when an error occurred appending the path to the URI
      */
     public JSON get(String path) throws RestException, IOException, URISyntaxException {
-        return get(buildURI(path));
+        return get(path, null);
     }
+
 
     /**
      * Executes an HTTP POST with the given URI and payload.

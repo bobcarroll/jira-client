@@ -72,7 +72,7 @@ public class Status extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "status/" + id);
+            result = restclient.get(getBaseUri() + "status/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve status " + id, ex);
         }

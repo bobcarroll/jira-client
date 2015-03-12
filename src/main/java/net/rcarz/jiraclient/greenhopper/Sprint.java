@@ -22,6 +22,8 @@ package net.rcarz.jiraclient.greenhopper;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.RestClient;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
@@ -38,6 +40,8 @@ public class Sprint extends GreenHopperResource {
     private DateTime startDate = null;
     private DateTime endDate = null;
     private DateTime completeDate = null;
+    private List<Integer> issuesIds = null;
+    private List<SprintIssue> issues = null;
 
     /**
      * Creates a sprint from a JSON payload.
@@ -61,6 +65,7 @@ public class Sprint extends GreenHopperResource {
         startDate = GreenHopperField.getDateTime(map.get("startDate"));
         endDate = GreenHopperField.getDateTime(map.get("endDate"));
         completeDate = GreenHopperField.getDateTime(map.get("completeDate"));
+        issuesIds = GreenHopperField.getIntegerArray(map.get("issuesIds"));
     }
 
     @Override
@@ -86,6 +91,17 @@ public class Sprint extends GreenHopperResource {
 
     public DateTime getCompleteDate() {
         return completeDate;
+    }
+
+    public List<SprintIssue> getIssues(){
+        if(issues == null){
+            issues = new ArrayList<SprintIssue>();
+        }
+        return issues;
+    }
+
+    public List<Integer> getIssuesIds() {
+        return issuesIds;
     }
 }
 

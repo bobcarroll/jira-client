@@ -84,7 +84,7 @@ public class WorkLog extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "issue/" + issue + "/worklog/" + id);
+            result = restclient.get(getBaseUri() + "issue/" + issue + "/worklog/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve work log " + id + " on issue " + issue, ex);
         }
@@ -118,6 +118,10 @@ public class WorkLog extends Resource {
 
     public Date getUpdatedDate() {
         return updated;
+    }
+
+    public int getTimeSpentSeconds() {
+        return timeSpentSeconds;
     }
 }
 

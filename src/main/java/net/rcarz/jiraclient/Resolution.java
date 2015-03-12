@@ -70,7 +70,7 @@ public class Resolution extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "resolution/" + id);
+            result = restclient.get(getBaseUri() + "resolution/" + id);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve resolution " + id, ex);
         }

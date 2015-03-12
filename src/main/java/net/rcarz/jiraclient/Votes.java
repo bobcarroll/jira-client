@@ -19,10 +19,10 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents issue votes.
@@ -71,7 +71,7 @@ public class Votes extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(RESOURCE_URI + "issue/" + issue + "/votes");
+            result = restclient.get(getBaseUri() + "issue/" + issue + "/votes");
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve votes for issue " + issue, ex);
         }
