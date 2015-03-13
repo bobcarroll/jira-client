@@ -148,6 +148,7 @@ public final class Field {
     public static final String TIME_SPENT = "timespent";
     public static final String CREATED_DATE = "created";
     public static final String UPDATED_DATE = "updated";
+    public static final String TRANSITION_TO_STATUS = "to";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
@@ -362,6 +363,8 @@ public final class Field {
                 result = (T)new Resolution(restclient, (JSONObject)r);
             else if (type == Status.class)
                 result = (T)new Status(restclient, (JSONObject)r);
+            else if (type == Transition.class)
+                result = (T)new Transition(restclient, (JSONObject)r);
             else if (type == User.class)
                 result = (T)new User(restclient, (JSONObject)r);
             else if (type == Version.class)
