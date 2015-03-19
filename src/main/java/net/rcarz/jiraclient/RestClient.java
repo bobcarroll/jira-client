@@ -22,6 +22,7 @@ package net.rcarz.jiraclient;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -48,7 +49,9 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
 
 /**
  * A simple REST client that speaks JSON.
@@ -183,16 +186,43 @@ public class RestClient {
     }
     
     private JSON request(HttpEntityEnclosingRequestBase req, File file)
-            throws RestException, IOException {
-            if (file != null) {
-            	File fileUpload = file;
-            	req.setHeader("X-Atlassian-Token","nocheck");
-            	MultipartEntity ent = new MultipartEntity();
-            	ent.addPart("file", new FileBody(fileUpload));
-            	req.setEntity(ent);
-            }
-            return request(req);
+        throws RestException, IOException {
+        if (file != null) {
+            File fileUpload = file;
+            req.setHeader("X-Atlassian-Token", "nocheck");
+            MultipartEntity ent = new MultipartEntity();
+            ent.addPart("file", new FileBody(fileUpload));
+            req.setEntity(ent);
         }
+        return request(req);
+    }
+
+    private JSON request(HttpEntityEnclosingRequestBase req, Issue.NewAttachment... attachments)
+        throws RestException, IOException {
+        if (attachments != null) {
+            req.setHeader("X-Atlassian-Token", "nocheck");
+            MultipartEntity ent = new MultipartEntity();
+            for(Issue.NewAttachment attachment : attachments) {
+                String filename = attachment.getFilename();
+                Object content = attachment.getContent();
+                if (content instanceof byte[]) {
+                    ent.addPart("file", new ByteArrayBody((byte[]) content, filename));
+                } else if (content instanceof InputStream) {
+                    ent.addPart("file", new InputStreamBody((InputStream) content, filename));
+                } else if (content instanceof File) {
+                    ent.addPart("file", new FileBody((File) content, filename));
+                } else if (content == null) {
+                    throw new IllegalArgumentException("Missing content for the file " + filename);
+                } else {
+                    throw new IllegalArgumentException(
+                        "Expected file type byte[], java.io.InputStream or java.io.File but provided " +
+                            content.getClass().getName() + " for the file " + filename);
+                }
+            }
+            req.setEntity(ent);
+        }
+        return request(req);
+    }
 
     private JSON request(HttpEntityEnclosingRequestBase req, JSON payload)
         throws RestException, IOException {
@@ -354,7 +384,7 @@ public class RestClient {
     /**
      * Executes an HTTP POST with the given path and file payload.
      * 
-     * @param uri Full URI of the remote endpoint
+     * @param path Full URI of the remote endpoint
      * @param file java.io.File
      * 
      * @throws URISyntaxException 
@@ -363,6 +393,22 @@ public class RestClient {
      */
     public JSON post(String path, File file) throws RestException, IOException, URISyntaxException{
         return request(new HttpPost(buildURI(path)), file);
+    }
+
+    /**
+     * Executes an HTTP POST with the given path and file payloads.
+     *
+     * @param path    Full URI of the remote endpoint
+     * @param attachments   the name of the attachment
+     *
+     * @throws URISyntaxException
+     * @throws IOException
+     * @throws RestException
+     */
+    public JSON post(String path, Issue.NewAttachment... attachments)
+        throws RestException, IOException, URISyntaxException
+    {
+        return request(new HttpPost(buildURI(path)), attachments);
     }
 
     /**
