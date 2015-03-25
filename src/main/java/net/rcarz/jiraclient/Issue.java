@@ -20,6 +20,7 @@
 package net.rcarz.jiraclient;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.*;
 
@@ -381,6 +382,57 @@ public class Issue extends Resource {
         public List<Issue> issues = null;
     }
 
+    public static final class NewAttachment {
+
+        private final String filename;
+        private final Object content;
+
+        public NewAttachment(File content) {
+            this(content.getName(), content);
+        }
+
+        public NewAttachment(String filename, File content) {
+            this.filename = requireFilename(filename);
+            this.content = requireContent(content);
+        }
+
+        public NewAttachment(String filename, InputStream content) {
+            this.filename = requireFilename(filename);
+            this.content = requireContent(content);
+        }
+
+        public NewAttachment(String filename, byte[] content) {
+            this.filename = requireFilename(filename);
+            this.content = requireContent(content);
+        }
+
+        String getFilename() {
+            return filename;
+        }
+
+        Object getContent() {
+            return content;
+        }
+
+        private static String requireFilename(String filename) {
+            if (filename == null) {
+                throw new NullPointerException("filename may not be null");
+            }
+            if (filename.length() == 0) {
+                throw new IllegalArgumentException("filename may not be empty");
+            }
+            return filename;
+        }
+
+        private static Object requireContent(Object content) {
+            if (content == null) {
+                throw new NullPointerException("content may not be null");
+            }
+            return content;
+        }
+
+    }
+
     private String key = null;
     private Map fields = null;
 
@@ -570,7 +622,7 @@ public class Issue extends Resource {
      *
      * @param file java.io.File
      *
-     * @throws JiraException when the comment creation fails
+     * @throws JiraException when the attachment creation fails
      */
     public void addAttachment(File file) throws JiraException {
         try {
@@ -603,6 +655,27 @@ public class Issue extends Resource {
             restclient.post(getRestUri(key) + "/remotelink", req);
         } catch (Exception ex) {
             throw new JiraException("Failed add remote link to issue " + key, ex);
+        }
+    }
+
+    /**
+     * Adds an attachments to this issue.
+     *
+     * @param attachments  the attachments to add
+     *
+     * @throws JiraException when the attachments creation fails
+     */
+    public void addAttachments(NewAttachment... attachments) throws JiraException {
+        if (attachments == null) {
+            throw new NullPointerException("attachments may not be null");
+        }
+        if (attachments.length == 0) {
+            return;
+        }
+        try {
+            restclient.post(getRestUri(key) + "/attachments", attachments);
+        } catch (Exception ex) {
+            throw new JiraException("Failed add attachment to issue " + key, ex);
         }
     }
 
