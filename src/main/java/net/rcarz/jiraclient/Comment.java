@@ -19,11 +19,11 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Date;
-import java.util.Map;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * Represents an issue comment.

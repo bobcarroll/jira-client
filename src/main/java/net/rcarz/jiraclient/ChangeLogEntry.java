@@ -19,11 +19,11 @@
 
 package net.rcarz.jiraclient;
 
+import net.sf.json.JSONObject;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import net.sf.json.JSONObject;
 
 /**
  * Contains information about an issue change log entry. Change log entries are
@@ -69,7 +69,7 @@ public class ChangeLogEntry extends Resource {
 
         id = Field.getString(map.get("id"));
         author = Field.getResource(User.class, map.get("author"), restclient);
-        created = Field.getDate(map.get("created"));
+        created = Field.getDateTime(map.get("created"));
         items = Field.getResourceArray(ChangeLogItem.class, map.get(
                 Field.CHANGE_LOG_ITEMS), restclient);
     }
