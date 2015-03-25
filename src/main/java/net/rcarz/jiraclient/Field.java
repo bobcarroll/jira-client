@@ -513,10 +513,11 @@ public final class Field {
      *
      * @param iter Iterable type containing field values
      * @param type Name of the item type
+     * @param custom Name of the custom type
      *
      * @return a JSON-encoded array of items
      */
-    public static JSONArray toArray(Iterable iter, String type) throws JiraException {
+    public static JSONArray toArray(Iterable iter, String type, String custom) throws JiraException {
         JSONArray results = new JSONArray();
 
         if (type == null)
@@ -545,6 +546,11 @@ public final class Field {
                     itemMap.put(ValueType.NAME.toString(), realValue.toString());
 
                 realResult = itemMap;
+            } else if (type.equals("string") && custom != null
+                    && custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes")) {
+                
+                realResult = new JSONObject();
+                ((JSONObject)realResult).put(ValueType.VALUE.toString(), realValue.toString());
             } else if (type.equals("string"))
                 realResult = realValue.toString();
 
@@ -584,7 +590,7 @@ public final class Field {
             else if (!(value instanceof Iterable))
                 throw new JiraException("Field expects an Iterable value");
 
-            return toArray((Iterable)value, m.items);
+            return toArray((Iterable)value, m.items, m.custom);
         } else if (m.type.equals("date")) {
             if (value == null)
                 return JSONNull.getInstance();
