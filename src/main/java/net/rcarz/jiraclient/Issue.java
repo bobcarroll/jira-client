@@ -579,6 +579,32 @@ public class Issue extends Resource {
             throw new JiraException("Failed add attachment to issue " + key, ex);
         }
     }
+    
+    /**
+     * Adds a remote link to this issue.
+     *
+     * @param url Url of the remote link
+     * @param title Title of the remote link
+     * @param summary Summary of the remote link
+     *
+     * @throws JiraException when the link creation fails
+     */
+    public void addRemoteLink(String url, String title, String summary) throws JiraException {
+        JSONObject req = new JSONObject();
+        JSONObject obj = new JSONObject();
+        
+        obj.put("url", url);
+        obj.put("title", title);
+        obj.put("summary", summary);
+        
+        req.put("object", obj);
+
+        try {
+            restclient.post(getRestUri(key) + "/remotelink", req);
+        } catch (Exception ex) {
+            throw new JiraException("Failed add remote link to issue " + key, ex);
+        }
+    }
 
     /**
      * Adds a comment to this issue.
