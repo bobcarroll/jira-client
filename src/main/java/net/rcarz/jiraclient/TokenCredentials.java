@@ -68,7 +68,6 @@ public class TokenCredentials implements ICredentials {
         return username;
     }
 
-    @Override
     public void initialize(RestClient client) throws JiraException {
         if (token==null) {
             try {
@@ -83,7 +82,6 @@ public class TokenCredentials implements ICredentials {
         }
     }
 
-    @Override
     public void logout(RestClient client) throws JiraException {
         if (token != null) {
            try {
