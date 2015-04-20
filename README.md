@@ -23,6 +23,9 @@ jira-client is still under heavy development. Here's what works:
 * Add and remove issue links
 * Create sub-tasks
 * Retrieval of Rapid Board backlog and sprints
+* Search assignable users for a project
+* Use OAuth to authenticate (see src/integrationtest/net/rcarz/jiraclient/OAuthTest for an example)
+
 
 ## Maven Dependency ##
 

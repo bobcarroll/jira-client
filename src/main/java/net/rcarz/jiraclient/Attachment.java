@@ -106,24 +106,8 @@ public class Attachment extends Resource {
      */
     public byte[] download() 
     	throws JiraException{
-    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    	try{
-        	HttpGet get = new HttpGet(content);
-        	HttpResponse response = restclient.getHttpClient().execute(get);
-        	HttpEntity entity = response.getEntity();
-        	if (entity != null) {
-        	    InputStream inputStream = entity.getContent();
-        	    int next = inputStream.read();
-        	    while (next > -1) {
-        	        bos.write(next);
-        	        next = inputStream.read();
-        	    }
-        	    bos.flush();
-        	}
-    	}catch(IOException e){
-    		  throw new JiraException(String.format("Failed downloading attachment from %s: %s", this.content, e.getMessage()));
-    	}
-    	return bos.toByteArray();
+        return restclient.download(content);
+
     }
 
     @Override

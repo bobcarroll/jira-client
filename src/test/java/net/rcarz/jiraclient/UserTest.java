@@ -22,7 +22,7 @@ public class UserTest {
 
     @Test
     public void testJSONDeserializer() throws IOException, URISyntaxException {
-        User user = new User(new RestClient(null, new URI("/123/asd")), getTestJSON());
+        User user = new User(new ApacheHttpRestClient(null, new URI("/123/asd")), getTestJSON());
         assertEquals(user.getName(), username);
         assertEquals(user.getDisplayName(), displayName);
         assertEquals(user.getEmail(), email);
@@ -61,7 +61,7 @@ public class UserTest {
 
     @Test
     public void testStatusToString() throws URISyntaxException {
-        User user = new User(new RestClient(null, new URI("/123/asd")), getTestJSON());
+        User user = new User(new ApacheHttpRestClient(null, new URI("/123/asd")), getTestJSON());
         assertEquals(username, user.toString());
     }
 }

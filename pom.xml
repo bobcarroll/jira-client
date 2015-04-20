@@ -29,6 +29,11 @@
       <name>Bob Carroll</name>
       <email>bob.carroll@alum.rit.edu</email>
     </developer>
+      <developer>
+          <id>beders</id>
+          <name>Jochen Bedersdorfer</name>
+          <email>beders@yahoo.com</email>
+      </developer>
   </developers>
 
   <parent>
@@ -70,6 +75,12 @@
       <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
+
+      <dependency>
+          <groupId>org.scribe</groupId>
+          <artifactId>scribe</artifactId>
+          <version>1.3.7</version>
+      </dependency>
 
   </dependencies>
 </project>

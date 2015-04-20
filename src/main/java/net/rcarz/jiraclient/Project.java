@@ -19,8 +19,13 @@
 
 package net.rcarz.jiraclient;
 
+import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
@@ -169,6 +174,27 @@ public class Project extends Resource {
 
     public Map<String, String> getRoles() {
         return roles;
+    }
+
+    public List<User> searchAssignableUsers() throws JiraException {
+        return searchAssignableUsers(0, 50);
+    }
+
+    public List<User> searchAssignableUsers(int startIndex, int count) throws JiraException {
+        try {
+            Map<String,String> param = new HashMap<>();
+            param.put("project", key);
+            param.put("startAt", Integer.toString(startIndex));
+            param.put("maxResults", Integer.toString(count));
+
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "user/assignable/search", param);
+            JSONArray response = (JSONArray) restclient.get(uri);
+            List<User> users = (List<User>)response.stream().map(o -> new User(restclient, (JSONObject) o)).collect(Collectors.toList());
+
+            return users;
+        } catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+        }
     }
 }
 

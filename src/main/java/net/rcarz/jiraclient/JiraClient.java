@@ -47,7 +47,17 @@ public class JiraClient {
      * @param uri Base URI of the JIRA server
      */
     public JiraClient(String uri) {
-        this(uri, null);
+        this(uri, (ICredentials)null);
+    }
+
+    /**
+     * Creates a JIRA client.
+     *
+     * @param uri Base URI of the JIRA server
+     */
+    public JiraClient(String uri, ICredentials creds, RestClient restClient) {
+        this(uri, creds);
+        this.restclient = restClient;
     }
 
     /**
@@ -59,7 +69,7 @@ public class JiraClient {
     public JiraClient(String uri, ICredentials creds) {
         DefaultHttpClient httpclient = new DefaultHttpClient();
 
-        restclient = new RestClient(httpclient, creds, URI.create(uri));
+        restclient = new ApacheHttpRestClient(httpclient, creds, URI.create(uri));
 
         if (creds != null)
             username = creds.getLogonName();

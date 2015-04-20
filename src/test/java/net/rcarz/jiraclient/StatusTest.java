@@ -17,7 +17,7 @@ public class StatusTest {
 
     @Test
     public void testJSONDeserializer() throws IOException, URISyntaxException {
-        Status status = new Status(new RestClient(null, new URI("/123/asd")), getTestJSON());
+        Status status = new Status(new ApacheHttpRestClient(null, new URI("/123/asd")), getTestJSON());
         assertEquals(status.getDescription(), description);
         assertEquals(status.getIconUrl(), iconURL);
         assertEquals(status.getName(), "Open");
@@ -36,7 +36,7 @@ public class StatusTest {
 
     @Test
     public void testStatusToString() throws URISyntaxException {
-        Status status = new Status(new RestClient(null, new URI("/123/asd")), getTestJSON());
+        Status status = new Status(new ApacheHttpRestClient(null, new URI("/123/asd")), getTestJSON());
         assertEquals("Open",status.toString());
     }
 
