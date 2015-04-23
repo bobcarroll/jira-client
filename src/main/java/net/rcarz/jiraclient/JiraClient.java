@@ -45,8 +45,9 @@ public class JiraClient {
      * Creates a JIRA client.
      *
      * @param uri Base URI of the JIRA server
+     * @throws JiraException 
      */
-    public JiraClient(String uri) {
+    public JiraClient(String uri) throws JiraException {
         this(uri, null);
     }
 
@@ -55,13 +56,14 @@ public class JiraClient {
      *
      * @param uri Base URI of the JIRA server
      * @param creds Credentials to authenticate with
+     * @throws JiraException 
      */
-    public JiraClient(String uri, ICredentials creds) {
+    public JiraClient(String uri, ICredentials creds) throws JiraException {
         DefaultHttpClient httpclient = new DefaultHttpClient();
 
         restclient = new RestClient(httpclient, creds, URI.create(uri));
-
         if (creds != null)
+        	creds.initialize(restclient);
             username = creds.getLogonName();
         }
 
@@ -148,10 +150,12 @@ public class JiraClient {
      *
      * @param jql JQL statement
      *
+     * @return the count
+     *
      * @throws JiraException when the search fails
      */
     public int countIssues(String jql) throws JiraException {
-    	return Issue.count(restclient, jql);
+        return Issue.count(restclient, jql);
     }
 
     /**
@@ -341,7 +345,8 @@ public class JiraClient {
       return Issue.search(restclient, jql, includedFields, expandFields, maxResults,
           startAt);
     }
-   /**
+
+    /**
      *
      * @return a list of all priorities available in the Jira installation
      * @throws JiraException
@@ -502,71 +507,69 @@ public class JiraClient {
         return Component.get(restclient, id);
     }
     
-    /**
-    *
-    * @return a list of all priorities available in the Jira installation
-    * @throws JiraException
-    */
-   public ArrayList<IssueHistory> filterChangeLog(List<IssueHistory> histoy,String fields) {
-       ArrayList<IssueHistory> result = new ArrayList<IssueHistory>(histoy.size());
-       fields = ","+fields+",";
-       for (IssueHistory record : histoy) {
-    	   ArrayList<IssueHistoryItem> list = new ArrayList<IssueHistoryItem>(record.getChanges().size());
-    	   for (IssueHistoryItem item : record.getChanges()) {
-    		   if (fields.contains(item.getField())) {
-    			   list.add(item);
-    		   }
-    	   }
-    	   if (list.size()>0) {
-    		   result.add(new IssueHistory(record,list));
-    	   }
-       }
-	   return result;
-   }
-    /**
-    *
-    * @return a list of all priorities available in the Jira installation
-    * @throws JiraException
-    */
-   public ArrayList<IssueHistory> getIssueChangeLog(Issue issue) throws JiraException {
-       try {
-    	   ArrayList<IssueHistory> changes = null;
-           JSON response = getNextPortion(issue,0);
-    	   while (true) {
-               JSONObject object = JSONObject.fromObject(response);
-               Object opers = object.get("changelog");
-               object = JSONObject.fromObject(opers);
-               Integer totalObj = (Integer)object.get("total");
-               JSONArray histories = JSONArray.fromObject(object.get("histories"));
-               if (changes == null) {
-            	   changes = new ArrayList<IssueHistory>(totalObj);
-               }
-               for (int i = 0; i < histories.size(); i++) {
-                   JSONObject p = histories.getJSONObject(i);
-                   changes.add(new IssueHistory(restclient, p));
-               }
-               if (changes.size()>=totalObj) {
-            	   break;
-               } else {
-            	   response = getNextPortion(issue,changes.size());
-               }
-    	   } 
-           
-           return changes;
-       } catch (Exception ex) {
-           throw new JiraException(ex.getMessage(), ex);
-       }
-   }
+    public ArrayList<IssueHistory> filterChangeLog(List<IssueHistory> histoy,String fields) {
+        ArrayList<IssueHistory> result = new ArrayList<IssueHistory>(histoy.size());
+        fields = "," + fields + ",";
 
-	private JSON getNextPortion(Issue issue,Integer startAt) throws URISyntaxException, RestException, IOException {
- 	   Map<String,String> params = new HashMap<String, String>();
- 	   if(startAt != null){
- 		   params.put("startAt", String.valueOf(startAt));
- 	   }
-	   params.put("expand","changelog.fields");
-       URI uri = restclient.buildURI(Issue.getBaseUri()+"issue/"+issue.id,params);
-       return restclient.get(uri);
+        for (IssueHistory record : histoy) {
+            ArrayList<IssueHistoryItem> list = new ArrayList<IssueHistoryItem>(record.getChanges().size());
+            for (IssueHistoryItem item : record.getChanges()) {
+                if (fields.contains(item.getField())) {
+                    list.add(item);
+                }
+            }
+
+            if (list.size() > 0) {
+                result.add(new IssueHistory(record,list));
+            }
+        }
+        return result;
     }
 
-    
+    public ArrayList<IssueHistory> getIssueChangeLog(Issue issue) throws JiraException {
+        try {
+            ArrayList<IssueHistory> changes = null;
+            JSON response = getNextPortion(issue, 0);
+
+            while (true) {
+                JSONObject object = JSONObject.fromObject(response);
+                Object opers = object.get("changelog");
+                object = JSONObject.fromObject(opers);
+                Integer totalObj = (Integer)object.get("total");
+                JSONArray histories = JSONArray.fromObject(object.get("histories"));
+
+                if (changes == null) {
+                    changes = new ArrayList<IssueHistory>(totalObj);
+                }
+
+                for (int i = 0; i < histories.size(); i++) {
+                    JSONObject p = histories.getJSONObject(i);
+                    changes.add(new IssueHistory(restclient, p));
+                }
+
+                if (changes.size() >= totalObj) {
+                    break;
+                } else {
+                    response = getNextPortion(issue,changes.size());
+                }
+            } 
+           
+            return changes;
+        } catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+        }
+    }
+
+    private JSON getNextPortion(Issue issue, Integer startAt)
+            throws URISyntaxException, RestException, IOException {
+
+        Map<String, String> params = new HashMap<String, String>();
+        if (startAt != null) {
+            params.put("startAt", String.valueOf(startAt));
+        }
+
+        params.put("expand","changelog.fields");
+        URI uri = restclient.buildURI(Issue.getBaseUri() + "issue/" + issue.id, params);
+        return restclient.get(uri);
+    }
 }

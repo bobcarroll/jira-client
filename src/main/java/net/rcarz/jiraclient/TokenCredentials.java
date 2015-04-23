@@ -45,18 +45,18 @@ public class TokenCredentials implements ICredentials {
     }
 
     public TokenCredentials(String jsessionId) {
-	    token = jsessionId;
+        token = jsessionId;
     }
 
-	/**
+    /**
      * Sets the Authorization header for the given request.
      *
      * @param req HTTP request to authenticate
      */
     public void authenticate(HttpRequest req) {
-    	if (token != null) {
+        if (token != null) {
             req.addHeader("Cookie","JSESSIONID="+token+";");
-    	}
+        }
     }
 
     /**
@@ -68,34 +68,35 @@ public class TokenCredentials implements ICredentials {
         return username;
     }
 
-	@Override
     public void initialize(RestClient client) throws JiraException {
-		if (token==null) {
+        if (token==null) {
             try {
-            	JSONObject req = new JSONObject();
-            	req.put("username", username);
-            	req.put("password", password);
-        	   JSON json = client.post(Resource.getAuthUri() + "session", req);
-        	   System.out.println(json.toString());
+                JSONObject req = new JSONObject();
+                req.put("username", username);
+                req.put("password", password);
+                JSON json = client.post(Resource.getAuthUri() + "session", req);
+                if (json instanceof JSONObject) {
+	                JSONObject obj = (JSONObject) json;
+	                token = (String)obj.getJSONObject("session").get("value");
+                }
             } catch (Exception ex) {
                 throw new JiraException("Failed to login", ex);
             }
-		}
+        }
     }
 
-	@Override
     public void logout(RestClient client) throws JiraException {
-		if (token != null) {
-     	   try {
-        	    client.delete(Resource.getAuthUri() + "session");
+        if (token != null) {
+           try {
+                client.delete(Resource.getAuthUri() + "session");
             } catch (Exception e) {
                 throw new JiraException("Failed to logout", e);
             }
-		}
-	}
+        }
+    }
 
-	public String getToken() {
-	    return token;
+    public String getToken() {
+        return token;
     }
 }
 
