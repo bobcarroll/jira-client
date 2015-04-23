@@ -62,10 +62,11 @@ public class JiraClient {
         DefaultHttpClient httpclient = new DefaultHttpClient();
 
         restclient = new RestClient(httpclient, creds, URI.create(uri));
-        if (creds != null)
+        if (creds != null) {
         	creds.initialize(restclient);
             username = creds.getLogonName();
         }
+    }
 
     /**
      * Creates a new issue in the given project.
