@@ -32,6 +32,7 @@ public class TokenCredentials implements ICredentials {
     private String username;
     private String password;
     private String token;
+	private String cookieName="JSESSIONID";
 
     /**
      * Creates new basic HTTP credentials.
@@ -55,7 +56,7 @@ public class TokenCredentials implements ICredentials {
      */
     public void authenticate(HttpRequest req) {
         if (token != null) {
-            req.addHeader("Cookie","JSESSIONID="+token+";");
+            req.addHeader("Cookie",cookieName+"="+token+";");
         }
     }
 
@@ -74,8 +75,14 @@ public class TokenCredentials implements ICredentials {
                 JSONObject req = new JSONObject();
                 req.put("username", username);
                 req.put("password", password);
-               JSON json = client.post(Resource.getAuthUri() + "session", req);
-               System.out.println(json.toString());
+                JSON json = client.post(Resource.getAuthUri() + "session", req);
+                if (json instanceof JSONObject) {
+	                JSONObject jso = (JSONObject) json;
+	                jso = (JSONObject) jso.get("session");
+	                cookieName = (String)jso.get("name");
+	                token = (String)jso.get("value");
+	                
+                }
             } catch (Exception ex) {
                 throw new JiraException("Failed to login", ex);
             }
