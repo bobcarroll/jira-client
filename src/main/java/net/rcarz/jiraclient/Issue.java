@@ -291,8 +291,10 @@ public class Issue extends Resource {
                 }
             }
 
-            if (result == null)
-                throw new JiraException("Transition was not found.");
+            if (result == null) {
+                final String allTransitionNames = Arrays.toString(transitions.toArray());
+                throw new JiraException("Transition '" + name + "' was not found. Known transitions are:" + allTransitionNames);
+            }
 
             return result;
         }
