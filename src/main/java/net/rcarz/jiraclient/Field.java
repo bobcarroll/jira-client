@@ -582,13 +582,13 @@ public final class Field {
 
         Meta m = getFieldMetadata(name, editmeta);
         if (m.type == null)
-            throw new JiraException("Field metadata is missing a type");
+            throw new JiraException("Field '" + name + "' is missing metadata type");
 
         if (m.type.equals("array")) {
             if (value == null)
                 value = new ArrayList();
             else if (!(value instanceof Iterable))
-                throw new JiraException("Field expects an Iterable value");
+                throw new JiraException("Field '" + name + "' expects an Iterable value");
 
             return toArray((Iterable)value, m.items, m.custom);
         } else if (m.type.equals("date")) {
@@ -597,7 +597,7 @@ public final class Field {
 
             Date d = toDate(value);
             if (d == null)
-                throw new JiraException("Field expects a date value or format is invalid");
+                throw new JiraException("Field '" + name + "' expects a date value or format is invalid");
 
             SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
             return df.format(d);
@@ -605,7 +605,7 @@ public final class Field {
             if (value == null)
                 return JSONNull.getInstance();
             else if (!(value instanceof Timestamp))
-                throw new JiraException("Field expects a Timestamp value");
+                throw new JiraException("Field '" + name + "' expects a Timestamp value");
 
             SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
             return df.format(value);
@@ -656,7 +656,7 @@ public final class Field {
             if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
                     instanceof java.lang.Float) && !(value instanceof java.lang.Long) )
             {
-                throw new JiraException("Field expects a Numeric value");
+                throw new JiraException("Field '" + name + "' expects a Numeric value");
             }
             return value;
         }
