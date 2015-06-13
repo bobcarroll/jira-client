@@ -281,18 +281,20 @@ public class Issue extends Resource {
             this.transitions = transitions;
         }
 
-        private Transition getTransition(String id, boolean name) throws JiraException {
+        private Transition getTransition(String id, boolean isName) throws JiraException {
             Transition result = null;
 
             for (Transition transition : transitions) {
-                if((name && id.equals(transition.getName())
-                || (!name && id.equals(transition.getId())))){
+                if((isName && id.equals(transition.getName())
+                || (!isName && id.equals(transition.getId())))){
                     result = transition;
                 }
             }
 
-            if (result == null)
-                throw new JiraException("Transition was not found.");
+            if (result == null) {
+                final String allTransitionNames = Arrays.toString(transitions.toArray());
+                throw new JiraException("Transition '" + id + "' was not found. Known transitions are:" + allTransitionNames);
+            }
 
             return result;
         }
