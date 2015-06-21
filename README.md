@@ -84,6 +84,11 @@ public class Example {
             issue.transition()
                 .field(Field.ASSIGNEE, "batman")
                 .execute("Open");
+                
+            /* Assign the issue */
+            issue.update()
+                .field(Field.ASSIGNEE, "batman")
+                .execute();
 
             /* Add two comments, with one limited to the developer role. */
             issue.addComment("No problem. We'll get right on it!");
