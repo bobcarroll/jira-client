@@ -139,6 +139,168 @@ public class Issue extends Resource {
         }
     }
 
+
+    /**
+     * Used to {@link #create() create} remote links. Provide at least the {@link #url(String)} or
+     * {@link #globalId(String) global id} and the {@link #title(String) title}.
+     */
+    public static final class FluentRemoteLink {
+
+        final private RestClient restclient;
+        final private String key;
+        final private JSONObject request;
+
+
+        private FluentRemoteLink(final RestClient restclient, String key) {
+            this.restclient = restclient;
+            this.key = key;
+            request = new JSONObject();
+        }
+
+
+        private JSONObject getObject() {
+            JSONObject object = (JSONObject) request.get("object");
+            if (object == null) {
+                object = new JSONObject();
+                request.put("object", object);
+            }
+            return object;
+        }
+
+
+        /**
+         * A globally unique identifier which uniquely identifies the remote application and the remote object within
+         * the remote system. The maximum length is 255 characters. This call sets also the {@link #url(String) url}.
+         *
+         * @param globalId the global id
+         * @return this instance
+         */
+        public FluentRemoteLink globalId(final String globalId) {
+            request.put("globalId", globalId);
+            url(globalId);
+            return this;
+        }
+
+
+        /**
+         * A hyperlink to the object in the remote system.
+         * @param url A hyperlink to the object in the remote system.
+         * @return this instance
+         */
+        public FluentRemoteLink url(final String url) {
+            getObject().put("url", url);
+            return this;
+        }
+
+
+        /**
+         * The title of the remote object.
+         * @param title The title of the remote object.
+         * @return this instance
+         */
+        public FluentRemoteLink title(final String title) {
+            getObject().put("title", title);
+            return this;
+        }
+
+
+        /**
+         * Provide an icon for the remote link.
+         * @param url A 16x16 icon representing the type of the object in the remote system.
+         * @param title Text for the tooltip of the main icon describing the type of the object in the remote system.
+         * @return this instance
+         */
+        public FluentRemoteLink icon(final String url, final String title) {
+            final JSONObject icon = new JSONObject();
+            icon.put("url16x16", url);
+            icon.put("title", title);
+            getObject().put("icon", icon);
+            return this;
+        }
+
+
+        /**
+         * The status in the remote system.
+         * @param resolved if {@code true} the link to the issue will be in a strike through font.
+         * @param title Text for the tooltip of the main icon describing the type of the object in the remote system.
+         * @param iconUrl Text for the tooltip of the main icon describing the type of the object in the remote system.
+         * @param statusUrl A hyperlink for the tooltip of the the status icon.
+         * @return this instance
+         */
+        public FluentRemoteLink status(final boolean resolved, final String iconUrl, final String title, final String statusUrl) {
+            final JSONObject status = new JSONObject();
+            status.put("resolved", Boolean.toString(resolved));
+            final JSONObject icon = new JSONObject();
+            icon.put("title", title);
+            if (iconUrl != null) {
+                icon.put("url16x16", iconUrl);
+            }
+            if (statusUrl != null) {
+                icon.put("link", statusUrl);
+            }
+            status.put("icon", icon);
+            getObject().put("status", status);
+            return this;
+        }
+
+
+        /**
+         * Textual summary of the remote object.
+         * @param summary Textual summary of the remote object.
+         * @return this instance
+         */
+        public FluentRemoteLink summary(final String summary) {
+            getObject().put("summary", summary);
+            return this;
+        }
+
+
+        /**
+         * Relationship between the remote object and the JIRA issue. This can be a verb or a noun.
+         * It is used to group together links in the UI.
+         * @param relationship Relationship between the remote object and the JIRA issue.
+         * @return this instance
+         */
+        public FluentRemoteLink relationship(final String relationship) {
+            request.put("relationship", relationship);
+            return this;
+        }
+
+
+        /**
+         * The application for this remote link. Links are grouped on the type and name in the UI. The name-spaced
+         * type of the application. It is not displayed to the user. Renderering plugins can register to render a
+         * certain type of application.
+         * @param type The name-spaced type of the application.
+         * @param name The human-readable name of the remote application instance that stores the remote object.
+         * @return this instance
+         */
+        public FluentRemoteLink application(final String type, final String name) {
+            final JSONObject application = new JSONObject();
+            if (type != null) {
+                application.put("type", type);
+            }
+            application.put("name", name);
+            request.put("application", application);
+            return this;
+        }
+
+
+        /**
+         * Creates or updates the remote link if a {@link #globalId(String) global id} is given and there is already
+         * a remote link for the specified global id.
+         * @throws JiraException when the remote link creation fails
+         */
+        public void create() throws JiraException {
+            try {
+                restclient.post(getRestUri(key) + "/remotelink", request);
+            } catch (Exception ex) {
+                throw new JiraException("Failed add remote link to issue " + key, ex);
+            }
+        }
+
+    }
+
     /**
      * count issues with the given query.
      *
@@ -642,22 +804,24 @@ public class Issue extends Resource {
      * @param summary Summary of the remote link
      *
      * @throws JiraException when the link creation fails
+     * @see #remoteLink()
      */
     public void addRemoteLink(String url, String title, String summary) throws JiraException {
-        JSONObject req = new JSONObject();
-        JSONObject obj = new JSONObject();
-        
-        obj.put("url", url);
-        obj.put("title", title);
-        obj.put("summary", summary);
-        
-        req.put("object", obj);
+        remoteLink().url(url).title(title).summary(summary).create();
+    }
 
-        try {
-            restclient.post(getRestUri(key) + "/remotelink", req);
-        } catch (Exception ex) {
-            throw new JiraException("Failed add remote link to issue " + key, ex);
-        }
+
+    /**
+     * Adds a remote link to this issue. At least set the
+     * {@link FluentRemoteLink#url(String) url} or
+     * {@link FluentRemoteLink#globalId(String) globalId} and
+     * {@link FluentRemoteLink#title(String) title} before
+     * {@link FluentRemoteLink#create() creating} the link.
+     *
+     * @return a fluent remote link instance
+     */
+    public FluentRemoteLink remoteLink() {
+        return new FluentRemoteLink(restclient, getKey());
     }
 
     /**
