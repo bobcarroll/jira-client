@@ -149,22 +149,14 @@ public class Issue extends Resource {
         final private RestClient restclient;
         final private String key;
         final private JSONObject request;
+        final private JSONObject object;
 
 
         private FluentRemoteLink(final RestClient restclient, String key) {
             this.restclient = restclient;
             this.key = key;
             request = new JSONObject();
-        }
-
-
-        private JSONObject getObject() {
-            JSONObject object = (JSONObject) request.get("object");
-            if (object == null) {
-                object = new JSONObject();
-                request.put("object", object);
-            }
-            return object;
+            object = new JSONObject();
         }
 
 
@@ -188,7 +180,7 @@ public class Issue extends Resource {
          * @return this instance
          */
         public FluentRemoteLink url(final String url) {
-            getObject().put("url", url);
+            object.put("url", url);
             return this;
         }
 
@@ -199,7 +191,7 @@ public class Issue extends Resource {
          * @return this instance
          */
         public FluentRemoteLink title(final String title) {
-            getObject().put("title", title);
+            object.put("title", title);
             return this;
         }
 
@@ -214,7 +206,7 @@ public class Issue extends Resource {
             final JSONObject icon = new JSONObject();
             icon.put("url16x16", url);
             icon.put("title", title);
-            getObject().put("icon", icon);
+            object.put("icon", icon);
             return this;
         }
 
@@ -239,7 +231,7 @@ public class Issue extends Resource {
                 icon.put("link", statusUrl);
             }
             status.put("icon", icon);
-            getObject().put("status", status);
+            object.put("status", status);
             return this;
         }
 
@@ -250,7 +242,7 @@ public class Issue extends Resource {
          * @return this instance
          */
         public FluentRemoteLink summary(final String summary) {
-            getObject().put("summary", summary);
+            object.put("summary", summary);
             return this;
         }
 
@@ -293,6 +285,7 @@ public class Issue extends Resource {
          */
         public void create() throws JiraException {
             try {
+                request.put("object", object);
                 restclient.post(getRestUri(key) + "/remotelink", request);
             } catch (Exception ex) {
                 throw new JiraException("Failed add remote link to issue " + key, ex);
