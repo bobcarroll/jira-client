@@ -8,6 +8,9 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSON;
+import net.sf.json.JSONNull;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
@@ -100,7 +103,7 @@ public class IssueTest {
 
     @Test
     public void testGetVersion(){
-        Issue issue = new Issue(null,Utils.getTestIssue());
+        Issue issue = new Issue(null, Utils.getTestIssue());
         List<Version> versions = issue.getFixVersions();
 
         assertNotNull(versions);
@@ -134,6 +137,66 @@ public class IssueTest {
     public void testUpdatedDate(){
       Issue issue = new Issue(null,Utils.getTestIssue());
       assertEquals(new DateTime(2013, 10, 9, 22, 24, 55, 961, DateTimeZone.forOffsetHours(1)).toDate(), issue.getUpdatedDate());
+    }
+
+    @Test
+    public void testAddRemoteLink() throws JiraException {
+        final TestableRestClient restClient = new TestableRestClient();
+        Issue issue = new Issue(restClient, Utils.getTestIssue());
+        issue.addRemoteLink("test-url", "test-title", "test-summary");
+        assertEquals("/rest/api/latest/issue/FILTA-43/remotelink", restClient.postPath);
+        assertEquals("{\"object\":{\"url\":\"test-url\",\"title\":\"test-title\",\"summary\":\"test-summary\"}}", restClient.postPayload.toString(0));
+    }
+
+
+    @Test
+    public void testRemoteLink() throws JiraException {
+        final TestableRestClient restClient = new TestableRestClient();
+        Issue issue = new Issue(restClient, Utils.getTestIssue());
+        issue.remoteLink()
+                .globalId("gid")
+                .title("test-title")
+                .summary("summary")
+                .application("app-type", "app-name")
+                .relationship("fixes")
+                .icon("icon", "icon-url")
+                .status(true, "status-icon", "status-title", "status-url")
+                .create();
+        assertEquals("/rest/api/latest/issue/FILTA-43/remotelink", restClient.postPath);
+        assertEquals(
+                "{\"globalId\":\"gid\"," +
+                "\"application\":" +
+                        "{\"type\":\"app-type\",\"name\":\"app-name\"}," +
+                "\"relationship\":\"fixes\"," +
+                "\"object\":{" +
+                        "\"url\":\"gid\"," +
+                        "\"title\":\"test-title\"," +
+                        "\"summary\":\"summary\"," +
+                        "\"icon\":" +
+                            "{\"url16x16\":\"icon\",\"title\":\"icon-url\"}," +
+                        "\"status\":{\"resolved\":\"true\",\"icon\":" +
+                            "{\"title\":\"status-title\",\"url16x16\":\"status-icon\",\"link\":\"status-url\"}" +
+                "}}}",
+                restClient.postPayload.toString(0));
+    }
+
+
+    private static class TestableRestClient extends RestClient {
+
+        public String postPath = "not called";
+        public JSON postPayload = JSONNull.getInstance();
+
+        public TestableRestClient() {
+            super(null, null);
+        }
+
+        @Override
+        public JSON post(String path, JSON payload) {
+            postPath = path;
+            postPayload = payload;
+            return null;
+        }
+
     }
 
 }
