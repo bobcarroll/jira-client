@@ -22,6 +22,7 @@ package net.rcarz.jiraclient.greenhopper;
 import net.rcarz.jiraclient.RestClient;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sf.json.JSONArray;
@@ -181,16 +182,19 @@ public final class GreenHopperField {
     /**
      * Gets a list of strings from the given object.
      *
-     * @param ia a JSONArray instance
+     * @param o a JSONObject instance
      *
      * @return a list of strings
      */
-    public static List<String> getStringArray(Object ia) {
-        List<String> results = new ArrayList<String>();
+    public static List<String> getStringArray(Object o) {
+	    List<String> results = new ArrayList<String>();
 
-        if (ia instanceof JSONArray) {
-            for (Object v : (JSONArray)ia)
-                results.add((String)v);
+        if (o instanceof JSONObject && !((JSONObject)o).isNullObject()) {
+            JSONObject obj = (JSONObject)o;
+            Iterator<?> it = obj.keys();
+            while(it.hasNext()) {
+                results.add(it.next().toString());
+            }
         }
 
         return results;
