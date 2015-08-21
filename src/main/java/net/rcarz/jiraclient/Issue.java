@@ -526,6 +526,105 @@ public class Issue extends Resource {
         }
     }
 
+
+	/**
+     * Iterates over all issues in the query by getting the next page of
+     * issues when the iterator reaches the last of the current page.
+     */
+    private static class IssueIterator implements Iterator<Issue> {
+    	private Iterator<Issue> currentPage;
+		private RestClient restClient;
+		private Issue nextIssue;
+        private Integer maxResults = -1;
+		private String jql;
+		private String includedFields;
+		private String expandFields;
+		private Integer startAt;
+		private List<Issue> issues;
+		private int total;
+		
+        public IssueIterator(RestClient restClient, String jql,
+                String includedFields, String expandFields, Integer maxResults, Integer startAt)
+                        throws JiraException {
+			this.restClient = restClient;
+			this.jql = jql;
+			this.includedFields = includedFields;
+			this.expandFields = expandFields;
+			this.maxResults = maxResults;
+			this.startAt = startAt;
+        }
+    	
+		@Override
+		public boolean hasNext() {
+			if (nextIssue != null) {
+				return true;
+			}
+			try {
+				nextIssue = getNextIssue();
+			} catch (JiraException e) {
+				throw new RuntimeException(e);
+			}
+			return nextIssue != null;
+		}
+
+		@Override
+		public Issue next() {
+			if (! hasNext()) {
+				throw new NoSuchElementException();
+			}
+			Issue result = nextIssue;
+			nextIssue = null;
+			return result;
+		}
+
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("Method remove() not support for class " + this.getClass().getName());
+		}
+
+		private Issue getNextIssue() throws JiraException {
+			// first call
+			if (currentPage == null) {
+				currentPage = getNextIssues().iterator();
+				if (currentPage == null) {
+					return null;
+				} else {
+					return currentPage.next();
+				}
+			}
+			
+			if (! currentPage.hasNext()) {
+				currentPage = getNextIssues().iterator();
+			}
+
+			if (currentPage.hasNext()) {
+				return currentPage.next();
+			} else {
+				return null;
+			}
+		}
+
+		private List<Issue> getNextIssues() throws JiraException {
+			if (issues == null) {
+				startAt = Integer.valueOf(0);
+			} else {
+				startAt = startAt + issues.size();
+			}
+
+			JSON searchResult = executeSearch(restClient, jql, includedFields, expandFields, maxResults, startAt);
+    		
+			Map map = (Map) searchResult;
+	
+			this.startAt = Field.getInteger(map.get("startAt"));
+			this.maxResults = Field.getInteger(map.get("maxResults"));
+	    	this.total = Field.getInteger(map.get("total"));
+	    	this.issues = Field.getResourceArray(Issue.class, map.get("issues"), restClient);
+	    	return issues;
+		}
+
+    }
+    
     /**
      * Issue search results structure.
      */
@@ -534,6 +633,42 @@ public class Issue extends Resource {
         public int max = 0;
         public int total = 0;
         public List<Issue> issues = null;
+		private RestClient restClient;
+		private String jql;
+		private String includedFields;
+		private String expandFields;
+		private Integer maxResults;
+		private Integer startAt;
+		private IssueIterator issueIterator;
+
+	    public SearchResult(RestClient restClient, String jql,
+	            String includedFields, String expandFields, Integer maxResults, Integer startAt) throws JiraException {
+			this.restClient = restClient;
+			this.jql = jql;
+			this.includedFields = includedFields;
+			this.expandFields = expandFields;
+			this.maxResults = maxResults;
+			this.startAt = startAt;
+			initSearchResult();
+        }
+        
+        private void initSearchResult() throws JiraException {
+        	this.issueIterator = new IssueIterator(restClient, jql, includedFields, expandFields, maxResults, startAt);
+        	this.issueIterator.hasNext();
+        	this.max = issueIterator.maxResults;
+        	this.start = issueIterator.startAt;
+        	this.issues = issueIterator.issues;
+        	this.total = issueIterator.total;
+		}
+
+		/**
+         * All issues found.
+         * 
+         * @return All issues found.
+         */
+        public IssueIterator iterator() {
+        	return issueIterator;
+        }
     }
 
     public static final class NewAttachment {
@@ -1163,7 +1298,15 @@ public class Issue extends Resource {
             String includedFields, String expandFields, Integer maxResults, Integer startAt)
                     throws JiraException {
 
-        final String j = jql;
+		SearchResult sr = new SearchResult(restclient, jql, includedFields, expandFields, maxResults, startAt);
+
+        return sr;
+    }
+
+	private static JSON executeSearch(RestClient restclient, String jql,
+			String includedFields, String expandFields, Integer maxResults,
+			Integer startAt) throws JiraException {
+		final String j = jql;
         JSON result = null;
 
         try {
@@ -1191,17 +1334,8 @@ public class Issue extends Resource {
         if (!(result instanceof JSONObject)) {
             throw new JiraException("JSON payload is malformed");
         }
-
-        SearchResult sr = new SearchResult();
-        Map map = (Map) result;
-
-        sr.start = Field.getInteger(map.get("startAt"));
-        sr.max = Field.getInteger(map.get("maxResults"));
-        sr.total = Field.getInteger(map.get("total"));
-        sr.issues = Field.getResourceArray(Issue.class, map.get("issues"), restclient);
-
-        return sr;
-    }
+		return result;
+	}
 
     /**
      * Reloads issue data from the JIRA server (issue includes all navigable
