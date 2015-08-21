@@ -309,11 +309,8 @@ public class Issue extends Resource {
         final String j = jql;
         JSON result = null;
         try {
-            Map<String, String> queryParams = new HashMap<String, String>() {
-                {
-                    put("jql", j);
-                }
-            };
+            Map<String, String> queryParams = new HashMap<String, String>();
+            queryParams.put("jql", j);
             queryParams.put("maxResults", "1");
             URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
             result = restclient.get(searchUri);
@@ -689,13 +686,13 @@ public class Issue extends Resource {
         JSON result = null;
 
         try {
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("expand", "projects.issuetypes.fields");
+        	params.put("projectKeys", pval);
+        	params.put("issuetypeNames", itval);
             URI createuri = restclient.buildURI(
                 getBaseUri() + "issue/createmeta",
-                new HashMap<String, String>() {{
-                    put("expand", "projects.issuetypes.fields");
-                    put("projectKeys", pval);
-                    put("issuetypeNames", itval);
-                }});
+                params);
             result = restclient.get(createuri);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve issue metadata", ex);
@@ -747,11 +744,10 @@ public class Issue extends Resource {
         JSON result = null;
 
         try {
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("expand", "transitions.fields");
             URI transuri = restclient.buildURI(
-                getRestUri(key) + "/transitions",
-                new HashMap<String, String>() {{
-                    put("expand", "transitions.fields");
-                }});
+                getRestUri(key) + "/transitions",params);
             result = restclient.get(transuri);
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve transitions", ex);
@@ -1048,11 +1044,8 @@ public class Issue extends Resource {
     public static Issue get(RestClient restclient, String key, final String includedFields)
             throws JiraException {
 
-        Map<String, String> queryParams = new HashMap<String, String>() {
-            {
-                put("fields", includedFields);
-            }
-        };
+        Map<String, String> queryParams = new HashMap<String, String>();
+        queryParams.put("fields", includedFields);
         return new Issue(restclient, realGet(restclient, key, queryParams));
     }
 
@@ -1082,14 +1075,11 @@ public class Issue extends Resource {
     public static Issue get(RestClient restclient, String key, final String includedFields,
             final String expand) throws JiraException {
 
-        Map<String, String> queryParams = new HashMap<String, String>() {
-            {
-                put("fields", includedFields);
-                if (expand != null) {
-                    put("expand", expand);
-                }
-            }
-        };
+        Map<String, String> queryParams = new HashMap<String, String>();
+        queryParams.put("fields", includedFields);
+	    if (expand != null) {
+	        queryParams.put("expand", expand);
+	    }
         return new Issue(restclient, realGet(restclient, key, queryParams));
     }
 
@@ -1177,11 +1167,8 @@ public class Issue extends Resource {
         JSON result = null;
 
         try {
-            Map<String, String> queryParams = new HashMap<String, String>() {
-                {
-                    put("jql", j);
-                }
-            };
+            Map<String, String> queryParams = new HashMap<String, String>();
+            queryParams.put("jql", j);
             if(maxResults != null){
                 queryParams.put("maxResults", String.valueOf(maxResults));
             }
@@ -1245,11 +1232,8 @@ public class Issue extends Resource {
      */
     public void refresh(final String includedFields) throws JiraException {
 
-        Map<String, String> queryParams = new HashMap<String, String>() {
-            {
-                put("fields", includedFields);
-            }
-        };
+        Map<String, String> queryParams = new HashMap<String, String>();
+        queryParams.put("fields", includedFields);
         JSONObject result = realGet(restclient, key, queryParams);
         deserialise(result);
     }
@@ -1346,11 +1330,10 @@ public class Issue extends Resource {
 
         try {
             final String u = username;
+            Map<String, String> connectionParams = new HashMap<String, String>();
+            connectionParams.put("username", u);
             URI uri = restclient.buildURI(
-                getRestUri(key) + "/watchers",
-                new HashMap<String, String>() {{
-                    put("username", u);
-                }});
+                getRestUri(key) + "/watchers", connectionParams);
             restclient.delete(uri);
         } catch (Exception ex) {
             throw new JiraException(
