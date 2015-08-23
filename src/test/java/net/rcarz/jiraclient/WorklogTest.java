@@ -10,9 +10,9 @@ import static junit.framework.Assert.assertEquals;
 public class WorklogTest {
 
     private String author = "joseph";
-    private String started = "2015-08-17T00:00:00.000+0300";
-    private String created = "2015-08-20T00:00:00.000+0300";
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private String started = "2015-08-17T00:00:00.000";
+    private String created = "2015-08-20T00:00:00.000";
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     @Test
     public void testWorklog() {
