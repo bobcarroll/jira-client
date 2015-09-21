@@ -34,7 +34,7 @@ public class WorkLog extends Resource {
     private String comment = null;
     private Date created = null;
     private Date updated = null;
-    private User updatedAuthor = null;
+    private User updateAuthor = null;
     private Date started = null;
     private String timeSpent = null;
     private int timeSpentSeconds = 0;
@@ -61,7 +61,7 @@ public class WorkLog extends Resource {
         comment = Field.getString(map.get("comment"));
         created = Field.getDate(map.get("created"));
         updated = Field.getDate(map.get("updated"));
-        updatedAuthor = Field.getResource(User.class, map.get("updatedAuthor"), restclient);
+        updateAuthor = Field.getResource(User.class, map.get("updateAuthor"), restclient);
         started = Field.getDate(map.get("started"));
         timeSpent = Field.getString(map.get("timeSpent"));
         timeSpentSeconds = Field.getInteger(map.get("timeSpentSeconds"));
@@ -113,15 +113,20 @@ public class WorkLog extends Resource {
     }
 
     public User getUpdateAuthor() {
-        return updatedAuthor;
+        return updateAuthor;
     }
 
     public Date getUpdatedDate() {
         return updated;
     }
 
+    public Date getStarted(){ return started; }
+
+    public String getTimeSpent(){ return timeSpent; }
+
     public int getTimeSpentSeconds() {
         return timeSpentSeconds;
     }
+
 }
 

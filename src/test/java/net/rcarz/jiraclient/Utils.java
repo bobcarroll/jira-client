@@ -202,4 +202,83 @@ public class Utils {
         return jsonObject;
     }
 
+    public static JSONObject getTestIssueWorklogs() {
+        JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON("{\n" +
+                "   \"startAt\":0,\n" +
+                "   \"maxResults\":2,\n" +
+                "   \"total\":2,\n" +
+                "   \"worklogs\":[  \n" +
+                "      {  \n" +
+                "         \"self\":\"https://brainbubble.atlassian.net/rest/api/latest/issue/10742/worklog/45517\",\n" +
+                "         \"author\":{  \n" +
+                "            \"self\":\"https://brainbubble.atlassian.net/rest/api/2/user?username=joseph\", \n" +
+                "            \"name\":\"joseph\",\n" +
+                "            \"avatarUrls\":{  \n" +
+                "               \"48x48\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=48\",\n" +
+                "               \"24x24\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=24\",\n" +
+                "               \"16x16\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=16\",\n" +
+                "               \"32x32\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=32\"\n" +
+                "            },\n" +
+                "            \"displayName\":\"Joseph McCarthy\",\n" +
+                "            \"active\":true\n" +
+                "         },\n" +
+                "         \"updateAuthor\":{  \n" +
+                "            \"self\":\"https://brainbubble.atlassian.net/rest/api/2/user?username=joseph\",\n" +
+                "            \"name\":\"joseph\",\n" +
+                "            \"avatarUrls\":{  \n" +
+                "               \"48x48\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=48\",\n" +
+                "               \"24x24\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=24\",\n" +
+                "               \"16x16\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=16\",\n" +
+                "               \"32x32\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=32\"\n" +
+                "            },\n" +
+                "            \"displayName\":\"Joseph McCarthy\",\n" +
+                "            \"active\":true\n" +
+                "         },\n" +
+                "         \"comment\":\"comment for worklog 1\",\n" +
+                "         \"created\":\"2015-08-20T13:19:44.000+0400\",\n" +
+                "         \"updated\":\"2015-08-20T13:19:44.000+0400\",\n" +
+                "         \"started\":\"2015-08-17T13:19:00.000+0400\",\n" +
+                "         \"timeSpent\":\"6h\",\n" +
+                "         \"timeSpentSeconds\":21600,\n" +
+                "         \"id\":\"45517\"\n" +
+                "      },\n" +
+                "      {  \n" +
+                "         \"self\":\"https://brainbubble.atlassian.net/rest/api/latest/issue/10742/worklog/45518\",\n" +
+                "         \"author\":{  \n" +
+                "            \"self\":\"https://brainbubble.atlassian.net/rest/api/2/user?username=joseph\",\n" +
+                "            \"name\":\"joseph\",\n" +
+                "            \"avatarUrls\":{  \n" +
+                "               \"48x48\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=48\",\n" +
+                "               \"24x24\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=24\",\n" +
+                "               \"16x16\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=16\",\n" +
+                "               \"32x32\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=32\"\n" +
+                "            },\n" +
+                "            \"displayName\":\"Joseph McCarthy\",\n" +
+                "            \"active\":true\n" +
+                "         },\n" +
+                "         \"updateAuthor\":{  \n" +
+                "            \"self\":\"https://brainbubble.atlassian.net/rest/api/2/user?username=joseph\",\n" +
+                "            \"name\":\"joseph\",\n" +
+                "            \"avatarUrls\":{  \n" +
+                "               \"48x48\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=48\",\n" +
+                "               \"24x24\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=24\",\n" +
+                "               \"16x16\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=16\",\n" +
+                "               \"32x32\":\"https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=32\"\n" +
+                "            },\n" +
+                "            \"displayName\":\"Joseph McCarthy\",\n" +
+                "            \"active\":true\n" +
+                "         },\n" +
+                "         \"comment\":\"comment for worklog 2\",\n" +
+                "         \"created\":\"2015-08-20T13:19:57.000+0400\",\n" +
+                "         \"updated\":\"2015-08-20T13:19:57.000+0400\",\n" +
+                "         \"started\":\"2015-08-18T13:19:00.000+0400\",\n" +
+                "         \"timeSpent\":\"2h\",\n" +
+                "         \"timeSpentSeconds\":7200,\n" +
+                "         \"id\":\"45518\"\n" +
+                "      }\n" +
+                "   ]\n" +
+                "}");
+        return jsonObject;
+    }
+
 }
