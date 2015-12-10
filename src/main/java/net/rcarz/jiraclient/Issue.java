@@ -839,6 +839,26 @@ public class Issue extends Resource {
     }
 
     /**
+	 * Removes an attachments.
+	 *
+	 * @param attachmentId attachment id to remove
+	 *
+	 * @throws JiraException when the attachment removal fails
+	 */
+	public void removeAttachment(String attachmentId) throws JiraException {
+	
+	    if (attachmentId == null) {
+	        throw new NullPointerException("attachmentId may not be null");
+	    }
+	
+	    try {
+	        restclient.delete(getBaseUri() + "attachment/" + attachmentId);
+	    } catch (Exception ex) {
+	        throw new JiraException("Failed remove attachment " + attachmentId, ex);
+	    }
+	}
+
+    /**
      * Adds a comment to this issue.
      *
      * @param body Comment text
