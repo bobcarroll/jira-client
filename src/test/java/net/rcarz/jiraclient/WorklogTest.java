@@ -4,6 +4,7 @@ import net.sf.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.text.SimpleDateFormat;
@@ -27,23 +28,24 @@ public class WorklogTest {
     @Test(expected = JiraException.class)
     public void testJiraExceptionFromNonJSON() throws Exception {
         final RestClient mockRestClient = PowerMockito.mock(RestClient.class);
-        WorkLog.get(mockRestClient, "issueNumber", "someID");
+        WorkLog.get(mockRestClient,"issueNumber","someID");
     }
 
     @Test
     public void testToString() throws Exception {
         final RestClient mockRestClient = PowerMockito.mock(RestClient.class);
         final JSONObject mockJSONObject = new JSONObject();
-        String dateString = "2013-09-29T20:16:19.854+0100";
+        String dateString = "2015-12-24";
 
-        mockJSONObject.put("created", dateString);
+        mockJSONObject.put("created",dateString);
         final JSONObject userJSON = new JSONObject();
-        userJSON.put("name", "Joseph McCarthy");
+        userJSON.put("name","Joseph McCarthy");
         mockJSONObject.put("author", userJSON);
 
 
-        WorkLog workLog = new WorkLog(mockRestClient, mockJSONObject);
-        assertEquals("Sun Sep 29 00:00:00 BST 2013 by Joseph McCarthy", workLog.toString());
+
+        WorkLog workLog = new WorkLog(mockRestClient,mockJSONObject);
+        assertEquals("Thu Dec 24 00:00:00 GMT 2015 by Joseph McCarthy",workLog.toString());
     }
 
     @Test
