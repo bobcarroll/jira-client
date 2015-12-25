@@ -34,7 +34,7 @@ public class WorklogTest {
     public void testToString() throws Exception {
         final RestClient mockRestClient = PowerMockito.mock(RestClient.class);
         final JSONObject mockJSONObject = new JSONObject();
-        String dateString = "2015-12-24";
+        String dateString = "2013-09-29T20:16:19.854+0100";
 
         mockJSONObject.put("created", dateString);
         final JSONObject userJSON = new JSONObject();
@@ -43,7 +43,7 @@ public class WorklogTest {
 
 
         WorkLog workLog = new WorkLog(mockRestClient, mockJSONObject);
-        assertEquals("Thu Dec 24 00:00:00 GMT 2015 by Joseph McCarthy", workLog.toString());
+        assertEquals("Sun Sep 29 00:00:00 BST 2013 by Joseph McCarthy", workLog.toString());
     }
 
     @Test
