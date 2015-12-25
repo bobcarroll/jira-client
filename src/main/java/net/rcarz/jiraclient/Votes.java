@@ -29,7 +29,6 @@ import java.util.Map;
  */
 public class Votes extends Resource {
 
-    private String name = null;
     private int votes = 0;
     private boolean hasVoted = false;
 
