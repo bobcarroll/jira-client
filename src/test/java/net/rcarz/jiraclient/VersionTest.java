@@ -1,22 +1,17 @@
 package net.rcarz.jiraclient;
 
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.PowerMockUtils;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(JSONObject.class)
@@ -87,7 +82,7 @@ public class VersionTest {
         verify(mockRestClient, times(1)).put(anyString(), any(JSONObject.class));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = JiraException.class)
     public void testMergeWithFailed() throws Exception {
         final RestClient mockRestClient = PowerMockito.mock(RestClient.class);
         final JSONObject mockJSON = PowerMockito.mock(JSONObject.class);
@@ -105,7 +100,7 @@ public class VersionTest {
         verify(mockRestClient, times(1)).post(anyString(),any(JSONObject.class));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = JiraException.class)
     public void testCopyToFailed() throws Exception {
         final RestClient mockRestClient = PowerMockito.mock(RestClient.class);
         final JSONObject mockJSON = PowerMockito.mock(JSONObject.class);
