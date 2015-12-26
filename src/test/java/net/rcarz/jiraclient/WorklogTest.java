@@ -6,7 +6,9 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -41,10 +43,12 @@ public class WorklogTest {
         userJSON.put("name","Joseph McCarthy");
         mockJSONObject.put("author", userJSON);
 
-
+        String DATE_FORMAT = "yyyy-MM-dd";
+        SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
+        final Date parse = df.parse(dateString, new ParsePosition(0));
 
         WorkLog workLog = new WorkLog(mockRestClient,mockJSONObject);
-        assertEquals("Thu Dec 24 00:00:00 GMT 2015 by Joseph McCarthy",workLog.toString());
+        assertEquals(parse.toString() + " by Joseph McCarthy",workLog.toString());
     }
 
     @Test
