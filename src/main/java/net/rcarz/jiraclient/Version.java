@@ -54,7 +54,7 @@ public class Version extends Resource {
      * @param version
      *            The version to merge
      */
-    public void mergeWith(Version version) {
+    public void mergeWith(Version version) throws JiraException {
     
         JSONObject req = new JSONObject();
         req.put("description", version.getDescription());
@@ -66,7 +66,7 @@ public class Version extends Resource {
         try {
             restclient.put(Resource.getBaseUri() + "version/" + id, req);
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to merge", ex);
+            throw new JiraException("Failed to merge", ex);
         }
     }
 
@@ -76,7 +76,7 @@ public class Version extends Resource {
     * @param project
     *            The project the version will be copied to
     */
-    public void copyTo(Project project) {
+    public void copyTo(Project project) throws JiraException {
     
         JSONObject req = new JSONObject();
         req.put("description", getDescription());
@@ -90,7 +90,7 @@ public class Version extends Resource {
         try {
             restclient.post(Resource.getBaseUri() + "version/", req);
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to copy to project '" + project.getKey() + "'", ex);
+            throw new JiraException("Failed to copy to project '" + project.getKey() + "'", ex);
         }
     }
 
