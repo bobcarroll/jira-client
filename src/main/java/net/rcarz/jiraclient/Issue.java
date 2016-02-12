@@ -137,6 +137,19 @@ public class Issue extends Resource {
             fields.put(name, value);
             return this;
         }
+
+        /**
+         * Appends a field to the update action.
+         *
+         * @param name Name of the field
+         * @param value A {@link IgnoreMetadataCheck} object that represents New field value
+         *
+         * @return the current fluent update instance
+         */
+        public FluentCreate field(String name, IgnoreMetadataCheck value) {
+            fields.put(name, value);
+            return this;
+        }
     }
 
 
@@ -391,6 +404,19 @@ public class Issue extends Resource {
             return this;
         }
 
+        /**
+         * Appends a field to the update action.
+         *
+         * @param name Name of the field
+         * @param value A {@link IgnoreMetadataCheck} object that represents New field value
+         *
+         * @return the current fluent update instance
+         */
+        public FluentUpdate field(String name, IgnoreMetadataCheck value) {
+            fields.put(name, value);
+            return this;
+        }
+
         private FluentUpdate fieldOperation(String oper, String name, Object value) {
             if (!fieldOpers.containsKey(name))
                 fieldOpers.put(name, new ArrayList());
@@ -527,6 +553,20 @@ public class Issue extends Resource {
             fields.put(name, value);
             return this;
         }
+
+        /**
+         * Appends a field to the transition action.
+         *
+         * @param name Name of the field
+         * @param value A {@link IgnoreMetadataCheck} object that represents New field value
+         *
+         * @return the current fluent transition instance
+         */
+        public FluentTransition field(String name, IgnoreMetadataCheck value) {
+            fields.put(name, value);
+            return this;
+        }
+
     }
 
     /**
