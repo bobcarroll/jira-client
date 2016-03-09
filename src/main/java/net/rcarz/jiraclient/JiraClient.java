@@ -27,11 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
-import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
  * A simple JIRA REST client.
@@ -59,7 +61,10 @@ public class JiraClient {
      * @throws JiraException 
      */
     public JiraClient(String uri, ICredentials creds) throws JiraException {
-        DefaultHttpClient httpclient = new DefaultHttpClient();
+    	PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
+        connManager.setDefaultMaxPerRoute(20);
+        connManager.setMaxTotal(40);
+        HttpClient httpclient = new DefaultHttpClient(connManager);
 
         restclient = new RestClient(httpclient, creds, URI.create(uri));
 
