@@ -45,6 +45,14 @@ public class TransitionTest {
         assertEquals("Done", transition.toString());
     }
 
+    @Test
+    public void testGetFields() throws Exception {
+        Transition transition = new Transition(new RestClient(null, new URI("/123/asd")), getTestJson());
+        final Map fields = transition.getFields();
+        Assert.assertEquals(2,fields.size());
+
+    }
+
     public static JSONObject getTestJson() {
         JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(
                 "{\n" +
