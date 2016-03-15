@@ -504,8 +504,12 @@ public final class Field {
         if (value instanceof Date || value == null)
             return (Date)value;
 
+        String dateStr = value.toString();
         SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
-        return df.parse(value.toString(), new ParsePosition(0));
+        if (dateStr.length() > DATE_FORMAT.length()) {
+            df = new SimpleDateFormat(DATETIME_FORMAT);
+        }
+        return df.parse(dateStr, new ParsePosition(0));
     }
 
     /**
@@ -547,7 +551,8 @@ public final class Field {
 
                 realResult = itemMap;
             } else if (type.equals("string") && custom != null
-                    && custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes")) {
+                    && (custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") ||
+                    custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multiselect"))) {
                 
                 realResult = new JSONObject();
                 ((JSONObject)realResult).put(ValueType.VALUE.toString(), realValue.toString());
