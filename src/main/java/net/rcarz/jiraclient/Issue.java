@@ -1,7 +1,7 @@
 /**
  * jira-client - a simple JIRA REST client
  * Copyright (c) 2013 Bob Carroll (bob.carroll@alum.rit.edu)
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -716,7 +716,7 @@ public class Issue extends Resource {
             restclient);
 
         if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty())
-            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType + 
+            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType +
                     "' missing from create metadata. Do you have enough permissions?");
 
         return projects.get(0).getIssueTypes().get(0).getFields();
@@ -788,7 +788,7 @@ public class Issue extends Resource {
             throw new JiraException("Failed add attachment to issue " + key, ex);
         }
     }
-    
+
     /**
      * Adds a remote link to this issue.
      *
@@ -1072,7 +1072,7 @@ public class Issue extends Resource {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param expand fields to expand when obtaining the issue
      *
      * @return an issue instance
@@ -1156,10 +1156,10 @@ public class Issue extends Resource {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param maxResults if non-<code>null</code>, defines the maximum number of
      * results that can be returned 
-     * 
+     *
      * @param startAt if non-<code>null</code>, defines the first issue to
      * return
      *
@@ -1427,7 +1427,7 @@ public class Issue extends Resource {
     public User getReporter() {
         return reporter;
     }
-    
+
     public List<RemoteLink> getRemoteLinks() throws JiraException {
         JSONArray obj;
         try {
@@ -1512,5 +1512,17 @@ public class Issue extends Resource {
         return updatedDate;
     }
 
+    public boolean delete(final boolean deleteSubtasks) throws JiraException {
+        boolean result;
+        try {
+                URI uri = restclient.buildURI(getBaseUri() + "issue/" + this.key, new HashMap<String, String>() {{
+                put("deleteSubtasks", String.valueOf(deleteSubtasks));
+            }});
+            result = (restclient.delete(uri) == null);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to delete issue " + key, ex);
+        }
+        return result;
+    }
 }
 

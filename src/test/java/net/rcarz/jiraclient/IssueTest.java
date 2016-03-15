@@ -5,6 +5,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 public class IssueTest {
 
@@ -199,4 +203,16 @@ public class IssueTest {
 
     }
 
+    /**
+     * false is bu default so we test positive case only
+     */
+    @Test
+    public void testDelete() throws Exception {
+        RestClient restClient = mock(RestClient.class);
+        URI uri = new URI("DUMMY");
+        when(restClient.buildURI(anyString(), any(Map.class))).thenReturn(uri);
+        when(restClient.delete(eq(uri))).thenReturn(null);
+        Issue issue = new Issue(restClient, Utils.getTestIssue());
+        Assert.assertTrue(issue.delete(true));
+    }
 }
