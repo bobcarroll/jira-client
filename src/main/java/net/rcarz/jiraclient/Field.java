@@ -357,6 +357,8 @@ public final class Field {
                 result = (T)new Priority(restclient, (JSONObject)r);
             else if (type == Project.class)
                 result = (T)new Project(restclient, (JSONObject)r);
+            else if (type == ProjectCategory.class)
+                result = (T)new ProjectCategory(restclient, (JSONObject)r);
             else if (type == RemoteLink.class)
                 result = (T)new RemoteLink(restclient, (JSONObject)r);
             else if (type == Resolution.class)

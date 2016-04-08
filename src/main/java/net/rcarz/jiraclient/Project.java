@@ -41,6 +41,8 @@ public class Project extends Resource {
     private List<IssueType> issueTypes = null;
     private List<Version> versions = null;
     private Map<String, String> roles = null;
+    private ProjectCategory category = null;
+    private String email = null;
 
     /**
      * Creates a project from a JSON payload.
@@ -73,6 +75,8 @@ public class Project extends Resource {
             restclient);
         versions = Field.getResourceArray(Version.class, map.get("versions"), restclient);
         roles = Field.getMap(String.class, String.class, map.get("roles"));
+        category = Field.getResource(ProjectCategory.class, map.get( "projectCategory" ), restclient);
+        email = Field.getString( map.get("email"));
     }
 
     /**
@@ -169,6 +173,14 @@ public class Project extends Resource {
 
     public Map<String, String> getRoles() {
         return roles;
+    }
+
+    public ProjectCategory getCategory() {
+        return category;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }
 
