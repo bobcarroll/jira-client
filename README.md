@@ -275,8 +275,14 @@ public class Example {
     }
 ```
 
-## Agile Example ##
+## Agile API ##
 https://docs.atlassian.com/jira-software/REST/cloud/
+
+### Agile supported calls ###
+ 1. AgileClient
+ ..* GET /rest/agile/1.0/board
+
+### Agile Example ###
 
 ```java
 import java.util.List;
@@ -309,3 +315,4 @@ public class Example {
     }
 }
 ```
+
