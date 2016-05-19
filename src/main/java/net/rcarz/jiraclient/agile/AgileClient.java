@@ -27,6 +27,7 @@ import java.util.List;
 
 /**
  * An Agile extension to the JIRA client.
+ * @see "https://docs.atlassian.com/jira-software/REST/cloud/"
  */
 public class AgileClient {
 

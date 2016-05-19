@@ -45,7 +45,7 @@ public abstract class AgileResource {
     public static final String ATTR_NAME = "name";
     public static final String ATTR_SELF = "self";
 
-    protected static final String RESOURCE_URI = "/rest/agile/1.0/";
+    public static final String RESOURCE_URI = "/rest/agile/1.0/";
 
     private RestClient restclient = null;
     private int id = 0;

@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
@@ -34,14 +35,22 @@ public class Board extends AgileResource {
 
     public static final String ATTR_TYPE = "type";
 
+    private String type;
+
     /**
-     * Creates a rapid view from a JSON payload.
+     * Creates a Board from a JSON payload.
      *
      * @param restclient REST client instance
      * @param json       JSON payload
      */
     protected Board(RestClient restclient, JSONObject json) {
         super(restclient, json);
+    }
+
+    @Override
+    protected void deserialize(JSONObject json) {
+        super.deserialize(json);
+        type = Field.getString(json.get(ATTR_TYPE));
     }
 
     /**
@@ -71,7 +80,7 @@ public class Board extends AgileResource {
      * @return The board type.
      */
     public String getType() {
-        return getAttribute(ATTR_TYPE);
+        return this.type;
     }
 
     public List<Sprint> getSprints() throws JiraException {
