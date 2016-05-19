@@ -279,7 +279,7 @@ public class Example {
 https://docs.atlassian.com/jira-software/REST/cloud/
 
 ### Agile supported calls ###
- 1. [AgileClient](../src/main/java/net/rcarz/jiraclient/agile/AgileClient.java)
+ 1. [AgileClient](src/main/java/net/rcarz/jiraclient/agile/AgileClient.java)
  ..* GET /rest/agile/1.0/board
 
 ### Agile Example ###
