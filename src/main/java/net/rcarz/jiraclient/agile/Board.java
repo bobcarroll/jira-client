@@ -83,23 +83,14 @@ public class Board extends AgileResource {
         return this.type;
     }
 
+    /**
+     * @return All sprints related to the current board.
+     * @throws JiraException when the retrieval fails
+     */
     public List<Sprint> getSprints() throws JiraException {
-        return AgileResource.list(getRestclient(), Sprint.class, RESOURCE_URI + "board/" + getId() + "/sprint");
+        return Sprint.getAll(getRestclient(), getId());
     }
 
-//    /**
-//     * Retrieves the sprint report for the given sprint.
-//     *
-//     * @param sprint Sprint to lookup
-//     *
-//     * @return the sprint report
-//     *
-//     * @throws JiraException when the retrieval fails
-//     */
-//    public SprintReport getSprintReport(Sprint sprint) throws JiraException {
-//        return SprintReport.get(restclient, this, sprint);
-//    }
-//
 //    /**
 //     * Retrieves the backlog data for this rapid view.
 //     *

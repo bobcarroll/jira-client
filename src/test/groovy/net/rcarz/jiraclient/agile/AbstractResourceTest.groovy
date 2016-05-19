@@ -5,6 +5,7 @@ import net.rcarz.jiraclient.RestClient
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNot
 import org.hamcrest.core.IsNull
+import org.junit.Test
 
 import static org.junit.Assert.assertThat
 import static org.mockito.Mockito.mock
@@ -35,6 +36,24 @@ class AbstractResourceTest {
         assertThat board.getName(), new IsEqual<Integer>(JSONResources.BOARD_84_NAME)
         assertThat board.getType(), new IsEqual<Integer>(JSONResources.BOARD_84_TYPE)
         assertThat board.getSelfURL(), new IsEqual<Integer>(JSONResources.BOARD_84_SELF)
+        assertThat board.toString(), new IsEqual<String>(
+                String.format("Board{id=%s, name='%s'}",
+                        JSONResources.BOARD_84_ID, JSONResources.BOARD_84_NAME))
 
+    }
+
+    void "Assert equals to Sprint 37"(Sprint sprint) {
+        assertThat sprint, new IsNot<>(new IsNull())
+        assertThat sprint.getId(), new IsEqual<Integer>(JSONResources.SPRINT_37_ID)
+        assertThat sprint.getName(), new IsEqual<Integer>(JSONResources.SPRINT_37_NAME)
+        assertThat sprint.getSelfURL(), new IsEqual<Integer>(JSONResources.SPRINT_37_SELF)
+        assertThat sprint.getState(), new IsEqual<Integer>(JSONResources.SPRINT_37_STATE)
+        assertThat sprint.getOriginBoardId(), new IsEqual<Integer>(JSONResources.SPRINT_37_ORIGIN_BOARD_ID)
+        assertThat sprint.getStartDate(), new IsEqual<Date>(JSONResources.SPRINT_37_START_DATE)
+        assertThat sprint.getEndDate(), new IsEqual<Date>(JSONResources.SPRINT_37_END_DATE)
+        assertThat sprint.getCompleteDate(), new IsEqual<Date>(JSONResources.SPRINT_37_COMPLETE_DATE)
+        assertThat sprint.toString(), new IsEqual<String>(
+                String.format("Sprint{id=%s, name='%s'}",
+                        JSONResources.SPRINT_37_ID, JSONResources.SPRINT_37_NAME))
     }
 }

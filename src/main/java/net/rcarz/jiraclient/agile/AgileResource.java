@@ -217,7 +217,7 @@ public abstract class AgileResource {
         try {
             result = restclient.get(url);
         } catch (Exception ex) {
-            throw new JiraException("Failed to retrieve boards", ex);
+            throw new JiraException("Failed to retrieve a list of " + type.getSimpleName() + " : " + url, ex);
         }
 
         return getResourceArray(
@@ -240,7 +240,7 @@ public abstract class AgileResource {
         try {
             result = restclient.get(url);
         } catch (Exception ex) {
-            throw new JiraException("Failed to retrieve boards", ex);
+            throw new JiraException("Failed to retrieve " + type.getSimpleName() + " : " + url, ex);
         }
 
         return getResource(
