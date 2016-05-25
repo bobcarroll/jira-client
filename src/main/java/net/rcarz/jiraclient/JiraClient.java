@@ -354,6 +354,16 @@ public class JiraClient {
           startAt);
     }
 
+	/**
+     * Retrieve the jira filter with the supplied id.
+     * @param id id of the filter to retreive.
+     * @return The Jira filter with the supplied id
+     * @throws JiraException
+     */
+    public Filter getFilter(final String id) throws JiraException {
+        return  Filter.get(restclient, id);
+    }
+
     /**
      *
      * @return a list of all priorities available in the Jira installation
