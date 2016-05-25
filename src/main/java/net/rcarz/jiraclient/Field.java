@@ -550,9 +550,11 @@ public final class Field {
                     itemMap.put(ValueType.NAME.toString(), realValue.toString());
 
                 realResult = itemMap;
-            } else if (type.equals("string") && custom != null
+            } else if ( type.equals("option") ||
+                    (
+                    type.equals("string") && custom != null
                     && (custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") ||
-                    custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multiselect"))) {
+                    custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multiselect")))) {
                 
                 realResult = new JSONObject();
                 ((JSONObject)realResult).put(ValueType.VALUE.toString(), realValue.toString());
