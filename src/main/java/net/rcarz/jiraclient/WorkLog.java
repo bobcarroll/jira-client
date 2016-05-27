@@ -60,10 +60,10 @@ public class WorkLog extends Resource {
         id = Field.getString(map.get("id"));
         author = Field.getResource(User.class, map.get("author"), restclient);
         comment = Field.getString(map.get("comment"));
-        created = Field.getDate(map.get("created"));
-        updated = Field.getDate(map.get("updated"));
+        created = Field.getDateTime(map.get("created"));
+        updated = Field.getDateTime(map.get("updated"));
         updateAuthor = Field.getResource(User.class, map.get("updateAuthor"), restclient);
-        started = Field.getDate(map.get("started"));
+        started = Field.getDateTime(map.get("started"));
         timeSpent = Field.getString(map.get("timeSpent"));
         timeSpentSeconds = Field.getInteger(map.get("timeSpentSeconds"));
     }
