@@ -705,7 +705,7 @@ public class Issue extends Resource {
          * 
          * @return All issues found.
          */
-        public IssueIterator iterator() {
+        public Iterator<Issue> iterator() {
         	return issueIterator;
         }
     }
