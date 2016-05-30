@@ -15,7 +15,8 @@ import static org.junit.Assert.assertThat
 import static org.mockito.Mockito.when
 
 /**
- * Created by pldupont on 2016-05-19.
+ * Created on 2016-05-19.
+ * @author pldupont
  */
 class SprintTest extends AbstractResourceTest {
 
@@ -32,7 +33,7 @@ class SprintTest extends AbstractResourceTest {
 
         assertThat sprints, new IsNot<>(new IsNull())
         assertThat sprints.size(), new IsEqual<Integer>(2)
-        "Assert equals to Sprint 37"(sprints.get(0))
+        "Assert equals to Sprint ${JSONResources.SPRINT_ID}"(sprints.get(0))
     }
 
     @Test
@@ -44,18 +45,18 @@ class SprintTest extends AbstractResourceTest {
         expectedException.expect(JiraException.class);
         expectedException.expectMessage("Failed to retrieve a list of Sprint : /rest/agile/1.0/board/" + JSONResources.SPRINT_ORIGIN_BOARD_ID + "/sprint");
 
-        List<Sprint> sprints = Sprint.getAll(mockRestClient, JSONResources.SPRINT_ORIGIN_BOARD_ID);
+        Sprint.getAll(mockRestClient, JSONResources.SPRINT_ORIGIN_BOARD_ID);
     }
 
     @Test
-    void "Given a RestClient, when calling getSprint(84), then receive one Sprint."() {
+    void "Given a RestClient, when calling getSprint(sprintId), then receive one Sprint."() {
         RestClient mockRestClient = "given a REST Client"()
-        when(mockRestClient.get(AgileResource.RESOURCE_URI + "sprint/37"))
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "sprint/${JSONResources.SPRINT_ID}"))
                 .thenReturn(JSONSerializer.toJSON(JSONResources.SPRINT))
 
-        Sprint sprint = Sprint.get(mockRestClient, 37);
+        Sprint sprint = Sprint.get(mockRestClient, JSONResources.SPRINT_ID);
 
-        "Assert equals to Sprint 37"(sprint)
+        "Assert equals to Sprint ${JSONResources.SPRINT_ID}"(sprint)
     }
 
     @Test
@@ -67,6 +68,6 @@ class SprintTest extends AbstractResourceTest {
         expectedException.expect(JiraException.class);
         expectedException.expectMessage("Failed to retrieve Sprint : /rest/agile/1.0/sprint/666");
 
-        Sprint sprint = Sprint.get(mockRestClient, 666);
+        Sprint.get(mockRestClient, 666);
     }
 }

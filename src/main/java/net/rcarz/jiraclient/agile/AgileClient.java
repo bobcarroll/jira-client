@@ -27,6 +27,7 @@ import java.util.List;
 
 /**
  * An Agile extension to the JIRA client.
+ *
  * @see "https://docs.atlassian.com/jira-software/REST/cloud/"
  */
 public class AgileClient {
@@ -43,23 +44,20 @@ public class AgileClient {
     }
 
     /**
-     * Retreives the board with the given ID.
+     * Retrieves the board with the given ID.
      *
      * @param id Board ID
-     *
      * @return a Board instance
-     *
      * @throws JiraException when something goes wrong
      */
-    public Board getBoard(int id) throws JiraException {
+    public Board getBoard(long id) throws JiraException {
         return Board.get(restclient, id);
     }
 
     /**
-     * Retreives all boards visible to the session user.
+     * Retrieves all boards visible to the session user.
      *
      * @return a list of boards
-     *
      * @throws JiraException when something goes wrong
      */
     public List<Board> getBoards() throws JiraException {
@@ -67,17 +65,47 @@ public class AgileClient {
     }
 
     /**
-     * Retreives the sprint with the given ID.
+     * Retrieves the sprint with the given ID.
      *
      * @param id Sprint ID
-     *
      * @return a Sprint instance
-     *
      * @throws JiraException when something goes wrong
      */
-    public Sprint getSprint(int id) throws JiraException {
+    public Sprint getSprint(long id) throws JiraException {
         return Sprint.get(restclient, id);
     }
 
+    /**
+     * Retrieves the issue with the given ID.
+     *
+     * @param id Issue ID
+     * @return an Issue instance
+     * @throws JiraException when something goes wrong
+     */
+    public Issue getIssue(long id) throws JiraException {
+        return Issue.get(restclient, id);
+    }
+
+    /**
+     * Retrieves the issue with the given Key.
+     *
+     * @param key Issue Key
+     * @return an Issue instance
+     * @throws JiraException when something goes wrong
+     */
+    public Issue getIssue(String key) throws JiraException {
+        return Issue.get(restclient, key);
+    }
+
+    /**
+     * Retrieves the epic with the given ID.
+     *
+     * @param id Epic ID
+     * @return an Epic instance
+     * @throws JiraException when something goes wrong
+     */
+    public Epic getEpic(long id) throws JiraException {
+        return Epic.get(restclient, id);
+    }
 }
 

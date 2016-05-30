@@ -9,10 +9,10 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 
 import static org.mockito.Mockito.when
-import static org.mockito.Mockito.when
 
 /**
- * Created by pldupont on 2016-05-20.
+ *  Created on 2016-05-20.
+ * @author pldupont
  */
 class IssueTest extends AbstractResourceTest {
 
@@ -39,7 +39,7 @@ class IssueTest extends AbstractResourceTest {
         expectedException.expect(JiraException.class);
         expectedException.expectMessage("Failed to retrieve Issue : /rest/agile/1.0/issue/666");
 
-        Issue issue = Issue.get(mockRestClient, 666);
+        Issue.get(mockRestClient, 666);
     }
 
     @Test
@@ -62,6 +62,6 @@ class IssueTest extends AbstractResourceTest {
         expectedException.expect(JiraException.class);
         expectedException.expectMessage("Failed to retrieve Issue : /rest/agile/1.0/issue/HSP-2");
 
-        Issue issue = Issue.get(mockRestClient, "HSP-2");
+        Issue.get(mockRestClient, "HSP-2");
     }
 }

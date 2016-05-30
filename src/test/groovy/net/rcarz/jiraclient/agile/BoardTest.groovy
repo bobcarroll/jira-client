@@ -15,7 +15,8 @@ import static org.junit.Assert.assertThat
 import static org.mockito.Mockito.when
 
 /**
- * Created by pldupont on 2016-05-19.
+ * Created on 2016-05-19.
+ * @author pldupont
  */
 class BoardTest extends AbstractResourceTest {
 
@@ -44,16 +45,16 @@ class BoardTest extends AbstractResourceTest {
         expectedException.expect(JiraException.class);
         expectedException.expectMessage("Failed to retrieve a list of Board : /rest/agile/1.0/board");
 
-        List<Board> boards = Board.getAll(mockRestClient);
+        Board.getAll(mockRestClient);
     }
 
     @Test
-    void "Given a RestClient, when calling getBoard(84), then receive one Board."() {
+    void "Given a RestClient, when calling getBoard(boardId), then receive one Board."() {
         RestClient mockRestClient = "given a REST Client"()
-        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/84"))
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/${JSONResources.BOARD_ID}"))
                 .thenReturn(JSONSerializer.toJSON(JSONResources.BOARD))
 
-        Board board = Board.get(mockRestClient, 84);
+        Board board = Board.get(mockRestClient, JSONResources.BOARD_ID);
 
         "Assert equals to Board 84"(board)
     }
@@ -67,24 +68,24 @@ class BoardTest extends AbstractResourceTest {
         expectedException.expect(JiraException.class);
         expectedException.expectMessage("Failed to retrieve Board : /rest/agile/1.0/board/666");
 
-        Board board = Board.get(mockRestClient, 666);
+        Board.get(mockRestClient, 666);
     }
 
     @Test
     void "Given a valid Board, when calling getSprints(), then receive a list of Sprints."() {
         RestClient mockRestClient = "given a REST Client"()
-        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/84"))
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/${JSONResources.BOARD_ID}"))
                 .thenReturn(JSONSerializer.toJSON(JSONResources.BOARD))
-        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/84/sprint"))
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/${JSONResources.BOARD_ID}/sprint"))
                 .thenReturn(JSONSerializer.toJSON(JSONResources.LIST_OF_SPRINTS))
 
-        Board board = Board.get(mockRestClient, 84);
-        "Assert equals to Board 84"(board)
+        Board board = Board.get(mockRestClient, JSONResources.BOARD_ID);
+        "Assert equals to Board ${JSONResources.BOARD_ID}"(board)
 
         List<Sprint> sprints = board.getSprints();
 
         assertThat sprints, new IsNot<>(new IsNull())
         assertThat sprints.size(), new IsEqual<Integer>(2)
-        "Assert equals to Sprint 37"(sprints.get(0))
+        "Assert equals to Sprint ${JSONResources.SPRINT_ID}"(sprints.get(0))
     }
 }

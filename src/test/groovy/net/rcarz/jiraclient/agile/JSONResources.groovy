@@ -3,14 +3,15 @@ package net.rcarz.jiraclient.agile
 import net.rcarz.jiraclient.Field
 
 /**
- * Created by pldupont on 2016-05-19.
+ * Created on 2016-05-19.
+ * @author pldupont
  */
 interface JSONResources {
 
-    String BOARD_SELF = "http://www.example.com/jira/rest/agile/1.0/board/84"
+    long BOARD_ID = 84L
+    String BOARD_SELF = "http://www.example.com/jira/rest/agile/1.0/board/${BOARD_ID}"
     String BOARD_NAME = "scrum board"
     String BOARD_TYPE = "scrum"
-    int BOARD_ID = 84
     String BOARD = """{
     "id": ${BOARD_ID},
     "self": "${BOARD_SELF}",
@@ -34,11 +35,11 @@ interface JSONResources {
     ]
 }"""
 
-    int SPRINT_ID = 37
+    long SPRINT_ID = 37L
     String SPRINT_NAME = "sprint 1"
-    String SPRINT_SELF = "http://www.example.com/jira/rest/agile/1.0/sprint/23"
+    String SPRINT_SELF = "http://www.example.com/jira/rest/agile/1.0/sprint/${SPRINT_ID}"
     String SPRINT_STATE = "closed"
-    int SPRINT_ORIGIN_BOARD_ID = BOARD_ID
+    long SPRINT_ORIGIN_BOARD_ID = BOARD_ID
     Date SPRINT_START_DATE = Field.getDateTime("2015-04-11T15:22:00.000+10:00")
     Date SPRINT_END_DATE = Field.getDateTime("2015-04-20T01:22:00.000+10:00")
     Date SPRINT_COMPLETE_DATE = Field.getDateTime("2015-04-20T11:04:00.000+10:00")
@@ -69,7 +70,23 @@ interface JSONResources {
     ]
 }"""
 
-    int ISSUE_ID = 10001
+    long EPIC_ID = 23
+    String EPIC_SELF = "http://www.example.com/jira/rest/agile/1.0/epic/${EPIC_ID}"
+    String EPIC_NAME = "epic 1"
+    String EPIC_SUMMARY = "epic 1 summary"
+    boolean EPIC_DONE = true
+    String EPIC = """{
+    "id": ${EPIC_ID},
+    "self": "${EPIC_SELF}",
+    "name": "${EPIC_NAME}",
+    "summary": "${EPIC_SUMMARY}",
+    "color": {
+        "key": "color_4"
+    },
+    "done": ${EPIC_DONE}
+}"""
+
+    long ISSUE_ID = 10001L
     String ISSUE_SELF = "http://www.example.com/jira/rest/agile/1.0/board/92/issue/10001"
     String ISSUE_KEY = "HSP-1"
     String ISSUE = """{
@@ -80,14 +97,14 @@ interface JSONResources {
     "fields": {
         "flagged": true,
         "sprint": {
-            "id": 37,
-            "self": "http://www.example.com/jira/rest/agile/1.0/sprint/13",
+            "id": ${SPRINT_ID},
+            "self": "http://www.example.com/jira/rest/agile/1.0/sprint/${SPRINT_ID}",
             "state": "future",
             "name": "sprint 2"
         },
         "closedSprints": [
             {
-                "id": 37,
+                "id": 23,
                 "self": "http://www.example.com/jira/rest/agile/1.0/sprint/23",
                 "state": "closed",
                 "name": "sprint 1",

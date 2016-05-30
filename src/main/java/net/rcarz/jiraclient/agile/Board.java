@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class Board extends AgileResource {
 
-    public static final String ATTR_TYPE = "type";
+    private static final String ATTR_TYPE = "type";
 
     private String type;
 
@@ -47,12 +47,6 @@ public class Board extends AgileResource {
         super(restclient, json);
     }
 
-    @Override
-    protected void deserialize(JSONObject json) {
-        super.deserialize(json);
-        type = Field.getString(json.get(ATTR_TYPE));
-    }
-
     /**
      * Retrieves the given rapid view.
      *
@@ -61,7 +55,7 @@ public class Board extends AgileResource {
      * @return a rapid view instance
      * @throws JiraException when the retrieval fails
      */
-    public static Board get(RestClient restclient, int id) throws JiraException {
+    public static Board get(RestClient restclient, long id) throws JiraException {
         return AgileResource.get(restclient, Board.class, RESOURCE_URI + "board/" + id);
     }
 
@@ -74,6 +68,12 @@ public class Board extends AgileResource {
      */
     public static List<Board> getAll(RestClient restclient) throws JiraException {
         return AgileResource.list(restclient, Board.class, RESOURCE_URI + "board");
+    }
+
+    @Override
+    protected void deserialize(JSONObject json) {
+        super.deserialize(json);
+        type = Field.getString(json.get(ATTR_TYPE));
     }
 
     /**

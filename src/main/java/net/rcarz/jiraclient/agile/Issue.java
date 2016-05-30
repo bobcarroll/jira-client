@@ -4,10 +4,9 @@ import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
 
-import java.util.List;
-
 /**
- * Created by pldupont on 2016-05-20.
+ * Created on 2016-05-20.
+ * @author pldupont
  */
 public class Issue extends AgileResource {
 
@@ -29,7 +28,7 @@ public class Issue extends AgileResource {
      * @return an issue instance
      * @throws JiraException when the retrieval fails
      */
-    public static Issue get(RestClient restclient, int id) throws JiraException {
+    public static Issue get(RestClient restclient, long id) throws JiraException {
         return AgileResource.get(restclient, Issue.class, RESOURCE_URI + "issue/" + id);
     }
 

@@ -10,7 +10,8 @@ import static org.junit.Assert.assertThat
 import static org.mockito.Mockito.when
 
 /**
- * Created by pldupont on 2016-05-19.
+ *  Created on 2016-05-19.
+ * @author pldupont
  */
 class AgileClientTest extends AbstractResourceTest {
 
@@ -24,30 +25,63 @@ class AgileClientTest extends AbstractResourceTest {
 
         assertThat boards, new IsNot<>(new IsNull())
         assertThat boards.size(), new IsEqual<Integer>(2)
-        "Assert equals to Board 84"(boards.get(0))
+        "Assert equals to Board ${JSONResources.BOARD_ID}"(boards.get(0))
     }
 
     @Test
-    void "Given an agileClient, when calling getBoard(84), then receive one Board."() {
+    void "Given an agileClient, when calling getBoard(boardId), then receive one Board."() {
         "given an Agile Client"()
-        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/84"))
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/" + JSONResources.BOARD_ID))
                 .thenReturn(JSONSerializer.toJSON(JSONResources.BOARD))
 
-        Board board = agileClient.getBoard(84);
+        Board board = agileClient.getBoard(JSONResources.BOARD_ID);
 
         assertThat board, new IsNot<>(new IsNull())
-        "Assert equals to Board 84"(board)
+        "Assert equals to Board ${JSONResources.BOARD_ID}"(board)
     }
 
     @Test
-    void "Given an agileClient, when calling getSprint(37), then receive one Sprint."() {
+    void "Given an agileClient, when calling getSprint(sprintId), then receive one Sprint."() {
         "given an Agile Client"()
-        when(mockRestClient.get(AgileResource.RESOURCE_URI + "sprint/37"))
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "sprint/" + JSONResources.SPRINT_ID))
                 .thenReturn(JSONSerializer.toJSON(JSONResources.SPRINT))
 
-        Sprint sprint = agileClient.getSprint(37);
+        Sprint sprint = agileClient.getSprint(JSONResources.SPRINT_ID);
 
         assertThat sprint, new IsNot<>(new IsNull())
-        "Assert equals to Sprint 37"(sprint)
+        "Assert equals to Sprint ${JSONResources.SPRINT_ID}"(sprint)
+    }
+
+    @Test
+    void "Given an agileClient, when calling getIssue(id), then receive one Issue."() {
+        "given an Agile Client"()
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "issue/" + JSONResources.ISSUE_ID))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.ISSUE))
+
+        Issue issue = agileClient.getIssue(JSONResources.ISSUE_ID);
+
+        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issue)
+    }
+
+    @Test
+    void "Given an agileClient, when calling getIssue(key), then receive one Issue."() {
+        "given an Agile Client"()
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "issue/" + JSONResources.ISSUE_KEY))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.ISSUE))
+
+        Issue issue = agileClient.getIssue(JSONResources.ISSUE_KEY);
+
+        "Assert equals to Issue ${JSONResources.ISSUE_KEY}"(issue)
+    }
+
+    @Test
+    void "Given an agileClient, when calling getEpic(id), then receive one Epic."() {
+        "given an Agile Client"()
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "epic/" + JSONResources.EPIC_ID))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.EPIC))
+
+        Epic epic = agileClient.getEpic(JSONResources.EPIC_ID);
+
+        "Assert equals to Epic ${JSONResources.EPIC_ID}"(epic)
     }
 }

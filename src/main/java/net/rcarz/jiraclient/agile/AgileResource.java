@@ -48,7 +48,7 @@ public abstract class AgileResource {
     public static final String RESOURCE_URI = "/rest/agile/1.0/";
 
     private RestClient restclient = null;
-    private int id = 0;
+    private long id = 0;
     private String name;
     private String self;
     private Map<String, Object> attributes = new HashMap<String, Object>();
@@ -64,94 +64,6 @@ public abstract class AgileResource {
         if (json != null) {
             deserialize(json);
         }
-    }
-
-    /**
-     * @return Internal JIRA ID.
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @return The resource name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @return The resource URL.
-     */
-    public String getSelfURL() {
-        return self;
-    }
-
-    /**
-     * @return The REST client used to access the current resource.
-     */
-    protected RestClient getRestclient() {
-        return restclient;
-    }
-
-    /**
-     * Retrieve the specified attribute as a generic object.
-     *
-     * @param name The name of the attribute to retrieve.
-     * @return The value of the attribute.
-     */
-    public String getAttribute(String name) {
-        return (String) attributes.get(name);
-    }
-
-    /**
-     * Retrieve the specified attribute as a generic object.
-     *
-     * @param name The name of the attribute to retrieve.
-     * @return The value of the attribute.
-     */
-    public int getAttributeAsInt(String name) {
-        return NumberUtils.toInt(getAttribute(name), 0);
-    }
-
-    /**
-     * Retrieve the specified attribute as a generic object.
-     *
-     * @param name The name of the attribute to retrieve.
-     * @return The value of the attribute.
-     */
-    public boolean getAttributeAsBoolean(String name) {
-        return BooleanUtils.toBoolean(getAttribute(name));
-    }
-
-    /**
-     * Deserialize the json to extract standard attributes and keep a reference of
-     * other attributes.
-     *
-     * @param json The JSON object to read.
-     */
-    protected void deserialize(JSONObject json) {
-        Map<String, Object> map = json;
-
-        id = getInteger(map.get("id"));
-        name = Field.getString(map.get("name"));
-        self = Field.getString(map.get("self"));
-        attributes.putAll(map);
-    }
-
-    private int getInteger(Object o) {
-        if (o instanceof Integer) {
-            return Field.getInteger(o);
-        } else if (o instanceof String && NumberUtils.isDigits((String) o)) {
-            return NumberUtils.toInt((String) o, 0);
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s{id=%s, name='%s'}", getClass().getSimpleName(), id, name);
     }
 
     /**
@@ -223,7 +135,7 @@ public abstract class AgileResource {
      */
     static <T extends AgileResource> List<T> list(RestClient restclient, Class<T> type, String url) throws JiraException {
 
-        JSON result = null;
+        JSON result;
         try {
             result = restclient.get(url);
         } catch (Exception ex) {
@@ -246,7 +158,7 @@ public abstract class AgileResource {
      */
     static <T extends AgileResource> T get(RestClient restclient, Class<T> type, String url) throws JiraException {
 
-        JSON result = null;
+        JSON result;
         try {
             result = restclient.get(url);
         } catch (Exception ex) {
@@ -258,6 +170,93 @@ public abstract class AgileResource {
                 result,
                 restclient
         );
+    }
+
+    /**
+     * @return Internal JIRA ID.
+     */
+    public long getId() {
+        return id;
+    }
+
+    /**
+     * @return The resource name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return The resource URL.
+     */
+    public String getSelfURL() {
+        return self;
+    }
+
+    /**
+     * @return The REST client used to access the current resource.
+     */
+    protected RestClient getRestclient() {
+        return restclient;
+    }
+
+    /**
+     * Retrieve the specified attribute as a generic object.
+     *
+     * @param name The name of the attribute to retrieve.
+     * @return The value of the attribute.
+     */
+    String getAttribute(String name) {
+        return (String) attributes.get(name);
+    }
+
+    /**
+     * Retrieve the specified attribute as a generic object.
+     *
+     * @param name The name of the attribute to retrieve.
+     * @return The value of the attribute.
+     */
+    int getAttributeAsInt(String name) {
+        return NumberUtils.toInt(getAttribute(name), 0);
+    }
+
+    /**
+     * Retrieve the specified attribute as a generic object.
+     *
+     * @param name The name of the attribute to retrieve.
+     * @return The value of the attribute.
+     */
+    boolean getAttributeAsBoolean(String name) {
+        return BooleanUtils.toBoolean(getAttribute(name));
+    }
+
+    /**
+     * Deserialize the json to extract standard attributes and keep a reference of
+     * other attributes.
+     *
+     * @param json The JSON object to read.
+     */
+    protected void deserialize(JSONObject json) {
+
+        id = getLong(json.get("id"));
+        name = Field.getString(json.get("name"));
+        self = Field.getString(json.get("self"));
+        attributes.putAll(json);
+    }
+
+    long getLong(Object o) {
+        if (o instanceof Integer || o instanceof Long) {
+            return Field.getInteger(o);
+        } else if (o instanceof String && NumberUtils.isDigits((String) o)) {
+            return NumberUtils.toLong((String) o, 0L);
+        } else {
+            return 0L;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s{id=%s, name='%s'}", getClass().getSimpleName(), id, name);
     }
 }
 
