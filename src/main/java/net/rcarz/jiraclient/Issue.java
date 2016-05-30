@@ -812,6 +812,8 @@ public class Issue extends Resource {
         key = Field.getString(map.get("key"));
 
         fields = (Map)map.get("fields");
+        if (fields == null)
+            return;
 
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
         attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ATTACHMENT), restclient);
