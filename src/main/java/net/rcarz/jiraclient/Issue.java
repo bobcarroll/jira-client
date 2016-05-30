@@ -818,7 +818,7 @@ public class Issue extends Resource {
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
         attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ATTACHMENT), restclient);
         changeLog = Field.getResource(ChangeLog.class, map.get(Field.CHANGE_LOG), restclient);
-        comments = Field.getComments(fields.get(Field.COMMENT), restclient);
+        comments = Field.getComments(fields.get(Field.COMMENT), restclient, key);
         components = Field.getResourceArray(Component.class, fields.get(Field.COMPONENTS), restclient);
         description = Field.getString(fields.get(Field.DESCRIPTION));
         dueDate = Field.getDate(fields.get(Field.DUE_DATE));
@@ -1033,8 +1033,8 @@ public class Issue extends Resource {
      *
      * @throws JiraException when the comment creation fails
      */
-    public void addComment(String body) throws JiraException {
-        addComment(body, null, null);
+    public Comment addComment(String body) throws JiraException {
+        return addComment(body, null, null);
     }
 
     /**
@@ -1046,7 +1046,7 @@ public class Issue extends Resource {
      *
      * @throws JiraException when the comment creation fails
      */
-    public void addComment(String body, String visType, String visName)
+    public Comment addComment(String body, String visType, String visName)
         throws JiraException {
 
         JSONObject req = new JSONObject();
@@ -1060,11 +1060,19 @@ public class Issue extends Resource {
             req.put("visibility", vis);
         }
 
+        JSON result = null;
+
         try {
-            restclient.post(getRestUri(key) + "/comment", req);
+            result = restclient.post(getRestUri(key) + "/comment", req);
         } catch (Exception ex) {
             throw new JiraException("Failed add comment to issue " + key, ex);
         }
+
+        if (!(result instanceof JSONObject)) {
+            throw new JiraException("JSON payload is malformed");
+        }
+
+        return new Comment(restclient, (JSONObject) result, key);
     }
 
     /**
