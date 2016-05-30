@@ -31,7 +31,7 @@ class AgileClientTest extends AbstractResourceTest {
     void "Given an agileClient, when calling getBoard(84), then receive one Board."() {
         "given an Agile Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/84"))
-                .thenReturn(JSONSerializer.toJSON(JSONResources.BOARD_84))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.BOARD))
 
         Board board = agileClient.getBoard(84);
 
@@ -43,7 +43,7 @@ class AgileClientTest extends AbstractResourceTest {
     void "Given an agileClient, when calling getSprint(37), then receive one Sprint."() {
         "given an Agile Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "sprint/37"))
-                .thenReturn(JSONSerializer.toJSON(JSONResources.SPRINT_37))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.SPRINT))
 
         Sprint sprint = agileClient.getSprint(37);
 

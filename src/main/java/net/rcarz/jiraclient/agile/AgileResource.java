@@ -133,10 +133,20 @@ public abstract class AgileResource {
     protected void deserialize(JSONObject json) {
         Map<String, Object> map = json;
 
-        id = Field.getInteger(map.get("id"));
+        id = getInteger(map.get("id"));
         name = Field.getString(map.get("name"));
         self = Field.getString(map.get("self"));
         attributes.putAll(map);
+    }
+
+    private int getInteger(Object o) {
+        if (o instanceof Integer) {
+            return Field.getInteger(o);
+        } else if (o instanceof String && NumberUtils.isDigits((String) o)) {
+            return NumberUtils.toInt((String) o, 0);
+        } else {
+            return 0;
+        }
     }
 
     @Override

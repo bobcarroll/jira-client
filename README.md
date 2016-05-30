@@ -280,7 +280,30 @@ https://docs.atlassian.com/jira-software/REST/cloud/
 
 ### Agile supported calls ###
  1. [AgileClient](src/main/java/net/rcarz/jiraclient/agile/AgileClient.java)
-    * GET /rest/agile/1.0/board
+    1. GET /rest/agile/1.0/board
+    1. GET /rest/agile/1.0/board/{boardId}
+    1. GET /rest/agile/1.0/sprint/{sprintId}
+ 1. [Board](src/main/java/net/rcarz/jiraclient/agile/Board.java)
+    1. GET /rest/agile/1.0/board
+    1. GET /rest/agile/1.0/board/{boardId}
+    1. GET /rest/agile/1.0/board/{boardId}/sprint
+ 1. [Sprint](src/main/java/net/rcarz/jiraclient/agile/Sprint.java)
+    1. GET /rest/agile/1.0/sprint/{sprintId}
+    1. GET /rest/agile/1.0/board/{boardId}/sprint
+ 1. To implement
+    1. -- GET /rest/agile/1.0/board/{boardId}/backlog
+    1. -- GET /rest/agile/1.0/board/{boardId}/epic
+    1. -- GET /rest/agile/1.0/board/{boardId}/epic/{epicId}/issue
+    1. -- GET /rest/agile/1.0/board/{boardId}/epic/none/issue
+    1. -- GET /rest/agile/1.0/board/{boardId}/sprint/{sprintId}/issue
+    1. -- GET /rest/agile/1.0/epic/{epicIdOrKey}
+    1. -- GET /rest/agile/1.0/epic/{epicIdOrKey}/issue
+    1. -- GET /rest/agile/1.0/epic/none/issue
+    1. -- GET /rest/agile/1.0/issue/{issueIdOrKey}
+    1. -- GET /rest/agile/1.0/issue/{issueIdOrKey}/estimation
+    1. -- GET /rest/agile/1.0/sprint/{sprintId}/issue
+    
+    
 
 ### Agile Example ###
 

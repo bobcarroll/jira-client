@@ -25,10 +25,10 @@ class SprintTest extends AbstractResourceTest {
     @Test
     void "Given a RestClient, when calling getAll(), then receive a list of Sprint."() {
         RestClient mockRestClient = "given a REST Client"()
-        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/" + JSONResources.SPRINT_37_ORIGIN_BOARD_ID + "/sprint"))
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/" + JSONResources.SPRINT_ORIGIN_BOARD_ID + "/sprint"))
                 .thenReturn(JSONSerializer.toJSON(JSONResources.LIST_OF_SPRINTS))
 
-        List<Sprint> sprints = Sprint.getAll(mockRestClient, JSONResources.SPRINT_37_ORIGIN_BOARD_ID);
+        List<Sprint> sprints = Sprint.getAll(mockRestClient, JSONResources.SPRINT_ORIGIN_BOARD_ID);
 
         assertThat sprints, new IsNot<>(new IsNull())
         assertThat sprints.size(), new IsEqual<Integer>(2)
@@ -39,19 +39,19 @@ class SprintTest extends AbstractResourceTest {
     void "Given a RestClient, when calling getAll() and use doesn't have access, then throws an 401 error."() {
         RestException unauthorized = new RestException("Do not have access", 401, "Unauthorized")
         RestClient mockRestClient = "given a REST Client"()
-        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/" + JSONResources.SPRINT_37_ORIGIN_BOARD_ID + "/sprint"))
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/" + JSONResources.SPRINT_ORIGIN_BOARD_ID + "/sprint"))
                 .thenThrow(unauthorized)
         expectedException.expect(JiraException.class);
-        expectedException.expectMessage("Failed to retrieve a list of Sprint : /rest/agile/1.0/board/" + JSONResources.SPRINT_37_ORIGIN_BOARD_ID + "/sprint");
+        expectedException.expectMessage("Failed to retrieve a list of Sprint : /rest/agile/1.0/board/" + JSONResources.SPRINT_ORIGIN_BOARD_ID + "/sprint");
 
-        List<Sprint> sprints = Sprint.getAll(mockRestClient, JSONResources.SPRINT_37_ORIGIN_BOARD_ID);
+        List<Sprint> sprints = Sprint.getAll(mockRestClient, JSONResources.SPRINT_ORIGIN_BOARD_ID);
     }
 
     @Test
     void "Given a RestClient, when calling getSprint(84), then receive one Sprint."() {
         RestClient mockRestClient = "given a REST Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "sprint/37"))
-                .thenReturn(JSONSerializer.toJSON(JSONResources.SPRINT_37))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.SPRINT))
 
         Sprint sprint = Sprint.get(mockRestClient, 37);
 

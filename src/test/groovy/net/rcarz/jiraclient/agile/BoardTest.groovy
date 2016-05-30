@@ -4,15 +4,12 @@ import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.RestClient
 import net.rcarz.jiraclient.RestException
 import net.sf.json.JSONSerializer
-import org.hamcrest.Description
-import org.hamcrest.Matcher
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNot
 import org.hamcrest.core.IsNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
-import org.mockito.internal.matchers.Contains
 
 import static org.junit.Assert.assertThat
 import static org.mockito.Mockito.when
@@ -54,7 +51,7 @@ class BoardTest extends AbstractResourceTest {
     void "Given a RestClient, when calling getBoard(84), then receive one Board."() {
         RestClient mockRestClient = "given a REST Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/84"))
-                .thenReturn(JSONSerializer.toJSON(JSONResources.BOARD_84))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.BOARD))
 
         Board board = Board.get(mockRestClient, 84);
 
@@ -77,7 +74,7 @@ class BoardTest extends AbstractResourceTest {
     void "Given a valid Board, when calling getSprints(), then receive a list of Sprints."() {
         RestClient mockRestClient = "given a REST Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/84"))
-                .thenReturn(JSONSerializer.toJSON(JSONResources.BOARD_84))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.BOARD))
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/84/sprint"))
                 .thenReturn(JSONSerializer.toJSON(JSONResources.LIST_OF_SPRINTS))
 
