@@ -61,7 +61,7 @@ public class JiraClient {
      * @throws JiraException 
      */
     public JiraClient(String uri, ICredentials creds) throws JiraException {
-    	this(null, uri, creds);
+        this(null, uri, creds);
     }
     
     /**
@@ -73,19 +73,19 @@ public class JiraClient {
      * @throws JiraException 
      */
     public JiraClient(HttpClient httpClient, String uri, ICredentials creds) throws JiraException {
-    	if (httpClient == null) {
-	    	PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
-	        connManager.setDefaultMaxPerRoute(20);
-	        connManager.setMaxTotal(40);
-	        httpClient = new DefaultHttpClient(connManager);
-    	}
+        if (httpClient == null) {
+            PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
+            connManager.setDefaultMaxPerRoute(20);
+            connManager.setMaxTotal(40);
+            httpClient = new DefaultHttpClient(connManager);
+        }
 
         restclient = new RestClient(httpClient, creds, URI.create(uri));
 
         if (creds != null) {
             username = creds.getLogonName();
-        	//intialize connection if required
-        	creds.initialize(restclient);
+            //intialize connection if required
+            creds.initialize(restclient);
         }
     }
 
@@ -368,7 +368,7 @@ public class JiraClient {
           startAt);
     }
 
-	/**
+    /**
      * Retrieve the jira filter with the supplied id.
      * @param id id of the filter to retreive.
      * @return The Jira filter with the supplied id
