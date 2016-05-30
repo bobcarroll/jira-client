@@ -595,7 +595,7 @@ public class Issue extends Resource {
 			// first call
 			if (currentPage == null) {
 				currentPage = getNextIssues().iterator();
-				if (currentPage == null) {
+				if (currentPage == null || !currentPage.hasNext()) {
 					return null;
 				} else {
 					return currentPage.next();
