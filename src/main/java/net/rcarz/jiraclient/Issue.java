@@ -658,6 +658,17 @@ public class Issue extends Resource {
     
     /**
      * Issue search results structure.
+     *
+     * The issues of the result can be retrived from this class in 2 ways.
+     *
+     * The first is to access the issues field directly. This is a list of Issue instances.
+     * Note however that this will only contain the issues fetched in the initial search,
+     * so its size will be the same as the max result value or below.
+     *
+     * The second way is to use the iterator methods. This will return an Iterator instance,
+     * that will iterate over every result of the search, even if there is more than the max
+     * result value. The price for this, is that the call to next has none determistic performence,
+     * as it sometimes need to fetch a new batch of issues from Jira.
      */
     public static class SearchResult {
         public int start = 0;
