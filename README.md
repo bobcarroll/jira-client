@@ -194,6 +194,12 @@ public class Example {
             for (Issue i : sr.issues)
                 System.out.println("Result: " + i);
 
+            /* Search with paging (optionally 10 issues at a time). There are optional
+               arguments for including/expanding fields, and page size/start. */
+            Issue.SearchResult sr = jira.searchIssues("project IN (GOTHAM) ORDER BY id");
+            while (sr.iterator().hasNext())
+                System.out.println("Result: " + sr.iterator().next());
+
         } catch (JiraException ex) {
             System.err.println(ex.getMessage());
 

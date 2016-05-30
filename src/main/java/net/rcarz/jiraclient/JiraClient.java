@@ -193,7 +193,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql)
             throws JiraException {
 
-        return Issue.search(restclient, jql, null, null);
+        return searchIssues(jql, null, null, null, null);
     }
 
     /**
@@ -210,7 +210,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, Integer maxResults)
             throws JiraException {
 
-        return Issue.search(restclient, jql, null, maxResults);
+        return searchIssues(jql, null, null, maxResults, null);
     }
 
     /**
@@ -237,7 +237,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields)
             throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields, null);
+        return searchIssues(jql, includedFields, null, null, null);
     }
 
     /**
@@ -262,10 +262,10 @@ public class JiraClient {
      *
      * @throws JiraException when the search fails
      */
-    public Issue.SearchResult searchIssues(String jql, String includedFields, String expandFields)
-        throws JiraException {
+    public Issue.SearchResult searchIssues(String jql, String includedFields,
+                                           String expandFields) throws JiraException {
 
-      return Issue.search(restclient, jql, includedFields, expandFields, null, null);
+        return searchIssues(jql, includedFields, expandFields, null, null);
     }
     
     /**
@@ -293,7 +293,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields, Integer maxResults)
             throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields, maxResults);
+        return searchIssues(jql, includedFields, null, maxResults, null);
     }
 
     /**
@@ -327,8 +327,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields,
             Integer maxResults, Integer startAt) throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields, null, maxResults,
-                startAt);
+        return searchIssues(jql, includedFields, null, maxResults, startAt);
     }
 
     /**
@@ -361,11 +360,18 @@ public class JiraClient {
      *
      * @throws JiraException when the search fails
      */
-    public Issue.SearchResult searchIssues(String jql, String includedFields, String expandFields,
-                                           Integer maxResults, Integer startAt) throws JiraException {
+    public Issue.SearchResult searchIssues(String jql, String includedFields,
+                                           String expandFields, Integer maxResults,
+                                           Integer startAt) throws JiraException {
 
-      return Issue.search(restclient, jql, includedFields, expandFields, maxResults,
-          startAt);
+        return Issue.search(
+            restclient,
+            jql,
+            includedFields,
+            expandFields,
+            maxResults,
+            startAt
+        );
     }
 
     /**

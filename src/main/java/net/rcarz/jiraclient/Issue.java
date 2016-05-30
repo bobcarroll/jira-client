@@ -544,9 +544,9 @@ public class Issue extends Resource {
         private List<Issue> issues;
         private int total;
         
-        public IssueIterator(RestClient restclient, String jql,
-                String includedFields, String expandFields, Integer maxResults, Integer startAt)
-                        throws JiraException {
+        public IssueIterator(RestClient restclient, String jql, String includedFields,
+                             String expandFields, Integer maxResults, Integer startAt)
+                             throws JiraException {
             this.restclient = restclient;
             this.jql = jql;
             this.includedFields = includedFields;
@@ -578,15 +578,16 @@ public class Issue extends Resource {
             return result;
         }
 
-
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("Method remove() not support for class " + this.getClass().getName());
+            throw new UnsupportedOperationException("Method remove() not support for class " +
+                                                    this.getClass().getName());
         }
 
         /**
          * Gets the next issue, returning null if none more available
-         * Will ask the next set of issues from the server if the end of the current list of issues is reached.
+         * Will ask the next set of issues from the server if the end
+         * of the current list of issues is reached.
          * 
          * @return the next issue, null if none more available
          * @throws JiraException
@@ -624,9 +625,9 @@ public class Issue extends Resource {
          * @throws JiraException
          */
         private List<Issue> getNextIssues() throws JiraException {
-            if (issues == null) {
+            if (issues == null && startAt == null) {
                 startAt = Integer.valueOf(0);
-            } else {
+            } else if (issues != null) {
                 startAt = startAt + issues.size();
             }
 
@@ -653,7 +654,6 @@ public class Issue extends Resource {
             this.issues = Field.getResourceArray(Issue.class, map.get("issues"), restclient);
             return issues;
         }
-
     }
     
     /**
@@ -675,24 +675,20 @@ public class Issue extends Resource {
         public int max = 0;
         public int total = 0;
         public List<Issue> issues = null;
-        private RestClient restclient;
-        private String jql;
-        private String includedFields;
-        private String expandFields;
-        private Integer startAt;
         private IssueIterator issueIterator;
 
-        public SearchResult(RestClient restclient, String jql,
-                String includedFields, String expandFields, Integer maxResults, Integer startAt) throws JiraException {
-            this.restclient = restclient;
-            this.jql = jql;
-            this.includedFields = includedFields;
-            this.expandFields = expandFields;
-            initSearchResult(maxResults, start);
-        }
-        
-        private void initSearchResult(Integer maxResults, Integer start) throws JiraException {
-            this.issueIterator = new IssueIterator(restclient, jql, includedFields, expandFields, maxResults, startAt);
+        public SearchResult(RestClient restclient, String jql, String includedFields, 
+                            String expandFields, Integer maxResults, Integer startAt)
+                            throws JiraException {
+            this.issueIterator = new IssueIterator(
+                restclient,
+                jql,
+                includedFields,
+                expandFields,
+                maxResults,
+                startAt
+            );
+            /* backwards compatibility shim - first page only */
             this.issueIterator.hasNext();
             this.max = issueIterator.maxResults;
             this.start = issueIterator.startAt;
@@ -1278,50 +1274,6 @@ public class Issue extends Resource {
     }
 
     /**
-     * Search for issues with the given query.
-     *
-     * @param restclient REST client instance
-     *
-     * @param jql JQL statement
-     *
-     * @return a search result structure with results (issues include all
-     * navigable fields)
-     *
-     * @throws JiraException when the search fails
-     */
-    public static SearchResult search(RestClient restclient, String jql)
-            throws JiraException {
-        return search(restclient, jql, null, null);
-    }
-
-    /**
-     * Search for issues with the given query and specify which fields to
-     * retrieve.
-     *
-     * @param restclient REST client instance
-     *
-     * @param jql JQL statement
-     *
-     * @param includedFields Specifies which issue fields will be included in
-     * the result.
-     * <br>Some examples how this parameter works:
-     * <ul>
-     * <li>*all - include all fields</li>
-     * <li>*navigable - include just navigable fields</li>
-     * <li>summary,comment - include just the summary and comments</li>
-     * <li>*all,-comment - include all fields</li>
-     * </ul>
-     *
-     * @return a search result structure with results
-     *
-     * @throws JiraException when the search fails
-     */
-    public static SearchResult search(RestClient restclient, String jql, String includedFields, Integer maxResults)
-            throws JiraException {
-        return search(restclient, jql, includedFields, null, maxResults, null);
-    }
-
-    /**
      * Search for issues with the given query and specify which fields to
      * retrieve. If the total results is bigger than the maximum returned
      * results, then further calls can be made using different values for
@@ -1354,31 +1306,17 @@ public class Issue extends Resource {
      * @throws JiraException when the search fails
      */
     public static SearchResult search(RestClient restclient, String jql,
-            String includedFields, String expandFields, Integer maxResults, Integer startAt)
-                    throws JiraException {
-
-        SearchResult sr = new SearchResult(restclient, jql, includedFields, expandFields, maxResults, startAt);
-
-        return sr;
-    }
-
-    private static JSON executeSearch(RestClient restclient, String jql,
             String includedFields, String expandFields, Integer maxResults,
             Integer startAt) throws JiraException {
-        JSON result = null;
 
-        try {
-            URI searchUri = createSearchURI(restclient, jql, includedFields,
-                    expandFields, maxResults, startAt);
-            result = restclient.get(searchUri);
-        } catch (Exception ex) {
-            throw new JiraException("Failed to search issues", ex);
-        }
-
-        if (!(result instanceof JSONObject)) {
-            throw new JiraException("JSON payload is malformed");
-        }
-        return result;
+        return new SearchResult(
+            restclient,
+            jql,
+            includedFields,
+            expandFields,
+            maxResults,
+            startAt
+        );
     }
 
     /**
