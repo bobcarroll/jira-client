@@ -50,7 +50,7 @@ public class JiraClient {
      * @throws JiraException 
      */
     public JiraClient(String uri) throws JiraException {
-        this(uri, null);
+        this(null, uri, null);
     }
 
     /**
@@ -61,12 +61,26 @@ public class JiraClient {
      * @throws JiraException 
      */
     public JiraClient(String uri, ICredentials creds) throws JiraException {
-    	PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
-        connManager.setDefaultMaxPerRoute(20);
-        connManager.setMaxTotal(40);
-        HttpClient httpclient = new DefaultHttpClient(connManager);
+    	this(null, uri, creds);
+    }
+    
+    /**
+     * Creates an authenticated JIRA client with custom HttpClient.
+     *
+     * @param httpClient Custom HttpClient to be used
+     * @param uri Base URI of the JIRA server
+     * @param creds Credentials to authenticate with
+     * @throws JiraException 
+     */
+    public JiraClient(HttpClient httpClient, String uri, ICredentials creds) throws JiraException {
+    	if (httpClient == null) {
+	    	PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
+	        connManager.setDefaultMaxPerRoute(20);
+	        connManager.setMaxTotal(40);
+	        httpClient = new DefaultHttpClient(connManager);
+    	}
 
-        restclient = new RestClient(httpclient, creds, URI.create(uri));
+        restclient = new RestClient(httpClient, creds, URI.create(uri));
 
         if (creds != null) {
             username = creds.getLogonName();
