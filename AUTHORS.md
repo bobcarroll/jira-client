@@ -4,3 +4,4 @@ Alesandro Lang <info@alesandro-lang.com> @alesandroLang
 Javier Molina <javinovich@gmail.com> @javinovich
 Joseph McCarthy <luckymikuhatsune@gmail.com>
 Magnus Lundberg <ludde89l@gmail.com>
+Anders Kreinøe <anders@kreinoee.dk> @Kreinoee
