@@ -3,6 +3,7 @@ package net.rcarz.jiraclient.agile
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.RestClient
 import net.rcarz.jiraclient.RestException
+import net.sf.json.JSONObject
 import net.sf.json.JSONSerializer
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNot
@@ -69,5 +70,19 @@ class SprintTest extends AbstractResourceTest {
         expectedException.expectMessage("Failed to retrieve Sprint : /rest/agile/1.0/sprint/666");
 
         Sprint.get(mockRestClient, 666);
+    }
+
+    @Test
+    void "Given a valid Sprint, when calling getIssues(), then receive a list of Issues."() {
+        RestClient mockRestClient = "given a REST Client"()
+        Sprint mockSprint = new Sprint(mockRestClient, JSONSerializer.toJSON(JSONResources.SPRINT) as JSONObject)
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "sprint/${JSONResources.SPRINT_ID}/issue"))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.LIST_OF_ISSUES))
+
+        List<Issue> issues = mockSprint.getIssues();
+
+        assertThat issues, new IsNot<>(new IsNull())
+        assertThat issues.size(), new IsEqual<Integer>(4)
+        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issues.get(0))
     }
 }

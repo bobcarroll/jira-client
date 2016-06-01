@@ -279,30 +279,27 @@ public class Example {
 https://docs.atlassian.com/jira-software/REST/cloud/
 
 ### Agile supported calls ###
- 1. [AgileClient](src/main/java/net/rcarz/jiraclient/agile/AgileClient.java)
-    1. GET /rest/agile/1.0/board
-    1. GET /rest/agile/1.0/board/{boardId}
-    1. GET /rest/agile/1.0/sprint/{sprintId}
-    1. GET /rest/agile/1.0/issue/{issueIdOrKey}
- 1. [Board](src/main/java/net/rcarz/jiraclient/agile/Board.java)
-    1. GET /rest/agile/1.0/board
-    1. GET /rest/agile/1.0/board/{boardId}
-    1. GET /rest/agile/1.0/board/{boardId}/sprint
- 1. [Sprint](src/main/java/net/rcarz/jiraclient/agile/Sprint.java)
-    1. GET /rest/agile/1.0/sprint/{sprintId}
-    1. GET /rest/agile/1.0/board/{boardId}/sprint
- 1. [Issue](src/main/java/net/rcarz/jiraclient/agile/Issue.java)
-    1. GET /rest/agile/1.0/issue/{issueIdOrKey}
-
- 1. To implement
-    1. -- GET /rest/agile/1.0/board/{boardId}/backlog
-    1. -- GET /rest/agile/1.0/board/{boardId}/epic
-    1. -- GET /rest/agile/1.0/board/{boardId}/epic/{epicId}/issue
-    1. -- GET /rest/agile/1.0/board/{boardId}/epic/none/issue
-    1. -- GET /rest/agile/1.0/board/{boardId}/sprint/{sprintId}/issue
-    1. -- GET /rest/agile/1.0/epic/{epicIdOrKey}/issue
-    1. -- GET /rest/agile/1.0/epic/none/issue
-    1. -- GET /rest/agile/1.0/sprint/{sprintId}/issue
+| Class | Method | REST Call |
+| ----- | ------ | --------- |
+| [AgileClient](src/main/java/net/rcarz/jiraclient/agile/AgileClient.java) | ```List<Board> getBoards()``` | GET /rest/agile/1.0/board |
+| | ```Board getBoard(long id)``` | GET /rest/agile/1.0/board/{boardId} |
+| | ```Sprint getSprint(long id)``` | GET /rest/agile/1.0/sprint/{sprintId} |
+| | ```Epic getEpic(long id)``` | GET /rest/agile/1.0/epic/{epicId} |
+| | ```Issue getIssue(long id)``` | GET /rest/agile/1.0/issue/{issueId} |
+| | ```Issue getIssue(String key)``` | GET /rest/agile/1.0/issue/{issueKey} |
+| [Board](src/main/java/net/rcarz/jiraclient/agile/Board.java) | ``` static List<Board> getAll(RestClient restclient)``` | GET /rest/agile/1.0/board |
+| | ```static Board get(RestClient restclient, long id)``` | GET /rest/agile/1.0/board/{boardId} |
+| | ```List<Sprint> getSprints()``` | GET /rest/agile/1.0/board/{boardId}/sprint |
+| * | ```List<Epic> getEpics()``` | GET /rest/agile/1.0/board/{boardId}/epic
+| * | ```List<Issue> getBacklog()``` | GET /rest/agile/1.0/board/{boardId}/backlog
+| * | ```List<Issue> getIssuesWithoutEpic()``` | GET /rest/agile/1.0/board/{boardId}/epic/none/issue
+| [Sprint](src/main/java/net/rcarz/jiraclient/agile/Sprint.java) | ``` static Sprint get(RestClient restclient, long sprintId)``` | GET /rest/agile/1.0/sprint/{sprintId} |
+| | ```static List<Sprint> getAll(RestClient restclient, long boardId)``` | GET /rest/agile/1.0/board/{boardId}/sprint |
+| * | ```List<Issue> getIssues()``` | GET /rest/agile/1.0/sprint/{sprintId}/issue |
+| [Epic](src/main/java/net/rcarz/jiraclient/agile/Epic.java) | ```static Epic get(RestClient restclient, long id)``` | GET /rest/agile/1.0/epic/{epicId} |
+| * | ```List<Issue> getIssues()``` | GET /rest/agile/1.0/epic/{epicId}/issue |
+| [Issue](src/main/java/net/rcarz/jiraclient/agile/Issue.java) | ```static Issue get(RestClient restclient, long id)``` | GET /rest/agile/1.0/issue/{issueId} |
+| | ```static Issue get(RestClient restclient, String key)``` | GET /rest/agile/1.0/issue/{issueKey} |
     
     
 

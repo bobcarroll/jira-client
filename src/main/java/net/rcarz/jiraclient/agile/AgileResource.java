@@ -25,18 +25,16 @@ import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A base class for Agile resources.
  *
+ * @author pldupont
  * @see "https://docs.atlassian.com/jira-software/REST/cloud/"
  */
 public abstract class AgileResource {
@@ -51,15 +49,16 @@ public abstract class AgileResource {
     private long id = 0;
     private String name;
     private String self;
-    private Map<String, Object> attributes = new HashMap<String, Object>();
+    private JSONObject attributes = new JSONObject();
 
     /**
      * Creates a new Agile resource.
      *
      * @param restclient REST client instance
      * @param json       JSON payload
+     * @throws JiraException when the retrieval fails
      */
-    public AgileResource(RestClient restclient, JSONObject json) {
+    public AgileResource(RestClient restclient, JSONObject json) throws JiraException {
         this.restclient = restclient;
         if (json != null) {
             deserialize(json);
@@ -73,8 +72,9 @@ public abstract class AgileResource {
      * @param r          a JSONObject instance
      * @param restclient REST client instance
      * @return a Resource instance or null if r isn't a JSONObject instance
+     * @throws JiraException when the retrieval fails
      */
-    private static <T extends AgileResource> T getResource(
+    protected static <T extends AgileResource> T getResource(
             Class<T> type, Object r, RestClient restclient) throws JiraException {
 
         if (!(r instanceof JSONObject)) {
@@ -101,26 +101,29 @@ public abstract class AgileResource {
      * @param type       Resource data type
      * @param ra         a JSONArray instance
      * @param restclient REST client instance
+     * @param listName   The name of the list of items from the JSON result.
      * @return a list of Resources found in ra
+     * @throws JiraException when the retrieval fails
      */
-    private static <T extends AgileResource> List<T> getResourceArray(
-            Class<T> type, Object ra, RestClient restclient) throws JiraException {
+    protected static <T extends AgileResource> List<T> getResourceArray(
+            Class<T> type, Object ra, RestClient restclient, String listName) throws JiraException {
         if (!(ra instanceof JSONObject)) {
             throw new JiraException("JSON payload is malformed");
         }
 
         JSONObject jo = (JSONObject) ra;
 
-        if (!jo.containsKey("values") || !(jo.get("values") instanceof JSONArray)) {
+        if (!jo.containsKey(listName) || !(jo.get(listName) instanceof JSONArray)) {
             throw new JiraException(type.getSimpleName() + " result is malformed");
         }
 
         List<T> results = new ArrayList<T>();
 
-        for (Object v : (JSONArray) jo.get("values")) {
+        for (Object v : (JSONArray) jo.get(listName)) {
             T item = getResource(type, v, restclient);
-            if (item != null)
+            if (item != null) {
                 results.add(item);
+            }
         }
 
         return results;
@@ -130,10 +133,28 @@ public abstract class AgileResource {
      * Retrieves all boards visible to the session user.
      *
      * @param restclient REST client instance
+     * @param type       The type of the object to deserialize.
+     * @param url        The URL to call.
      * @return a list of boards
      * @throws JiraException when the retrieval fails
      */
-    static <T extends AgileResource> List<T> list(RestClient restclient, Class<T> type, String url) throws JiraException {
+    static <T extends AgileResource> List<T> list(
+            RestClient restclient, Class<T> type, String url) throws JiraException {
+        return list(restclient, type, url, "values");
+    }
+
+    /**
+     * Retrieves all boards visible to the session user.
+     *
+     * @param restclient REST client instance
+     * @param type       The type of the object to deserialize.
+     * @param url        The URL to call.
+     * @param listName   The name of the list of items in the JSON response.
+     * @return a list of boards
+     * @throws JiraException when the retrieval fails
+     */
+    static <T extends AgileResource> List<T> list(
+            RestClient restclient, Class<T> type, String url, String listName) throws JiraException {
 
         JSON result;
         try {
@@ -145,7 +166,8 @@ public abstract class AgileResource {
         return getResourceArray(
                 type,
                 result,
-                restclient
+                restclient,
+                listName
         );
     }
 
@@ -173,6 +195,44 @@ public abstract class AgileResource {
     }
 
     /**
+     * Extract from a sub list the Resource array, if present.
+     *
+     * @param type         Resource data type
+     * @param subJson      a JSONObject instance
+     * @param resourceName The name of the list of items from the JSON result.
+     * @param <T>          The type of Agile resource to return.
+     * @return The list of resources if present.
+     * @throws JiraException when the retrieval fails
+     */
+    <T extends AgileResource> List<T> getSubResourceArray(
+            Class<T> type, JSONObject subJson, String resourceName) throws JiraException {
+        List<T> result = null;
+        if (subJson.containsKey(resourceName)) {
+            result = getResourceArray(type, subJson.get(resourceName), getRestclient(), resourceName + "s");
+        }
+        return result;
+    }
+
+    /**
+     * Extract from a sub list the Resource, if present.
+     *
+     * @param type         Resource data type
+     * @param subJson      a JSONObject instance
+     * @param resourceName The name of the item from the JSON result.
+     * @param <T>          The type of Agile resource to return.
+     * @return The resource if present.
+     * @throws JiraException when the retrieval fails
+     */
+    <T extends AgileResource> T getSubResource(
+            Class<T> type, JSONObject subJson, String resourceName) throws JiraException {
+        T result = null;
+        if (subJson.containsKey(resourceName)) {
+            result = getResource(type, subJson.get(resourceName), getRestclient());
+        }
+        return result;
+    }
+
+    /**
      * @return Internal JIRA ID.
      */
     public long getId() {
@@ -184,6 +244,13 @@ public abstract class AgileResource {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * @param name Setter for the resource name. In some case, the name is called something else.
+     */
+    void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -206,28 +273,8 @@ public abstract class AgileResource {
      * @param name The name of the attribute to retrieve.
      * @return The value of the attribute.
      */
-    String getAttribute(String name) {
+    public Object getAttribute(String name) {
         return (String) attributes.get(name);
-    }
-
-    /**
-     * Retrieve the specified attribute as a generic object.
-     *
-     * @param name The name of the attribute to retrieve.
-     * @return The value of the attribute.
-     */
-    int getAttributeAsInt(String name) {
-        return NumberUtils.toInt(getAttribute(name), 0);
-    }
-
-    /**
-     * Retrieve the specified attribute as a generic object.
-     *
-     * @param name The name of the attribute to retrieve.
-     * @return The value of the attribute.
-     */
-    boolean getAttributeAsBoolean(String name) {
-        return BooleanUtils.toBoolean(getAttribute(name));
     }
 
     /**
@@ -236,17 +283,26 @@ public abstract class AgileResource {
      *
      * @param json The JSON object to read.
      */
-    protected void deserialize(JSONObject json) {
+    void deserialize(JSONObject json) throws JiraException {
 
         id = getLong(json.get("id"));
         name = Field.getString(json.get("name"));
         self = Field.getString(json.get("self"));
+        addAttributes(json);
+    }
+
+    /**
+     * Allow to add more attributes.
+     *
+     * @param json The json object to extract attributes from.
+     */
+    void addAttributes(JSONObject json) {
         attributes.putAll(json);
     }
 
     long getLong(Object o) {
         if (o instanceof Integer || o instanceof Long) {
-            return Field.getInteger(o);
+            return Field.getLong(o);
         } else if (o instanceof String && NumberUtils.isDigits((String) o)) {
             return NumberUtils.toLong((String) o, 0L);
         } else {

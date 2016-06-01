@@ -24,11 +24,11 @@ import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
 
 /**
- * Represents an Agile TimeTracking.
+ * Represents an Agile Resolution.
  *
  * @author pldupont
  */
-public class TimeTracking extends AgileResource {
+public class Resolution extends AgileResource {
 
     /**
      * Creates a new Agile resource.
@@ -36,7 +36,7 @@ public class TimeTracking extends AgileResource {
      * @param restclient REST client instance
      * @param json       JSON payload
      */
-    public TimeTracking(RestClient restclient, JSONObject json) throws JiraException {
+    public Resolution(RestClient restclient, JSONObject json) throws JiraException {
         super(restclient, json);
     }
 }

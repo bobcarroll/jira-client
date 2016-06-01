@@ -34,12 +34,6 @@ import java.util.List;
  */
 public class Sprint extends AgileResource {
 
-    private static final String ATTR_STATE = "state";
-    private static final String ATTR_ORIGIN_BOARD_ID = "originBoardId";
-    private static final String ATTR_START_DATE = "startDate";
-    private static final String ATTR_END_DATE = "endDate";
-    private static final String ATTR_COMPLETE_DATE = "completeDate";
-
     private String state;
     private long originBoardId;
     private Date startDate;
@@ -52,7 +46,7 @@ public class Sprint extends AgileResource {
      * @param restclient REST client instance
      * @param json       JSON payload
      */
-    protected Sprint(RestClient restclient, JSONObject json) {
+    protected Sprint(RestClient restclient, JSONObject json) throws JiraException {
         super(restclient, json);
     }
 
@@ -80,14 +74,22 @@ public class Sprint extends AgileResource {
         return AgileResource.list(restclient, Sprint.class, RESOURCE_URI + "board/" + boardId + "/sprint");
     }
 
+    /**
+     * @return All issues in the Sprint.
+     * @throws JiraException when the retrieval fails
+     */
+    public List<Issue> getIssues() throws JiraException {
+        return AgileResource.list(getRestclient(), Issue.class, RESOURCE_URI + "sprint/" + getId() + "/issue", "issues");
+    }
+
     @Override
-    protected void deserialize(JSONObject json) {
+    protected void deserialize(JSONObject json) throws JiraException {
         super.deserialize(json);
-        state = Field.getString(json.get(ATTR_STATE));
-        originBoardId = getLong(json.get(ATTR_ORIGIN_BOARD_ID));
-        startDate = Field.getDateTime(json.get(ATTR_START_DATE));
-        endDate = Field.getDateTime(json.get(ATTR_END_DATE));
-        completeDate = Field.getDateTime(json.get(ATTR_COMPLETE_DATE));
+        state = Field.getString(json.get("state"));
+        originBoardId = getLong(json.get("originBoardId"));
+        startDate = Field.getDateTime(json.get("startDate"));
+        endDate = Field.getDateTime(json.get("endDate"));
+        completeDate = Field.getDateTime(json.get("completeDate"));
     }
 
     public String getState() {

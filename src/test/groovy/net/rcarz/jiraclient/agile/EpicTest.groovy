@@ -3,11 +3,16 @@ package net.rcarz.jiraclient.agile
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.RestClient
 import net.rcarz.jiraclient.RestException
+import net.sf.json.JSONObject
 import net.sf.json.JSONSerializer
+import org.hamcrest.core.IsEqual
+import org.hamcrest.core.IsNot
+import org.hamcrest.core.IsNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
+import static org.junit.Assert.assertThat
 import static org.mockito.Mockito.when
 
 /**
@@ -40,5 +45,65 @@ class EpicTest extends AbstractResourceTest {
         expectedException.expectMessage("Failed to retrieve Epic : /rest/agile/1.0/epic/666");
 
         Epic.get(mockRestClient, 666);
+    }
+
+    @Test
+    void "Given an epic without the issue cache, when calling asIssue(false), then call the REST Api."() {
+        RestClient mockRestClient = "given a REST Client"()
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "issue/" + JSONResources.EPIC_ID))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.ISSUE))
+        Epic mockEpic = new Epic(mockRestClient, JSONSerializer.toJSON(JSONResources.EPIC) as JSONObject)
+
+        assertThat mockEpic.issue, new IsNull()
+        Issue issue = mockEpic.asIssue(false)
+
+        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issue)
+        assertThat mockEpic.issue, new IsNot<>(new IsNull())
+    }
+
+    @Test
+    void "Given an epic with the issue cache, when calling asIssue(false), then use the cache version."() {
+        RestClient mockRestClient = "given a REST Client"()
+        Epic mockEpic = new Epic(mockRestClient, JSONSerializer.toJSON(JSONResources.EPIC) as JSONObject)
+        Issue mockIssue = new Issue(mockRestClient, JSONSerializer.toJSON(JSONResources.ISSUE) as JSONObject)
+        mockEpic.issue = mockIssue
+
+        assertThat mockEpic.issue, new IsNot<>(new IsNull())
+        Issue issue = mockEpic.asIssue(false)
+
+        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issue)
+        assertThat mockEpic.issue, new IsNot<>(new IsNull())
+        assert mockEpic.issue == mockIssue
+    }
+
+    @Test
+    void "Given an epic with the issue cache, when calling asIssue(true), then call the REST Api."() {
+        RestClient mockRestClient = "given a REST Client"()
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "issue/" + JSONResources.EPIC_ID))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.ISSUE))
+        Epic mockEpic = new Epic(mockRestClient, JSONSerializer.toJSON(JSONResources.EPIC) as JSONObject)
+        Issue mockIssue = new Issue(mockRestClient, JSONSerializer.toJSON(JSONResources.ISSUE) as JSONObject)
+        mockEpic.issue = mockIssue
+
+        assertThat mockEpic.issue, new IsNot<>(new IsNull())
+        Issue issue = mockEpic.asIssue(true)
+
+        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issue)
+        assertThat mockEpic.issue, new IsNot<>(new IsNull())
+        assert mockEpic.issue != mockIssue
+    }
+
+    @Test
+    void "Given a valid Epic, when calling getIssues(), then receive a list of Issues."() {
+        RestClient mockRestClient = "given a REST Client"()
+        Epic mockEpic = new Epic(mockRestClient, JSONSerializer.toJSON(JSONResources.EPIC) as JSONObject)
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "epic/${JSONResources.EPIC_ID}/issue"))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.LIST_OF_ISSUES))
+
+        List<Issue> issues = mockEpic.getIssues();
+
+        assertThat issues, new IsNot<>(new IsNull())
+        assertThat issues.size(), new IsEqual<Integer>(4)
+        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issues.get(0))
     }
 }

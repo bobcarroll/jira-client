@@ -64,4 +64,15 @@ class IssueTest extends AbstractResourceTest {
 
         Issue.get(mockRestClient, "HSP-2");
     }
+
+    @Test
+    void "Given an issue empty, when calling Issue.get(id), then deserialize properly."() {
+        RestClient mockRestClient = "given a REST Client"()
+        when(mockRestClient.get(AgileResource.RESOURCE_URI + "issue/" + JSONResources.BLANK_ISSUE1_ID))
+                .thenReturn(JSONSerializer.toJSON(JSONResources.BLANK_ISSUE1))
+
+        Issue issue = Issue.get(mockRestClient, JSONResources.BLANK_ISSUE1_ID);
+
+        "Assert equals to Issue ${JSONResources.BLANK_ISSUE1_ID}"(issue)
+    }
 }

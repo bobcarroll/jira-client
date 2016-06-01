@@ -72,11 +72,111 @@ class AbstractResourceTest {
 
     }
 
+    static void "Assert equals to Project 10000"(Project project) {
+        assertThat project, new IsNot<>(new IsNull())
+        assertThat project.getId(), new IsEqual<Long>(JSONResources.PROJECT_ID)
+        assertThat project.getName(), new IsEqual<String>(JSONResources.PROJECT_NAME)
+        assertThat project.getSelfURL(), new IsEqual<String>(JSONResources.PROJECT_SELF)
+
+    }
+
+    static void "Assert equals to Comment 9999"(Comment comment) {
+        assertThat comment, new IsNot<>(new IsNull())
+        assertThat comment.getId(), new IsEqual<Long>(JSONResources.ISSUE_COMMENT_ID)
+        assertThat comment.getName(), new IsNull<String>()
+        assertThat comment.getSelfURL(), new IsEqual<String>(JSONResources.ISSUE_COMMENT_SELF)
+
+    }
+
+    static void "Assert equals to TimeTracking"(TimeTracking timeTracking) {
+        assertThat timeTracking, new IsNot<>(new IsNull())
+        assertThat timeTracking.getId(), new IsEqual<Long>(0L)
+        assertThat timeTracking.getName(), new IsNull<String>()
+        assertThat timeTracking.getSelfURL(), new IsNull<String>()
+
+    }
+
+    static void "Assert equals to IssueType"(IssueType issueType) {
+        assertThat issueType, new IsNot<>(new IsNull())
+        assertThat issueType.getId(), new IsEqual<Long>(JSONResources.ISSUE_TYPE_ID)
+        assertThat issueType.getName(), new IsEqual<String>(JSONResources.ISSUE_TYPE_NAME)
+        assertThat issueType.getSelfURL(), new IsEqual<String>(JSONResources.ISSUE_TYPE_SELF)
+    }
+
+    static void "Assert equals to Status"(Status status) {
+        assertThat status, new IsNot<>(new IsNull())
+        assertThat status.getId(), new IsEqual<Long>(JSONResources.ISSUE_STATUS_ID)
+        assertThat status.getName(), new IsEqual<String>(JSONResources.ISSUE_STATUS_NAME)
+        assertThat status.getSelfURL(), new IsEqual<String>(JSONResources.ISSUE_STATUS_SELF)
+    }
+
+    static void "Assert equals to Resolution"(Resolution resolution) {
+        assertThat resolution, new IsNot<>(new IsNull())
+        assertThat resolution.getId(), new IsEqual<Long>(JSONResources.ISSUE_RESOLUTION_ID)
+        assertThat resolution.getName(), new IsEqual<String>(JSONResources.ISSUE_RESOLUTION_NAME)
+        assertThat resolution.getSelfURL(), new IsEqual<String>(JSONResources.ISSUE_RESOLUTION_SELF)
+    }
+
+    static void "Assert equals to Priority"(Priority priority) {
+        assertThat priority, new IsNot<>(new IsNull())
+        assertThat priority.getId(), new IsEqual<Long>(JSONResources.ISSUE_PRIORITY_ID)
+        assertThat priority.getName(), new IsEqual<String>(JSONResources.ISSUE_PRIORITY_NAME)
+        assertThat priority.getSelfURL(), new IsEqual<String>(JSONResources.ISSUE_PRIORITY_SELF)
+    }
+
+    static void "Assert equals to User"(User user) {
+        assertThat user, new IsNot<>(new IsNull())
+        assertThat user.getId(), new IsEqual<Long>(0L)
+        assertThat user.getName(), new IsEqual<String>(JSONResources.USER_NAME)
+        assertThat user.getSelfURL(), new IsEqual<String>(JSONResources.USER_SELF)
+    }
+
+    static void "Assert equals to Worklog 100028"(Worklog worklog) {
+        assertThat worklog, new IsNot<>(new IsNull())
+        assertThat worklog.getId(), new IsEqual<Long>(JSONResources.ISSUE_WORKLOG_ID)
+        assertThat worklog.getName(), new IsNull<String>()
+        assertThat worklog.getSelfURL(), new IsEqual<String>(JSONResources.ISSUE_WORKLOG_SELF)
+    }
+
     static void "Assert equals to Issue 10001"(Issue issue) {
         assertThat issue, new IsNot<>(new IsNull())
         assertThat issue.getId(), new IsEqual<Long>(JSONResources.ISSUE_ID)
         assertThat issue.getName(), new IsNull<String>()
         assertThat issue.getSelfURL(), new IsEqual<String>(JSONResources.ISSUE_SELF)
+        assertThat issue.getKey(), new IsEqual<String>(JSONResources.ISSUE_KEY)
+        assertThat issue.isFlagged(), new IsEqual<Boolean>(JSONResources.ISSUE_FLAGGED)
+        "Assert equals to Sprint ${issue.getSprint().getId()}"(issue.getSprint())
+        assertThat issue.getClosedSprints(), new IsNot<>(new IsNull<>())
+        assertThat issue.getClosedSprints().size(), new IsEqual<Integer>(3)
+        assertThat issue.getDescription(), new IsEqual<String>(JSONResources.ISSUE_DESCRIPTION)
+        "Assert equals to Project ${issue.getProject().getId()}"(issue.getProject())
+        assertThat issue.getComments(), new IsNot<>(new IsNull<>())
+        assertThat issue.getComments().size(), new IsEqual<Integer>(1)
+        "Assert equals to Comment ${issue.getComments().get(0).getId()}"(issue.getComments().get(0))
+        "Assert equals to Epic ${issue.getEpic().getId()}"(issue.getEpic())
+        "Assert equals to TimeTracking"(issue.getTimeTracking())
+        assertThat issue.getWorklogs(), new IsNot<>(new IsNull<>())
+        assertThat issue.getWorklogs().size(), new IsEqual<Integer>(1)
+        "Assert equals to Worklog ${issue.getWorklogs().get(0).getId()}"(issue.getWorklogs().get(0))
+        assertThat issue.getEnvironment(), new IsEqual<String>(JSONResources.ISSUE_ENVIRONMENT)
+        "Assert equals to IssueType"(issue.getIssueType())
+        "Assert equals to Status"(issue.getStatus())
+        "Assert equals to Resolution"(issue.getResolution())
+        assertThat issue.getCreated(), new IsEqual<Date>(JSONResources.ISSUE_CREATED)
+        assertThat issue.getUpdated(), new IsEqual<Date>(JSONResources.ISSUE_UPDATED)
+        "Assert equals to User"(issue.getAssignee())
+        "Assert equals to User"(issue.getCreator())
+        "Assert equals to User"(issue.getReporter())
+        "Assert equals to Priority"(issue.getPriority())
+
+
+    }
+
+    static void "Assert equals to Issue 10010"(Issue issue) {
+        assertThat issue, new IsNot<>(new IsNull())
+        assertThat issue.getId(), new IsEqual<Long>(JSONResources.BLANK_ISSUE1_ID)
+        assertThat issue.getName(), new IsNull<String>()
+        assertThat issue.getSelfURL(), new IsEqual<String>(JSONResources.BLANK_ISSUE1_SELF)
 
     }
 
