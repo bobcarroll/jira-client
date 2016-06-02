@@ -305,7 +305,7 @@ https://docs.atlassian.com/jira-software/REST/cloud/
     
 
 ### Agile Example ###
-To see more examples, look at [AgileClientDemoTest](test/groovy/AgileClientDemoTest.groovy)
+To see more examples, look at [AgileClientDemoTest](src/test/groovy/AgileClientDemoTest.groovy)
 ```java
 import java.util.List;
 
