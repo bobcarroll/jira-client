@@ -154,3 +154,8 @@ nb-configuration.xml
 Session.vim
 .netrwhist
 *~
+
+### Acquisio related test ###
+*AcquisioTest.java
+*AcquisioTest.groovy
+credentials.groovy
