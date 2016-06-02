@@ -50,7 +50,7 @@ public class JiraClient {
      * @throws JiraException 
      */
     public JiraClient(String uri) throws JiraException {
-        this(uri, null);
+        this(null, uri, null);
     }
 
     /**
@@ -61,17 +61,31 @@ public class JiraClient {
      * @throws JiraException 
      */
     public JiraClient(String uri, ICredentials creds) throws JiraException {
-    	PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
-        connManager.setDefaultMaxPerRoute(20);
-        connManager.setMaxTotal(40);
-        HttpClient httpclient = new DefaultHttpClient(connManager);
+        this(null, uri, creds);
+    }
+    
+    /**
+     * Creates an authenticated JIRA client with custom HttpClient.
+     *
+     * @param httpClient Custom HttpClient to be used
+     * @param uri Base URI of the JIRA server
+     * @param creds Credentials to authenticate with
+     * @throws JiraException 
+     */
+    public JiraClient(HttpClient httpClient, String uri, ICredentials creds) throws JiraException {
+        if (httpClient == null) {
+            PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
+            connManager.setDefaultMaxPerRoute(20);
+            connManager.setMaxTotal(40);
+            httpClient = new DefaultHttpClient(connManager);
+        }
 
-        restclient = new RestClient(httpclient, creds, URI.create(uri));
+        restclient = new RestClient(httpClient, creds, URI.create(uri));
 
         if (creds != null) {
             username = creds.getLogonName();
-        	//intialize connection if required
-        	creds.initialize(restclient);
+            //intialize connection if required
+            creds.initialize(restclient);
         }
     }
 
@@ -179,7 +193,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql)
             throws JiraException {
 
-        return Issue.search(restclient, jql, null, null);
+        return searchIssues(jql, null, null, null, null);
     }
 
     /**
@@ -196,7 +210,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, Integer maxResults)
             throws JiraException {
 
-        return Issue.search(restclient, jql, null, maxResults);
+        return searchIssues(jql, null, null, maxResults, null);
     }
 
     /**
@@ -223,7 +237,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields)
             throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields, null);
+        return searchIssues(jql, includedFields, null, null, null);
     }
 
     /**
@@ -248,10 +262,10 @@ public class JiraClient {
      *
      * @throws JiraException when the search fails
      */
-    public Issue.SearchResult searchIssues(String jql, String includedFields, String expandFields)
-        throws JiraException {
+    public Issue.SearchResult searchIssues(String jql, String includedFields,
+                                           String expandFields) throws JiraException {
 
-      return Issue.search(restclient, jql, includedFields, expandFields, null, null);
+        return searchIssues(jql, includedFields, expandFields, null, null);
     }
     
     /**
@@ -279,7 +293,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields, Integer maxResults)
             throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields, maxResults);
+        return searchIssues(jql, includedFields, null, maxResults, null);
     }
 
     /**
@@ -313,8 +327,7 @@ public class JiraClient {
     public Issue.SearchResult searchIssues(String jql, String includedFields,
             Integer maxResults, Integer startAt) throws JiraException {
 
-        return Issue.search(restclient, jql, includedFields, null, maxResults,
-                startAt);
+        return searchIssues(jql, includedFields, null, maxResults, startAt);
     }
 
     /**
@@ -347,11 +360,28 @@ public class JiraClient {
      *
      * @throws JiraException when the search fails
      */
-    public Issue.SearchResult searchIssues(String jql, String includedFields, String expandFields,
-                                           Integer maxResults, Integer startAt) throws JiraException {
+    public Issue.SearchResult searchIssues(String jql, String includedFields,
+                                           String expandFields, Integer maxResults,
+                                           Integer startAt) throws JiraException {
 
-      return Issue.search(restclient, jql, includedFields, expandFields, maxResults,
-          startAt);
+        return Issue.search(
+            restclient,
+            jql,
+            includedFields,
+            expandFields,
+            maxResults,
+            startAt
+        );
+    }
+
+    /**
+     * Retrieve the jira filter with the supplied id.
+     * @param id id of the filter to retreive.
+     * @return The Jira filter with the supplied id
+     * @throws JiraException
+     */
+    public Filter getFilter(final String id) throws JiraException {
+        return  Filter.get(restclient, id);
     }
 
     /**

@@ -127,6 +127,11 @@ public class Example {
             /* Now let's start progress on this issue. */
             issue.transition().execute("Start Progress");
 
+            /* Add the first comment and update it */
+            Comment comment = issue.addComment("I am a comment!");
+            comment.update("I am the first comment!");
+            issue.getComments().get(0).update("this works too!");
+
             /* Pretend customfield_1234 is a text field. Get the raw field value... */
             Object cfvalue = issue.getField("customfield_1234");
 
@@ -193,6 +198,12 @@ public class Example {
             System.out.println("Total: " + sr.total);
             for (Issue i : sr.issues)
                 System.out.println("Result: " + i);
+
+            /* Search with paging (optionally 10 issues at a time). There are optional
+               arguments for including/expanding fields, and page size/start. */
+            Issue.SearchResult sr = jira.searchIssues("project IN (GOTHAM) ORDER BY id");
+            while (sr.iterator().hasNext())
+                System.out.println("Result: " + sr.iterator().next());
 
         } catch (JiraException ex) {
             System.err.println(ex.getMessage());

@@ -1,7 +1,7 @@
 /**
  * jira-client - a simple JIRA REST client
  * Copyright (c) 2013 Bob Carroll (bob.carroll@alum.rit.edu)
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -528,174 +528,181 @@ public class Issue extends Resource {
     }
 
 
-	/**
+    /**
      * Iterates over all issues in the query by getting the next page of
      * issues when the iterator reaches the last of the current page.
      */
     private static class IssueIterator implements Iterator<Issue> {
-    	private Iterator<Issue> currentPage;
-		private RestClient restclient;
-		private Issue nextIssue;
+        private Iterator<Issue> currentPage;
+        private RestClient restclient;
+        private Issue nextIssue;
         private Integer maxResults = -1;
-		private String jql;
-		private String includedFields;
-		private String expandFields;
-		private Integer startAt;
-		private List<Issue> issues;
-		private int total;
-		
-        public IssueIterator(RestClient restclient, String jql,
-                String includedFields, String expandFields, Integer maxResults, Integer startAt)
-                        throws JiraException {
-			this.restclient = restclient;
-			this.jql = jql;
-			this.includedFields = includedFields;
-			this.expandFields = expandFields;
-			this.maxResults = maxResults;
-			this.startAt = startAt;
+        private String jql;
+        private String includedFields;
+        private String expandFields;
+        private Integer startAt;
+        private List<Issue> issues;
+        private int total;
+        
+        public IssueIterator(RestClient restclient, String jql, String includedFields,
+                             String expandFields, Integer maxResults, Integer startAt)
+                             throws JiraException {
+            this.restclient = restclient;
+            this.jql = jql;
+            this.includedFields = includedFields;
+            this.expandFields = expandFields;
+            this.maxResults = maxResults;
+            this.startAt = startAt;
         }
-    	
-		@Override
-		public boolean hasNext() {
-			if (nextIssue != null) {
-				return true;
-			}
-			try {
-				nextIssue = getNextIssue();
-			} catch (JiraException e) {
-				throw new RuntimeException(e);
-			}
-			return nextIssue != null;
-		}
+        
+        @Override
+        public boolean hasNext() {
+            if (nextIssue != null) {
+                return true;
+            }
+            try {
+                nextIssue = getNextIssue();
+            } catch (JiraException e) {
+                throw new RuntimeException(e);
+            }
+            return nextIssue != null;
+        }
 
-		@Override
-		public Issue next() {
-			if (! hasNext()) {
-				throw new NoSuchElementException();
-			}
-			Issue result = nextIssue;
-			nextIssue = null;
-			return result;
-		}
+        @Override
+        public Issue next() {
+            if (! hasNext()) {
+                throw new NoSuchElementException();
+            }
+            Issue result = nextIssue;
+            nextIssue = null;
+            return result;
+        }
 
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Method remove() not support for class " +
+                                                    this.getClass().getName());
+        }
 
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException("Method remove() not support for class " + this.getClass().getName());
-		}
+        /**
+         * Gets the next issue, returning null if none more available
+         * Will ask the next set of issues from the server if the end
+         * of the current list of issues is reached.
+         * 
+         * @return the next issue, null if none more available
+         * @throws JiraException
+         */
+        private Issue getNextIssue() throws JiraException {
+            // first call
+            if (currentPage == null) {
+                currentPage = getNextIssues().iterator();
+                if (currentPage == null || !currentPage.hasNext()) {
+                    return null;
+                } else {
+                    return currentPage.next();
+                }
+            }
+            
+            // check if we need to get the next set of issues
+            if (! currentPage.hasNext()) {
+                currentPage = getNextIssues().iterator();
+            }
 
-		/**
-		 * Gets the next issue, returning null if none more available
-		 * Will ask the next set of issues from the server if the end of the current list of issues is reached.
-		 * 
-		 * @return the next issue, null if none more available
-		 * @throws JiraException
-		 */
-		private Issue getNextIssue() throws JiraException {
-			// first call
-			if (currentPage == null) {
-				currentPage = getNextIssues().iterator();
-				if (currentPage == null) {
-					return null;
-				} else {
-					return currentPage.next();
-				}
-			}
-			
-			// check if we need to get the next set of issues
-			if (! currentPage.hasNext()) {
-				currentPage = getNextIssues().iterator();
-			}
+            // return the next item if available
+            if (currentPage.hasNext()) {
+                return currentPage.next();
+            } else {
+                return null;
+            }
+        }
 
-			// return the next item if available
-			if (currentPage.hasNext()) {
-				return currentPage.next();
-			} else {
-				return null;
-			}
-		}
+        /**
+         * Execute the query to get the next set of issues.
+         * Also sets the startAt, maxMresults, total and issues fields,
+         * so that the SearchResult can access them.
+         * 
+         * @return the next set of issues.
+         * @throws JiraException
+         */
+        private List<Issue> getNextIssues() throws JiraException {
+            if (issues == null && startAt == null) {
+                startAt = Integer.valueOf(0);
+            } else if (issues != null) {
+                startAt = startAt + issues.size();
+            }
 
-		/**
-		 * Execute the query to get the next set of issues.
-		 * Also sets the startAt, maxMresults, total and issues fields,
-		 * so that the SearchResult can access them.
-		 * 
-		 * @return the next set of issues.
-		 * @throws JiraException
-		 */
-		private List<Issue> getNextIssues() throws JiraException {
-			if (issues == null) {
-				startAt = Integer.valueOf(0);
-			} else {
-				startAt = startAt + issues.size();
-			}
+            JSON result = null;
 
-	        JSON result = null;
+            try {
+                URI searchUri = createSearchURI(restclient, jql, includedFields,
+                        expandFields, maxResults, startAt);
+                result = restclient.get(searchUri);
+            } catch (Exception ex) {
+                throw new JiraException("Failed to search issues", ex);
+            }
 
-	        try {
-	            URI searchUri = createSearchURI(restclient, jql, includedFields,
-						expandFields, maxResults, startAt);
-	            result = restclient.get(searchUri);
-	        } catch (Exception ex) {
-	            throw new JiraException("Failed to search issues", ex);
-	        }
+            if (!(result instanceof JSONObject)) {
+                throw new JiraException("JSON payload is malformed");
+            }
 
-	        if (!(result instanceof JSONObject)) {
-	            throw new JiraException("JSON payload is malformed");
-	        }
-
-    		
-			Map map = (Map) result;
-	
-			this.startAt = Field.getInteger(map.get("startAt"));
-			this.maxResults = Field.getInteger(map.get("maxResults"));
-	    	this.total = Field.getInteger(map.get("total"));
-	    	this.issues = Field.getResourceArray(Issue.class, map.get("issues"), restclient);
-	    	return issues;
-		}
-
+            
+            Map map = (Map) result;
+    
+            this.startAt = Field.getInteger(map.get("startAt"));
+            this.maxResults = Field.getInteger(map.get("maxResults"));
+            this.total = Field.getInteger(map.get("total"));
+            this.issues = Field.getResourceArray(Issue.class, map.get("issues"), restclient);
+            return issues;
+        }
     }
     
     /**
      * Issue search results structure.
+     *
+     * The issues of the result can be retrived from this class in 2 ways.
+     *
+     * The first is to access the issues field directly. This is a list of Issue instances.
+     * Note however that this will only contain the issues fetched in the initial search,
+     * so its size will be the same as the max result value or below.
+     *
+     * The second way is to use the iterator methods. This will return an Iterator instance,
+     * that will iterate over every result of the search, even if there is more than the max
+     * result value. The price for this, is that the call to next has none determistic performence,
+     * as it sometimes need to fetch a new batch of issues from Jira.
      */
     public static class SearchResult {
         public int start = 0;
         public int max = 0;
         public int total = 0;
         public List<Issue> issues = null;
-		private RestClient restclient;
-		private String jql;
-		private String includedFields;
-		private String expandFields;
-		private Integer startAt;
-		private IssueIterator issueIterator;
+        private IssueIterator issueIterator;
 
-	    public SearchResult(RestClient restclient, String jql,
-	            String includedFields, String expandFields, Integer maxResults, Integer startAt) throws JiraException {
-			this.restclient = restclient;
-			this.jql = jql;
-			this.includedFields = includedFields;
-			this.expandFields = expandFields;
-			initSearchResult(maxResults, start);
+        public SearchResult(RestClient restclient, String jql, String includedFields, 
+                            String expandFields, Integer maxResults, Integer startAt)
+                            throws JiraException {
+            this.issueIterator = new IssueIterator(
+                restclient,
+                jql,
+                includedFields,
+                expandFields,
+                maxResults,
+                startAt
+            );
+            /* backwards compatibility shim - first page only */
+            this.issueIterator.hasNext();
+            this.max = issueIterator.maxResults;
+            this.start = issueIterator.startAt;
+            this.issues = issueIterator.issues;
+            this.total = issueIterator.total;
         }
-        
-        private void initSearchResult(Integer maxResults, Integer start) throws JiraException {
-        	this.issueIterator = new IssueIterator(restclient, jql, includedFields, expandFields, maxResults, startAt);
-        	this.issueIterator.hasNext();
-        	this.max = issueIterator.maxResults;
-        	this.start = issueIterator.startAt;
-        	this.issues = issueIterator.issues;
-        	this.total = issueIterator.total;
-		}
 
-		/**
+        /**
          * All issues found.
          * 
          * @return All issues found.
          */
-        public IssueIterator iterator() {
-        	return issueIterator;
+        public Iterator<Issue> iterator() {
+            return issueIterator;
         }
     }
 
@@ -805,11 +812,13 @@ public class Issue extends Resource {
         key = Field.getString(map.get("key"));
 
         fields = (Map)map.get("fields");
+        if (fields == null)
+            return;
 
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
         attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ATTACHMENT), restclient);
         changeLog = Field.getResource(ChangeLog.class, map.get(Field.CHANGE_LOG), restclient);
-        comments = Field.getComments(fields.get(Field.COMMENT), restclient);
+        comments = Field.getComments(fields.get(Field.COMMENT), restclient, key);
         components = Field.getResourceArray(Component.class, fields.get(Field.COMPONENTS), restclient);
         description = Field.getString(fields.get(Field.DESCRIPTION));
         dueDate = Field.getDate(fields.get(Field.DUE_DATE));
@@ -849,10 +858,10 @@ public class Issue extends Resource {
         JSON result = null;
 
         try {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("expand", "projects.issuetypes.fields");
-        	params.put("projectKeys", pval);
-        	params.put("issuetypeNames", itval);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("expand", "projects.issuetypes.fields");
+            params.put("projectKeys", pval);
+            params.put("issuetypeNames", itval);
             URI createuri = restclient.buildURI(
                 getBaseUri() + "issue/createmeta",
                 params);
@@ -876,7 +885,7 @@ public class Issue extends Resource {
             restclient);
 
         if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty())
-            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType + 
+            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType +
                     "' missing from create metadata. Do you have enough permissions?");
 
         return projects.get(0).getIssueTypes().get(0).getFields();
@@ -907,8 +916,8 @@ public class Issue extends Resource {
         JSON result = null;
 
         try {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("expand", "transitions.fields");
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("expand", "transitions.fields");
             URI transuri = restclient.buildURI(
                 getRestUri(key) + "/transitions",params);
             result = restclient.get(transuri);
@@ -947,7 +956,7 @@ public class Issue extends Resource {
             throw new JiraException("Failed add attachment to issue " + key, ex);
         }
     }
-    
+
     /**
      * Adds a remote link to this issue.
      *
@@ -998,24 +1007,24 @@ public class Issue extends Resource {
     }
 
     /**
-	 * Removes an attachments.
-	 *
-	 * @param attachmentId attachment id to remove
-	 *
-	 * @throws JiraException when the attachment removal fails
-	 */
-	public void removeAttachment(String attachmentId) throws JiraException {
-	
-	    if (attachmentId == null) {
-	        throw new NullPointerException("attachmentId may not be null");
-	    }
-	
-	    try {
-	        restclient.delete(getBaseUri() + "attachment/" + attachmentId);
-	    } catch (Exception ex) {
-	        throw new JiraException("Failed remove attachment " + attachmentId, ex);
-	    }
-	}
+     * Removes an attachments.
+     *
+     * @param attachmentId attachment id to remove
+     *
+     * @throws JiraException when the attachment removal fails
+     */
+    public void removeAttachment(String attachmentId) throws JiraException {
+    
+        if (attachmentId == null) {
+            throw new NullPointerException("attachmentId may not be null");
+        }
+    
+        try {
+            restclient.delete(getBaseUri() + "attachment/" + attachmentId);
+        } catch (Exception ex) {
+            throw new JiraException("Failed remove attachment " + attachmentId, ex);
+        }
+    }
 
     /**
      * Adds a comment to this issue.
@@ -1024,8 +1033,8 @@ public class Issue extends Resource {
      *
      * @throws JiraException when the comment creation fails
      */
-    public void addComment(String body) throws JiraException {
-        addComment(body, null, null);
+    public Comment addComment(String body) throws JiraException {
+        return addComment(body, null, null);
     }
 
     /**
@@ -1037,7 +1046,7 @@ public class Issue extends Resource {
      *
      * @throws JiraException when the comment creation fails
      */
-    public void addComment(String body, String visType, String visName)
+    public Comment addComment(String body, String visType, String visName)
         throws JiraException {
 
         JSONObject req = new JSONObject();
@@ -1051,11 +1060,19 @@ public class Issue extends Resource {
             req.put("visibility", vis);
         }
 
+        JSON result = null;
+
         try {
-            restclient.post(getRestUri(key) + "/comment", req);
+            result = restclient.post(getRestUri(key) + "/comment", req);
         } catch (Exception ex) {
             throw new JiraException("Failed add comment to issue " + key, ex);
         }
+
+        if (!(result instanceof JSONObject)) {
+            throw new JiraException("JSON payload is malformed");
+        }
+
+        return new Comment(restclient, (JSONObject) result, key);
     }
 
     /**
@@ -1248,7 +1265,7 @@ public class Issue extends Resource {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param expand fields to expand when obtaining the issue
      *
      * @return an issue instance
@@ -1260,54 +1277,10 @@ public class Issue extends Resource {
 
         Map<String, String> queryParams = new HashMap<String, String>();
         queryParams.put("fields", includedFields);
-	    if (expand != null) {
-	        queryParams.put("expand", expand);
-	    }
+        if (expand != null) {
+            queryParams.put("expand", expand);
+        }
         return new Issue(restclient, realGet(restclient, key, queryParams));
-    }
-
-    /**
-     * Search for issues with the given query.
-     *
-     * @param restclient REST client instance
-     *
-     * @param jql JQL statement
-     *
-     * @return a search result structure with results (issues include all
-     * navigable fields)
-     *
-     * @throws JiraException when the search fails
-     */
-    public static SearchResult search(RestClient restclient, String jql)
-            throws JiraException {
-        return search(restclient, jql, null, null);
-    }
-
-    /**
-     * Search for issues with the given query and specify which fields to
-     * retrieve.
-     *
-     * @param restclient REST client instance
-     *
-     * @param jql JQL statement
-     *
-     * @param includedFields Specifies which issue fields will be included in
-     * the result.
-     * <br>Some examples how this parameter works:
-     * <ul>
-     * <li>*all - include all fields</li>
-     * <li>*navigable - include just navigable fields</li>
-     * <li>summary,comment - include just the summary and comments</li>
-     * <li>*all,-comment - include all fields</li>
-     * </ul>
-     *
-     * @return a search result structure with results
-     *
-     * @throws JiraException when the search fails
-     */
-    public static SearchResult search(RestClient restclient, String jql, String includedFields, Integer maxResults)
-            throws JiraException {
-        return search(restclient, jql, includedFields, null, maxResults, null);
     }
 
     /**
@@ -1329,10 +1302,10 @@ public class Issue extends Resource {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param maxResults if non-<code>null</code>, defines the maximum number of
      * results that can be returned 
-     * 
+     *
      * @param startAt if non-<code>null</code>, defines the first issue to
      * return
      *
@@ -1343,66 +1316,52 @@ public class Issue extends Resource {
      * @throws JiraException when the search fails
      */
     public static SearchResult search(RestClient restclient, String jql,
-            String includedFields, String expandFields, Integer maxResults, Integer startAt)
-                    throws JiraException {
+            String includedFields, String expandFields, Integer maxResults,
+            Integer startAt) throws JiraException {
 
-		SearchResult sr = new SearchResult(restclient, jql, includedFields, expandFields, maxResults, startAt);
-
-        return sr;
+        return new SearchResult(
+            restclient,
+            jql,
+            includedFields,
+            expandFields,
+            maxResults,
+            startAt
+        );
     }
 
-	private static JSON executeSearch(RestClient restclient, String jql,
-			String includedFields, String expandFields, Integer maxResults,
-			Integer startAt) throws JiraException {
-        JSON result = null;
-
-        try {
-            URI searchUri = createSearchURI(restclient, jql, includedFields,
-					expandFields, maxResults, startAt);
-            result = restclient.get(searchUri);
-        } catch (Exception ex) {
-            throw new JiraException("Failed to search issues", ex);
+    /**
+     * Creates the URI to execute a jql search.
+     * 
+     * @param restclient
+     * @param jql
+     * @param includedFields
+     * @param expandFields
+     * @param maxResults
+     * @param startAt
+     * @return the URI to execute a jql search.
+     * @throws URISyntaxException
+     */
+    private static URI createSearchURI(RestClient restclient, String jql,
+            String includedFields, String expandFields, Integer maxResults,
+            Integer startAt) throws URISyntaxException {
+        Map<String, String> queryParams = new HashMap<String, String>();
+        queryParams.put("jql", jql);
+        if(maxResults != null){
+            queryParams.put("maxResults", String.valueOf(maxResults));
+        }
+        if (includedFields != null) {
+            queryParams.put("fields", includedFields);
+        }
+        if (expandFields != null) {
+            queryParams.put("expand", expandFields);
+        }
+        if (startAt != null) {
+            queryParams.put("startAt", String.valueOf(startAt));
         }
 
-        if (!(result instanceof JSONObject)) {
-            throw new JiraException("JSON payload is malformed");
-        }
-		return result;
-	}
-
-	/**
-	 * Creates the URI to execute a jql search.
-	 * 
-	 * @param restclient
-	 * @param jql
-	 * @param includedFields
-	 * @param expandFields
-	 * @param maxResults
-	 * @param startAt
-	 * @return the URI to execute a jql search.
-	 * @throws URISyntaxException
-	 */
-	private static URI createSearchURI(RestClient restclient, String jql,
-			String includedFields, String expandFields, Integer maxResults,
-			Integer startAt) throws URISyntaxException {
-		Map<String, String> queryParams = new HashMap<String, String>();
-		queryParams.put("jql", jql);
-		if(maxResults != null){
-		    queryParams.put("maxResults", String.valueOf(maxResults));
-		}
-		if (includedFields != null) {
-		    queryParams.put("fields", includedFields);
-		}
-		if (expandFields != null) {
-		    queryParams.put("expand", expandFields);
-		}
-		if (startAt != null) {
-		    queryParams.put("startAt", String.valueOf(startAt));
-		}
-
-		URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
-		return searchUri;
-	}
+        URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
+        return searchUri;
+    }
 
     /**
      * Reloads issue data from the JIRA server (issue includes all navigable
@@ -1611,7 +1570,7 @@ public class Issue extends Resource {
     public User getReporter() {
         return reporter;
     }
-    
+
     public List<RemoteLink> getRemoteLinks() throws JiraException {
         JSONArray obj;
         try {
@@ -1696,5 +1655,17 @@ public class Issue extends Resource {
         return updatedDate;
     }
 
+    public boolean delete(final boolean deleteSubtasks) throws JiraException {
+        boolean result;
+        try {
+                URI uri = restclient.buildURI(getBaseUri() + "issue/" + this.key, new HashMap<String, String>() {{
+                put("deleteSubtasks", String.valueOf(deleteSubtasks));
+            }});
+            result = (restclient.delete(uri) == null);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to delete issue " + key, ex);
+        }
+        return result;
+    }
 }
 

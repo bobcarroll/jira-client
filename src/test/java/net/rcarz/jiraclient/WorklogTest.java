@@ -43,12 +43,8 @@ public class WorklogTest {
         userJSON.put("name","Joseph McCarthy");
         mockJSONObject.put("author", userJSON);
 
-        String DATE_FORMAT = "yyyy-MM-dd";
-        SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
-        final Date parse = df.parse(dateString, new ParsePosition(0));
-
         WorkLog workLog = new WorkLog(mockRestClient,mockJSONObject);
-        assertEquals(parse.toString() + " by Joseph McCarthy",workLog.toString());
+        assertEquals(workLog.getCreatedDate() + " by Joseph McCarthy",workLog.toString());
     }
 
     @Test
@@ -63,14 +59,13 @@ public class WorklogTest {
         assertEquals("45517", workLog.getId());
         String author = "joseph";
         assertEquals(author, workLog.getAuthor().getName());
-        String started = "2015-08-17T00:00:00.000";
-        assertEquals(started, simpleDateFormat.format(workLog.getStarted()));
-        String created = "2015-08-20T00:00:00.000";
-        assertEquals(created, simpleDateFormat.format(workLog.getCreatedDate()));
+        final long expectedStartedUnixTimeStamp = 1439803140000L; //unix timestamp in millis of 2015-08-17T13:19:00.000+0400
+        assertEquals(expectedStartedUnixTimeStamp, workLog.getStarted().getTime());
+        final long expectedCreatedAndUpdatedUnitTimeStamp = 1440062384000L; //unix timestamp in millis of 2015-08-20T13:19:44.000+0400
+        assertEquals(expectedCreatedAndUpdatedUnitTimeStamp, workLog.getCreatedDate().getTime());
+        assertEquals(expectedCreatedAndUpdatedUnitTimeStamp, workLog.getUpdatedDate().getTime());
         assertEquals(21600, workLog.getTimeSpentSeconds());
         assertEquals(author, workLog.getUpdateAuthor().getName());
-        assertEquals(created, simpleDateFormat.format(workLog.getUpdatedDate()));
-
     }
 
 }

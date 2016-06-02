@@ -19,24 +19,107 @@
 
 package net.rcarz.jiraclient;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONNull;
-import net.sf.json.JSONObject;
-
+import java.lang.Iterable;
+import java.lang.UnsupportedOperationException;
 import java.sql.Timestamp;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONNull;
 
 /**
  * Utility functions for translating between JSON and fields.
  */
 public final class Field {
 
+    /**
+     * Field metadata structure.
+     */
+    public static final class Meta {
+        public boolean required;
+        public String type;
+        public String items;
+        public String name;
+        public String system;
+        public String custom;
+        public int customId;
+    }
+
+    /**
+     * Field update operation.
+     */
+    public static final class Operation {
+        public String name;
+        public Object value;
+
+        /**
+         * Initialises a new update operation.
+         *
+         * @param name Operation name
+         * @param value Field value
+         */
+        public Operation(String name, Object value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+
+    /**
+     * Allowed value types.
+     */
+    public enum ValueType {
+        KEY("key"), NAME("name"), ID_NUMBER("id"), VALUE("value");
+        private String typeName;
+
+        private ValueType(String typeName) {
+            this.typeName = typeName;
+        }
+
+        @Override
+        public String toString() {
+            return typeName;
+        }
+    };
+
+    /**
+     * Value and value type pair.
+     */
+    public static final class ValueTuple {
+        public final String type;
+        public final Object value;
+
+        /**
+         * Initialises the value tuple.
+         *
+         * @param type
+         * @param value
+         */
+        public ValueTuple(String type, Object value) {
+            this.type = type;
+            this.value = (value != null ? value : JSONNull.getInstance());
+        }
+
+        /**
+         * Initialises the value tuple.
+         *
+         * @param type
+         * @param value
+         */
+        public ValueTuple(ValueType type, Object value) {
+            this(type.toString(), value);
+        }
+    }
+
     public static final String ASSIGNEE = "assignee";
     public static final String ATTACHMENT = "attachment";
     public static final String CHANGE_LOG = "changelog";
-    ;
     public static final String CHANGE_LOG_ENTRIES = "histories";
     public static final String CHANGE_LOG_ITEMS = "items";
     public static final String COMMENT = "comment";
@@ -66,8 +149,10 @@ public final class Field {
     public static final String CREATED_DATE = "created";
     public static final String UPDATED_DATE = "updated";
     public static final String TRANSITION_TO_STATUS = "to";
+
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
     private Field() { }
 
     /**
@@ -91,14 +176,22 @@ public final class Field {
      *
      * @param c a JSONObject instance
      * @param restclient REST client instance
+     * @param issueKey key of the parent issue
      *
      * @return a list of comments found in c
      */
-    public static List<Comment> getComments(Object c, RestClient restclient) {
+    public static List<Comment> getComments(Object c, RestClient restclient,
+                                            String issueKey) {
         List<Comment> results = new ArrayList<Comment>();
 
-        if (c instanceof JSONObject && !((JSONObject)c).isNullObject())
-            results = getResourceArray(Comment.class, ((Map)c).get("comments"), restclient);
+        if (c instanceof JSONObject && !((JSONObject)c).isNullObject()) {
+            results = getResourceArray(
+                Comment.class,
+                ((Map)c).get("comments"),
+                restclient,
+                issueKey
+            );
+        }
 
         return results;
     }
@@ -119,7 +212,7 @@ public final class Field {
 
         return results;
     }
-
+    
     /**
      * Gets a list of remote links from the given object.
      *
@@ -206,20 +299,19 @@ public final class Field {
     }
 
     /**
-     * Gets a long from the given object.
-     *
-     * @param i a Long or an Integer instance
-     *
-     * @return a long primitive or 0 if i isn't a Long or an Integer instance
-     */
+     +     * Gets a long from the given object.
+     +     *
+     +     * @param i a Long or an Integer instance
+     +     *
+     +     * @return a long primitive or 0 if i isn't a Long or an Integer instance
+     +     */
     public static long getLong(Object i) {
         long result = 0;
-
-        if (i instanceof Long)
+        if (i instanceof Long) {
             result = ((Long) i).longValue();
-        if (i instanceof Integer)
+        } else if (i instanceof Integer) {
             result = ((Integer) i).intValue();
-
+        }
         return result;
     }
 
@@ -261,6 +353,22 @@ public final class Field {
     public static <T extends Resource> T getResource(
         Class<T> type, Object r, RestClient restclient) {
 
+        return getResource(type, r, restclient, null);
+    }
+
+    /**
+     * Gets a JIRA resource from the given object.
+     *
+     * @param type Resource data type
+     * @param r a JSONObject instance
+     * @param restclient REST client instance
+     * @param parentId id/key of the parent resource
+     *
+     * @return a Resource instance or null if r isn't a JSONObject instance
+     */
+    public static <T extends Resource> T getResource(
+        Class<T> type, Object r, RestClient restclient, String parentId) {
+
         T result = null;
 
         if (r instanceof JSONObject && !((JSONObject)r).isNullObject()) {
@@ -273,7 +381,7 @@ public final class Field {
             else if (type == ChangeLogItem.class)
                 result = (T)new ChangeLogItem(restclient, (JSONObject)r);
             else if (type == Comment.class)
-                result = (T)new Comment(restclient, (JSONObject)r);
+                result = (T)new Comment(restclient, (JSONObject)r, parentId);
             else if (type == Component.class)
                 result = (T)new Component(restclient, (JSONObject)r);
             else if (type == CustomFieldOption.class)
@@ -290,6 +398,8 @@ public final class Field {
                 result = (T)new Priority(restclient, (JSONObject)r);
             else if (type == Project.class)
                 result = (T)new Project(restclient, (JSONObject)r);
+            else if (type == ProjectCategory.class)
+                result = (T)new ProjectCategory(restclient, (JSONObject)r);
             else if (type == RemoteLink.class)
                 result = (T)new RemoteLink(restclient, (JSONObject)r);
             else if (type == Resolution.class)
@@ -361,11 +471,34 @@ public final class Field {
     public static <T extends Resource> List<T> getResourceArray(
         Class<T> type, Object ra, RestClient restclient) {
 
+        return getResourceArray(type, ra, restclient, null);
+    }
+
+    /**
+     * Gets a list of JIRA resources from the given object.
+     *
+     * @param type Resource data type
+     * @param ra a JSONArray instance
+     * @param restclient REST client instance
+     * @param parentId id/key of the parent resource
+     *
+     * @return a list of Resources found in ra
+     */
+    public static <T extends Resource> List<T> getResourceArray(
+        Class<T> type, Object ra, RestClient restclient, String parentId) {
+
         List<T> results = new ArrayList<T>();
 
         if (ra instanceof JSONArray) {
             for (Object v : (JSONArray)ra) {
-                T item = getResource(type, v, restclient);
+                T item = null;
+
+                if (parentId != null) {
+                    item = getResource(type, v, restclient, parentId);
+                } else {
+                    item = getResource(type, v, restclient);
+                }
+
                 if (item != null)
                     results.add(item);
             }
@@ -483,10 +616,12 @@ public final class Field {
                     itemMap.put(ValueType.NAME.toString(), realValue.toString());
 
                 realResult = itemMap;
-            } else if (type.equals("string") && custom != null
+            } else if ( type.equals("option") ||
+                    (
+                    type.equals("string") && custom != null
                     && (custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") ||
-                    custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multiselect"))) {
-
+                    custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multiselect")))) {
+                
                 realResult = new JSONObject();
                 ((JSONObject)realResult).put(ValueType.VALUE.toString(), realValue.toString());
             } else if (type.equals("string"))
@@ -591,7 +726,7 @@ public final class Field {
             else if (value instanceof TimeTracking)
                 return ((TimeTracking) value).toJsonObject();
         } else if (m.type.equals("number")) {
-            if (!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value
+            if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
                     instanceof java.lang.Float) && !(value instanceof java.lang.Long) )
             {
                 throw new JiraException("Field '" + name + "' expects a Numeric value");
@@ -654,84 +789,6 @@ public final class Field {
      */
     public static ValueTuple valueById(String id) {
         return new ValueTuple(ValueType.ID_NUMBER, id);
-    }
-
-    /**
-     * Allowed value types.
-     */
-    public enum ValueType {
-        KEY("key"), NAME("name"), ID_NUMBER("id"), VALUE("value");
-        private String typeName;
-
-        private ValueType(String typeName) {
-            this.typeName = typeName;
-        }
-
-        @Override
-        public String toString() {
-            return typeName;
-        }
-    }
-
-    /**
-     * Field metadata structure.
-     */
-    public static final class Meta {
-        public boolean required;
-        public String type;
-        public String items;
-        public String name;
-        public String system;
-        public String custom;
-        public int customId;
-    }
-
-    /**
-     * Field update operation.
-     */
-    public static final class Operation {
-        public String name;
-        public Object value;
-
-        /**
-         * Initialises a new update operation.
-         *
-         * @param name  Operation name
-         * @param value Field value
-         */
-        public Operation(String name, Object value) {
-            this.name = name;
-            this.value = value;
-        }
-    }
-
-    /**
-     * Value and value type pair.
-     */
-    public static final class ValueTuple {
-        public final String type;
-        public final Object value;
-
-        /**
-         * Initialises the value tuple.
-         *
-         * @param type
-         * @param value
-         */
-        public ValueTuple(String type, Object value) {
-            this.type = type;
-            this.value = (value != null ? value : JSONNull.getInstance());
-        }
-
-        /**
-         * Initialises the value tuple.
-         *
-         * @param type
-         * @param value
-         */
-        public ValueTuple(ValueType type, Object value) {
-            this(type.toString(), value);
-        }
     }
 }
 
