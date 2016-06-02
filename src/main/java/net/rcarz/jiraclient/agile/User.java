@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
@@ -30,6 +31,11 @@ import net.sf.json.JSONObject;
  */
 public class User extends AgileResource {
 
+    private String emailAddress;
+    private String displayName;
+    private boolean active;
+    private String timeZone;
+
     /**
      * Creates a new Agile resource.
      *
@@ -38,5 +44,41 @@ public class User extends AgileResource {
      */
     public User(RestClient restclient, JSONObject json) throws JiraException {
         super(restclient, json);
+    }
+
+    /**
+     * Deserialize the json to extract standard attributes and keep a reference of
+     * other attributes.
+     *
+     * @param json The JSON object to read.
+     */
+    @Override
+    void deserialize(JSONObject json) throws JiraException {
+        super.deserialize(json);
+        this.emailAddress = Field.getString(json.get("emailAddress"));
+        this.displayName = Field.getString(json.get("displayName"));
+        this.active = Field.getBoolean(json.get("active"));
+        this.timeZone = Field.getString(json.get("timeZone"));
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s{name='%s', Display Name='%s'}", getClass().getSimpleName(), getName(), getDisplayName());
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
     }
 }

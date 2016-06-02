@@ -32,7 +32,7 @@ class EpicTest extends AbstractResourceTest {
 
         Epic epic = Epic.get(mockRestClient, JSONResources.EPIC_ID);
 
-        "Assert equals to Epic ${JSONResources.EPIC_ID}"(epic)
+        "Assert equals to Epic"(epic)
     }
 
     @Test
@@ -57,7 +57,7 @@ class EpicTest extends AbstractResourceTest {
         assertThat mockEpic.issue, new IsNull()
         Issue issue = mockEpic.asIssue(false)
 
-        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issue)
+        "Assert equals to Issue"(issue)
         assertThat mockEpic.issue, new IsNot<>(new IsNull())
     }
 
@@ -71,7 +71,7 @@ class EpicTest extends AbstractResourceTest {
         assertThat mockEpic.issue, new IsNot<>(new IsNull())
         Issue issue = mockEpic.asIssue(false)
 
-        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issue)
+        "Assert equals to Issue"(issue)
         assertThat mockEpic.issue, new IsNot<>(new IsNull())
         assert mockEpic.issue == mockIssue
     }
@@ -88,7 +88,7 @@ class EpicTest extends AbstractResourceTest {
         assertThat mockEpic.issue, new IsNot<>(new IsNull())
         Issue issue = mockEpic.asIssue(true)
 
-        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issue)
+        "Assert equals to Issue"(issue)
         assertThat mockEpic.issue, new IsNot<>(new IsNull())
         assert mockEpic.issue != mockIssue
     }
@@ -104,6 +104,6 @@ class EpicTest extends AbstractResourceTest {
 
         assertThat issues, new IsNot<>(new IsNull())
         assertThat issues.size(), new IsEqual<Integer>(4)
-        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issues.get(0))
+        "Assert equals to Issue"(issues.get(0))
     }
 }

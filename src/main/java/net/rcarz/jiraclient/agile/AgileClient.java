@@ -108,5 +108,9 @@ public class AgileClient {
     public Epic getEpic(long id) throws JiraException {
         return Epic.get(restclient, id);
     }
+
+    public RestClient getRestclient() {
+        return restclient;
+    }
 }
 

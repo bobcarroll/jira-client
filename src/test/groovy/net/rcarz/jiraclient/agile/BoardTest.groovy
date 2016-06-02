@@ -34,7 +34,7 @@ class BoardTest extends AbstractResourceTest {
 
         assertThat boards, new IsNot<>(new IsNull())
         assertThat boards.size(), new IsEqual<Integer>(2)
-        "Assert equals to Board 84"(boards.get(0))
+        "Assert equals to Board"(boards.get(0))
     }
 
     @Test
@@ -57,7 +57,7 @@ class BoardTest extends AbstractResourceTest {
 
         Board board = Board.get(mockRestClient, JSONResources.BOARD_ID);
 
-        "Assert equals to Board 84"(board)
+        "Assert equals to Board"(board)
     }
 
     @Test
@@ -83,7 +83,7 @@ class BoardTest extends AbstractResourceTest {
 
         assertThat sprints, new IsNot<>(new IsNull())
         assertThat sprints.size(), new IsEqual<Integer>(2)
-        "Assert equals to Sprint ${JSONResources.SPRINT_ID}"(sprints.get(0))
+        "Assert equals to Sprint"(sprints.get(0))
     }
 
     @Test
@@ -97,7 +97,7 @@ class BoardTest extends AbstractResourceTest {
 
         assertThat epics, new IsNot<>(new IsNull())
         assertThat epics.size(), new IsEqual<Integer>(2)
-        "Assert equals to Epic ${JSONResources.EPIC_ID}"(epics.get(0))
+        "Assert equals to Epic"(epics.get(0))
     }
 
     @Test
@@ -111,7 +111,7 @@ class BoardTest extends AbstractResourceTest {
 
         assertThat backlog, new IsNot<>(new IsNull())
         assertThat backlog.size(), new IsEqual<Integer>(4)
-        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(backlog.get(0))
+        "Assert equals to Issue"(backlog.get(0))
     }
 
     @Test
@@ -125,6 +125,6 @@ class BoardTest extends AbstractResourceTest {
 
         assertThat issues, new IsNot<>(new IsNull())
         assertThat issues.size(), new IsEqual<Integer>(4)
-        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issues.get(0))
+        "Assert equals to Issue"(issues.get(0))
     }
 }

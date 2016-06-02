@@ -88,7 +88,7 @@ public abstract class AgileResource {
                 Constructor<T> constructor = type.getDeclaredConstructor(RestClient.class, JSONObject.class);
                 result = constructor.newInstance(restclient, r);
             } catch (Exception e) {
-                throw new JiraException("Failed to deserialize object array.");
+                throw new JiraException("Failed to deserialize object.", e);
             }
         }
 
@@ -114,7 +114,7 @@ public abstract class AgileResource {
         JSONObject jo = (JSONObject) ra;
 
         if (!jo.containsKey(listName) || !(jo.get(listName) instanceof JSONArray)) {
-            throw new JiraException(type.getSimpleName() + " result is malformed");
+            throw new JiraException("No array found for name '" + listName + "'");
         }
 
         List<T> results = new ArrayList<T>();
@@ -226,7 +226,7 @@ public abstract class AgileResource {
     <T extends AgileResource> T getSubResource(
             Class<T> type, JSONObject subJson, String resourceName) throws JiraException {
         T result = null;
-        if (subJson.containsKey(resourceName)) {
+        if (subJson.containsKey(resourceName) && !subJson.get(resourceName).equals("null")) {
             result = getResource(type, subJson.get(resourceName), getRestclient());
         }
         return result;
@@ -274,7 +274,7 @@ public abstract class AgileResource {
      * @return The value of the attribute.
      */
     public Object getAttribute(String name) {
-        return (String) attributes.get(name);
+        return attributes.get(name);
     }
 
     /**

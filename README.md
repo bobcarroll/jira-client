@@ -273,6 +273,7 @@ public class Example {
                 System.err.println(ex.getCause().getMessage());
         }
     }
+}
 ```
 
 ## Agile API ##
@@ -304,7 +305,7 @@ https://docs.atlassian.com/jira-software/REST/cloud/
     
 
 ### Agile Example ###
-
+To see more examples, look at [AgileClientDemoTest](test/groovy/AgileClientDemoTest.groovy)
 ```java
 import java.util.List;
 

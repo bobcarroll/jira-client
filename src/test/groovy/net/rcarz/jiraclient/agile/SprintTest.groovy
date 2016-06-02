@@ -34,7 +34,7 @@ class SprintTest extends AbstractResourceTest {
 
         assertThat sprints, new IsNot<>(new IsNull())
         assertThat sprints.size(), new IsEqual<Integer>(2)
-        "Assert equals to Sprint ${JSONResources.SPRINT_ID}"(sprints.get(0))
+        "Assert equals to Sprint"(sprints.get(0))
     }
 
     @Test
@@ -57,7 +57,7 @@ class SprintTest extends AbstractResourceTest {
 
         Sprint sprint = Sprint.get(mockRestClient, JSONResources.SPRINT_ID);
 
-        "Assert equals to Sprint ${JSONResources.SPRINT_ID}"(sprint)
+        "Assert equals to Sprint"(sprint)
     }
 
     @Test
@@ -83,6 +83,6 @@ class SprintTest extends AbstractResourceTest {
 
         assertThat issues, new IsNot<>(new IsNull())
         assertThat issues.size(), new IsEqual<Integer>(4)
-        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issues.get(0))
+        "Assert equals to Issue"(issues.get(0))
     }
 }

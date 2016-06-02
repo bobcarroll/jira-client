@@ -27,7 +27,7 @@ class IssueTest extends AbstractResourceTest {
 
         Issue issue = Issue.get(mockRestClient, JSONResources.ISSUE_ID);
 
-        "Assert equals to Issue ${JSONResources.ISSUE_ID}"(issue)
+        "Assert equals to Issue"(issue)
     }
 
     @Test
@@ -50,7 +50,7 @@ class IssueTest extends AbstractResourceTest {
 
         Issue issue = Issue.get(mockRestClient, JSONResources.ISSUE_KEY);
 
-        "Assert equals to Issue ${JSONResources.ISSUE_KEY}"(issue)
+        "Assert equals to Issue"(issue)
     }
 
     @Test
@@ -73,6 +73,6 @@ class IssueTest extends AbstractResourceTest {
 
         Issue issue = Issue.get(mockRestClient, JSONResources.BLANK_ISSUE1_ID);
 
-        "Assert equals to Issue ${JSONResources.BLANK_ISSUE1_ID}"(issue)
+        "Assert equals to Issue Blank"(issue)
     }
 }
