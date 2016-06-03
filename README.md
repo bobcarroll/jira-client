@@ -284,4 +284,68 @@ public class Example {
                 System.err.println(ex.getCause().getMessage());
         }
     }
+}
 ```
+
+## Agile API ##
+https://docs.atlassian.com/jira-software/REST/cloud/
+
+### Agile supported calls ###
+| Class | Method | REST Call |
+| ----- | ------ | --------- |
+| [AgileClient](src/main/java/net/rcarz/jiraclient/agile/AgileClient.java) | ```List<Board> getBoards()``` | GET /rest/agile/1.0/board |
+| | ```Board getBoard(long id)``` | GET /rest/agile/1.0/board/{boardId} |
+| | ```Sprint getSprint(long id)``` | GET /rest/agile/1.0/sprint/{sprintId} |
+| | ```Epic getEpic(long id)``` | GET /rest/agile/1.0/epic/{epicId} |
+| | ```Issue getIssue(long id)``` | GET /rest/agile/1.0/issue/{issueId} |
+| | ```Issue getIssue(String key)``` | GET /rest/agile/1.0/issue/{issueKey} |
+| [Board](src/main/java/net/rcarz/jiraclient/agile/Board.java) | ``` static List<Board> getAll(RestClient restclient)``` | GET /rest/agile/1.0/board |
+| | ```static Board get(RestClient restclient, long id)``` | GET /rest/agile/1.0/board/{boardId} |
+| | ```List<Sprint> getSprints()``` | GET /rest/agile/1.0/board/{boardId}/sprint |
+| * | ```List<Epic> getEpics()``` | GET /rest/agile/1.0/board/{boardId}/epic
+| * | ```List<Issue> getBacklog()``` | GET /rest/agile/1.0/board/{boardId}/backlog
+| * | ```List<Issue> getIssuesWithoutEpic()``` | GET /rest/agile/1.0/board/{boardId}/epic/none/issue
+| [Sprint](src/main/java/net/rcarz/jiraclient/agile/Sprint.java) | ``` static Sprint get(RestClient restclient, long sprintId)``` | GET /rest/agile/1.0/sprint/{sprintId} |
+| | ```static List<Sprint> getAll(RestClient restclient, long boardId)``` | GET /rest/agile/1.0/board/{boardId}/sprint |
+| * | ```List<Issue> getIssues()``` | GET /rest/agile/1.0/sprint/{sprintId}/issue |
+| [Epic](src/main/java/net/rcarz/jiraclient/agile/Epic.java) | ```static Epic get(RestClient restclient, long id)``` | GET /rest/agile/1.0/epic/{epicId} |
+| * | ```List<Issue> getIssues()``` | GET /rest/agile/1.0/epic/{epicId}/issue |
+| [Issue](src/main/java/net/rcarz/jiraclient/agile/Issue.java) | ```static Issue get(RestClient restclient, long id)``` | GET /rest/agile/1.0/issue/{issueId} |
+| | ```static Issue get(RestClient restclient, String key)``` | GET /rest/agile/1.0/issue/{issueKey} |
+    
+    
+
+### Agile Example ###
+To see more examples, look at [AgileClientDemoTest](src/test/groovy/AgileClientDemoTest.groovy)
+```java
+import java.util.List;
+
+import net.rcarz.jiraclient.BasicCredentials;
+import net.rcarz.jiraclient.Issue;
+import net.rcarz.jiraclient.JiraClient;
+import net.rcarz.jiraclient.JiraException;
+import net.rcarz.jiraclient.agile.Board;
+import net.rcarz.jiraclient.agile.AgileClient;
+
+public class Example {
+
+    public static void main(String[] args) {
+
+        BasicCredentials creds = new BasicCredentials("batman", "pow! pow!");
+        JiraClient jira = new JiraClient("https://jira.example.com/jira", creds);
+        AgileClient agileClient = new AgileClient(jira);
+
+        try {
+            /* Retrieve all Boards */
+            List<Board> allBoards = agileClient.getBoards();
+        } catch (JiraException ex) {
+            System.err.println(ex.getMessage());
+
+            if (ex.getCause() != null) {
+                System.err.println(ex.getCause().getMessage());
+            }
+        }
+    }
+}
+```
+

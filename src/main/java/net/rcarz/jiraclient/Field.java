@@ -299,6 +299,23 @@ public final class Field {
     }
 
     /**
+     +     * Gets a long from the given object.
+     +     *
+     +     * @param i a Long or an Integer instance
+     +     *
+     +     * @return a long primitive or 0 if i isn't a Long or an Integer instance
+     +     */
+    public static long getLong(Object i) {
+        long result = 0;
+        if (i instanceof Long) {
+            result = ((Long) i).longValue();
+        } else if (i instanceof Integer) {
+            result = ((Integer) i).intValue();
+        }
+        return result;
+    }
+
+    /**
      * Gets a generic map from the given object.
      *
      * @param keytype Map key data type
