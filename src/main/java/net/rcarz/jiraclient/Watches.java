@@ -71,7 +71,7 @@ public class Watches extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(getBaseUri() + "issue/" + issue + "/watches");
+            result = restclient.get(getBaseUri() + "issue/" + issue + "/watchers");
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve watches for issue " + issue, ex);
         }
