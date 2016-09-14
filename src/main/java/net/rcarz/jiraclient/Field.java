@@ -410,6 +410,8 @@ public final class Field {
                 result = (T)new Transition(restclient, (JSONObject)r);
             else if (type == User.class)
                 result = (T)new User(restclient, (JSONObject)r);
+            else if (type == Visibility.class)
+                result = (T)new Visibility(restclient, (JSONObject)r);
             else if (type == Version.class)
                 result = (T)new Version(restclient, (JSONObject)r);
             else if (type == Votes.class)
