@@ -87,9 +87,9 @@ public class Sprint extends AgileResource {
         super.deserialize(json);
         state = Field.getString(json.get("state"));
         originBoardId = getLong(json.get("originBoardId"));
-        startDate = Field.getDateTime(json.get("startDate"));
-        endDate = Field.getDateTime(json.get("endDate"));
-        completeDate = Field.getDateTime(json.get("completeDate"));
+        startDate = Field.getDateTimeSprint(json.get("startDate"));
+        endDate = Field.getDateTimeSprint(json.get("endDate"));
+        completeDate = Field.getDateTimeSprint(json.get("completeDate"));
     }
 
     public String getState() {
