@@ -59,11 +59,10 @@ public class WorklogTest {
         assertEquals("45517", workLog.getId());
         String author = "joseph";
         assertEquals(author, workLog.getAuthor().getName());
-        final long expectedStartedUnixTimeStamp = 1439803140000L; //unix timestamp in millis of 2015-08-17T13:19:00.000+0400
-        assertEquals(expectedStartedUnixTimeStamp, workLog.getStarted().getTime());
-        final long expectedCreatedAndUpdatedUnitTimeStamp = 1440062384000L; //unix timestamp in millis of 2015-08-20T13:19:44.000+0400
-        assertEquals(expectedCreatedAndUpdatedUnitTimeStamp, workLog.getCreatedDate().getTime());
-        assertEquals(expectedCreatedAndUpdatedUnitTimeStamp, workLog.getUpdatedDate().getTime());
+        String started = "2015-08-17T12:19:00.000";
+        assertEquals(started, simpleDateFormat.format(workLog.getStarted()));
+        String created = "2015-08-20T00:00:00.000";
+        assertEquals(created, simpleDateFormat.format(workLog.getCreatedDate()));
         assertEquals(21600, workLog.getTimeSpentSeconds());
         assertEquals(author, workLog.getUpdateAuthor().getName());
     }
