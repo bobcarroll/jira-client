@@ -11,29 +11,30 @@ import org.joda.time.PeriodType;
  */
 public class WorklogUtils {
 
-  /**
-   * Formats duration time into pretty string format
-   * Does not output seconds
-   * @param durationInSeconds provided duration to format
-   * @return formatted duration
-   */
-  public static String formatDurationFromSeconds(long durationInSeconds) {
-    if (durationInSeconds < 60)
-      return "0m";
-    StringBuilder builder = new StringBuilder();
-    PeriodType type = PeriodType.forFields(new DurationFieldType[]{
-        DurationFieldType.hours(),
-        DurationFieldType.minutes()
-    });
+    /**
+     * Formats duration time into pretty string format
+     * Does not output seconds
+     *
+     * @param durationInSeconds provided duration to format
+     * @return formatted duration
+     */
+    public static String formatDurationFromSeconds(long durationInSeconds) {
+        if (durationInSeconds < 60)
+            return "0m";
+        StringBuilder builder = new StringBuilder();
+        PeriodType type = PeriodType.forFields(new DurationFieldType[]{
+                DurationFieldType.hours(),
+                DurationFieldType.minutes()
+        });
 
-    Period period = new Period(1000 * durationInSeconds, type);
-    if (period.getHours() != 0)
-      builder.append(period.getHours()).append("h").append(" ");
-    if (period.getMinutes() != 0)
-      builder.append(period.getMinutes()).append("m").append(" ");
-    if ((builder.length() > 0) && builder.charAt(builder.length()-1) == " ".charAt(0))
-      builder.deleteCharAt(builder.length()-1);
-    return builder.toString();
-  }
+        Period period = new Period(1000 * durationInSeconds, type);
+        if (period.getHours() != 0)
+            builder.append(period.getHours()).append("h").append(" ");
+        if (period.getMinutes() != 0)
+            builder.append(period.getMinutes()).append("m").append(" ");
+        if ((builder.length() > 0) && builder.charAt(builder.length() - 1) == " ".charAt(0))
+            builder.deleteCharAt(builder.length() - 1);
+        return builder.toString();
+    }
 
 }
