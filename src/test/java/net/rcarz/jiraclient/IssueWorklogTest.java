@@ -6,7 +6,7 @@ import net.sf.json.JSONSerializer;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
@@ -35,16 +35,16 @@ public class IssueWorklogTest {
         WorkLog workLog = new WorkLog(mock(RestClient.class), (JSONObject) JSONSerializer.toJSON(RESPONSE_WORKLOG_BODY));
 
         // Assert
-        assertThat(workLog).isNotNull();
-        assertThat(workLog.getAuthor()).isNotNull();
-        assertThat(workLog.getSelf()).isEqualTo("https://jira.test.lt/rest/api/2/issue/32374/worklog/80720");
-        assertThat(workLog.getId()).isEqualTo("80720");
-        assertThat(workLog.getComment()).isEqualTo("Test");
-        assertThat(workLog.getCreatedDate().getTime()).isEqualTo(1454104800000L);
-        assertThat(workLog.getUpdatedDate().getTime()).isEqualTo(1454104800000L);
-        assertThat(workLog.getStarted().getTime()).isEqualTo(1453879853201L);
-        assertThat(workLog.getTimeSpent()).isEqualTo("5m");
-        assertThat(workLog.getTimeSpentSeconds()).isEqualTo(300);
+        assertNotNull(workLog);
+        assertNotNull(workLog.getAuthor());
+        assertEquals("https://jira.test.lt/rest/api/2/issue/32374/worklog/80720", workLog.getSelf());
+        assertEquals("80720", workLog.getId());
+        assertEquals("Test", workLog.getComment());
+        assertEquals(1454104800000L, workLog.getCreatedDate().getTime());
+        assertEquals(1454104800000L, workLog.getUpdatedDate().getTime());
+        assertEquals(1453879853201L, workLog.getStarted().getTime());
+        assertEquals("5m", workLog.getTimeSpent());
+        assertEquals(300, workLog.getTimeSpentSeconds());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class IssueWorklogTest {
         try {
             issue.addWorkLog(null, DateTime.now(), 120);
         } catch (JiraException e) {
-            assertThat(e).hasMessageContaining("Failed add worklog to issue");
+            assertEquals("Failed add worklog to issue", e.getMessage());
         }
 
         // Assert
@@ -90,7 +90,7 @@ public class IssueWorklogTest {
         try {
             issue.addWorkLog("asdf", null, 120);
         } catch (JiraException e) {
-            assertThat(e).hasMessageContaining("Failed add worklog to issue");
+            assertEquals("Failed add worklog to issue", e.getMessage());
         }
 
         // Assert
@@ -108,7 +108,7 @@ public class IssueWorklogTest {
         try {
             issue.addWorkLog("asdf", DateTime.now(), 30);
         } catch (JiraException e) {
-            assertThat(e).hasMessageContaining("Failed add worklog to issue");
+            assertEquals("Failed add worklog to issue", e.getMessage());
         }
 
         // Assert
