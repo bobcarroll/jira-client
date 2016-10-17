@@ -61,7 +61,7 @@ public class WorklogTest {
         assertEquals(author, workLog.getAuthor().getName());
         String started = "2015-08-17T12:19:00.000";
         assertEquals(started, simpleDateFormat.format(workLog.getStarted()));
-        String created = "2015-08-20T00:00:00.000";
+        String created = "2015-08-20T12:19:44.000";
         assertEquals(created, simpleDateFormat.format(workLog.getCreatedDate()));
         assertEquals(21600, workLog.getTimeSpentSeconds());
         assertEquals(author, workLog.getUpdateAuthor().getName());

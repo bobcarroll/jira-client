@@ -40,8 +40,8 @@ public class IssueWorklogTest {
         assertEquals("https://jira.test.lt/rest/api/2/issue/32374/worklog/80720", workLog.getSelf());
         assertEquals("80720", workLog.getId());
         assertEquals("Test", workLog.getComment());
-        assertEquals(1454104800000L, workLog.getCreatedDate().getTime());
-        assertEquals(1454104800000L, workLog.getUpdatedDate().getTime());
+        assertEquals(1454179576583L, workLog.getCreatedDate().getTime());
+        assertEquals(1454179576583L, workLog.getUpdatedDate().getTime());
         assertEquals(1453879853201L, workLog.getStarted().getTime());
         assertEquals("5m", workLog.getTimeSpent());
         assertEquals(300, workLog.getTimeSpentSeconds());
@@ -61,7 +61,7 @@ public class IssueWorklogTest {
         verify(issue.restclient).post(anyString(), any(JSON.class));
     }
 
-    @Test
+    @Test(expected = JiraException.class)
     public void testAdding_inputNullComment_shouldNotAdd() throws Exception {
         // Arrange
         Issue issue = mock(Issue.class);
@@ -69,17 +69,11 @@ public class IssueWorklogTest {
         doCallRealMethod().when(issue).addWorkLog(anyString(), any(DateTime.class), anyLong());
 
         // Act
-        try {
-            issue.addWorkLog(null, DateTime.now(), 120);
-        } catch (JiraException e) {
-            assertEquals("Failed add worklog to issue", e.getMessage());
-        }
-
         // Assert
-        verify(issue.restclient, never()).post(anyString(), any(JSON.class));
+        issue.addWorkLog(null, DateTime.now(), 120);
     }
 
-    @Test
+    @Test(expected = JiraException.class)
     public void testAdding_inputNullDateTime_shouldNotAdd() throws Exception {
         // Arrange
         Issue issue = mock(Issue.class);
@@ -87,17 +81,11 @@ public class IssueWorklogTest {
         doCallRealMethod().when(issue).addWorkLog(anyString(), any(DateTime.class), anyLong());
 
         // Act
-        try {
-            issue.addWorkLog("asdf", null, 120);
-        } catch (JiraException e) {
-            assertEquals("Failed add worklog to issue", e.getMessage());
-        }
-
         // Assert
-        verify(issue.restclient, never()).post(anyString(), any(JSON.class));
+        issue.addWorkLog("asdf", null, 120);
     }
 
-    @Test
+    @Test(expected = JiraException.class)
     public void testAdding_inputDurationTooLow_shouldNotAdd() throws Exception {
         // Arrange
         Issue issue = mock(Issue.class);
@@ -105,14 +93,8 @@ public class IssueWorklogTest {
         doCallRealMethod().when(issue).addWorkLog(anyString(), any(DateTime.class), anyLong());
 
         // Act
-        try {
-            issue.addWorkLog("asdf", DateTime.now(), 30);
-        } catch (JiraException e) {
-            assertEquals("Failed add worklog to issue", e.getMessage());
-        }
-
         // Assert
-        verify(issue.restclient, never()).post(anyString(), any(JSON.class));
+        issue.addWorkLog("asdf", DateTime.now(), 30);
     }
 
 
