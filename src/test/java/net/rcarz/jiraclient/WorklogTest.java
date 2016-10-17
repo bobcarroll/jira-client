@@ -18,7 +18,7 @@ import static org.mockito.Matchers.anyString;
 @RunWith(PowerMockRunner.class)
 public class WorklogTest {
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.ENGLISH);
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Field.DATETIME_FORMAT);
 
     @Test(expected = JiraException.class)
     public void testJiraExceptionFromRestException() throws Exception {
@@ -49,7 +49,7 @@ public class WorklogTest {
     }
 
     @Test
-    public void testWorklog() {
+    public void testWorklog() throws Exception {
 
         List<WorkLog> workLogs = Field.getResourceArray(WorkLog.class, Utils.getTestIssueWorklogs().get("worklogs"), null);
         assertEquals(2, workLogs.size());
@@ -60,10 +60,10 @@ public class WorklogTest {
         assertEquals("45517", workLog.getId());
         String author = "joseph";
         assertEquals(author, workLog.getAuthor().getName());
-        String started = "2015-08-17T12:19:00.000";
-        assertEquals(started, simpleDateFormat.format(workLog.getStarted()));
-        String created = "2015-08-20T12:19:44.000";
-        assertEquals(created, simpleDateFormat.format(workLog.getCreatedDate()));
+        String started = "2015-08-17T13:19:00.000+0400";
+        assertEquals(simpleDateFormat.parse(started), workLog.getStarted());
+        String created = "2015-08-20T13:19:44.000+0400";
+        assertEquals(simpleDateFormat.parse(created), workLog.getCreatedDate());
         assertEquals(21600, workLog.getTimeSpentSeconds());
         assertEquals(author, workLog.getUpdateAuthor().getName());
     }
