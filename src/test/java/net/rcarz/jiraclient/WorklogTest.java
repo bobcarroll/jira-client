@@ -10,6 +10,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
@@ -17,7 +18,7 @@ import static org.mockito.Matchers.anyString;
 @RunWith(PowerMockRunner.class)
 public class WorklogTest {
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.ENGLISH);
 
     @Test(expected = JiraException.class)
     public void testJiraExceptionFromRestException() throws Exception {
