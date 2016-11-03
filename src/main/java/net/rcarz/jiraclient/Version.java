@@ -98,6 +98,17 @@ public class Version extends Resource {
         }
 
         /**
+         * Sets the start date of the version.
+         * @param startDate start Date
+         * @return <code>this</code>
+         */
+        public FluentCreate startDate(Date startDate) {
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+            req.put("startDate", df.format(startDate));
+            return this;
+        }
+
+        /**
          * Sets the release date of the version.
          * @param releaseDate release Date
          * @return <code>this</code>
@@ -107,8 +118,6 @@ public class Version extends Resource {
             req.put("releaseDate", df.format(releaseDate));
             return this;
         }
-
-
 
 
         /**
@@ -138,6 +147,7 @@ public class Version extends Resource {
     private String name = null;
     private boolean archived = false;
     private boolean released = false;
+    private String startDate;
     private String releaseDate;
     private String description = null;
 
@@ -167,6 +177,7 @@ public class Version extends Resource {
         req.put("name", version.getName());
         req.put("archived", version.isArchived());
         req.put("released", version.isReleased());
+        req.put("startDate", version.getStartDate());
         req.put("releaseDate", version.getReleaseDate());
 
         try {
@@ -189,6 +200,7 @@ public class Version extends Resource {
         req.put("name", getName());
         req.put("archived", isArchived());
         req.put("released", isReleased());
+        req.put("startDate", getStartDate());
         req.put("releaseDate", getReleaseDate());
         req.put("project", project.getKey());
         req.put("projectId", project.getId());
@@ -233,6 +245,7 @@ public class Version extends Resource {
         name = Field.getString(map.get("name"));
         archived = Field.getBoolean(map.get("archived"));
         released = Field.getBoolean(map.get("released"));
+        startDate = Field.getString(map.get("startDate"));
         releaseDate = Field.getString(map.get("releaseDate"));
         description = Field.getString(map.get("description"));
     }
@@ -256,6 +269,10 @@ public class Version extends Resource {
 
     public String getReleaseDate() {
         return releaseDate;
+    }
+
+    public String getStartDate() {
+        return startDate;
     }
 
     public String getDescription() {

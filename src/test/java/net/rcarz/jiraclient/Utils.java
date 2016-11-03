@@ -47,6 +47,7 @@ public class Utils {
         "        \"name\": \"1.0\",\n" +
         "        \"archived\": false,\n" +
         "        \"released\": false,\n" +
+        "        \"startDate\": \"2013-11-01\",\n" +
         "        \"releaseDate\": \"2013-12-01\"\n" +
         "      }\n" +
         "    ],\n" +

@@ -119,6 +119,7 @@ public class IssueTest {
         Assert.assertEquals(version.getName(), "1.0");
         assertFalse(version.isArchived());
         assertFalse(version.isReleased());
+        Assert.assertEquals(version.getStartDate(), "2013-11-01");
         Assert.assertEquals(version.getReleaseDate(), "2013-12-01");
         Assert.assertEquals(version.getDescription(), "First Full Functional Build");
     }
