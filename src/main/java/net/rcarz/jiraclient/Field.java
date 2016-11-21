@@ -726,7 +726,9 @@ public final class Field {
             else if (value instanceof TimeTracking)
                 return ((TimeTracking) value).toJsonObject();
         } else if (m.type.equals("number")) {
-            if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
+            if (value == null) //Non mandatory number fields can be set to null
+                return JSONNull.getInstance(); 
+            else if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
                     instanceof java.lang.Float) && !(value instanceof java.lang.Long) )
             {
                 throw new JiraException("Field '" + name + "' expects a Numeric value");
