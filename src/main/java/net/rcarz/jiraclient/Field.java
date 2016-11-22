@@ -460,6 +460,26 @@ public final class Field {
     }
 
     /**
+     * Gets a list of integers from the given object.
+     *
+     * @param ia a JSONArray instance
+     *
+     * @return a list of integers found in ia
+     */
+    public static List<Integer> getIntegerArray(Object ia) {
+        List<Integer> results = new ArrayList<Integer>();
+
+        if (ia instanceof JSONArray) {
+            for (Object i : (JSONArray)ia) {
+                if (i instanceof Integer)
+                    results.add((Integer) i);
+            }
+        }
+
+        return results;
+    }
+
+    /**
      * Gets a list of JIRA resources from the given object.
      *
      * @param type Resource data type

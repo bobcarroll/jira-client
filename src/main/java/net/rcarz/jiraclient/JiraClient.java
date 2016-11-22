@@ -141,6 +141,10 @@ public class JiraClient {
         return Issue.get(restclient, key, includedFields);
     }
 
+    public ServerInfo getServerInfo() throws JiraException {
+        return ServerInfo.get(restclient);
+    }
+
     /**
      * Retreives the issue with the given key.
      *
