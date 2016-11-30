@@ -1,7 +1,7 @@
 /**
  * jira-client - a simple JIRA REST client
  * Copyright (c) 2013 Bob Carroll (bob.carroll@alum.rit.edu)
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,8 +19,6 @@
 
 package net.rcarz.jiraclient;
 
-import java.lang.Iterable;
-import java.lang.UnsupportedOperationException;
 import java.sql.Timestamp;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -31,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import net.sf.json.JSONNull;
+import net.sf.json.JSONObject;
 
 /**
  * Utility functions for translating between JSON and fields.
@@ -151,7 +149,8 @@ public final class Field {
     public static final String TRANSITION_TO_STATUS = "to";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
-    public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+    public static final String DATETIME_FORMAT_ZTIMEZONE = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+    public static final String DATETIME_FORMAT_XTIMEZONE = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
     private Field() { }
 
@@ -186,10 +185,10 @@ public final class Field {
 
         if (c instanceof JSONObject && !((JSONObject)c).isNullObject()) {
             results = getResourceArray(
-                Comment.class,
-                ((Map)c).get("comments"),
-                restclient,
-                issueKey
+                    Comment.class,
+                    ((Map)c).get("comments"),
+                    restclient,
+                    issueKey
             );
         }
 
@@ -212,7 +211,7 @@ public final class Field {
 
         return results;
     }
-    
+
     /**
      * Gets a list of remote links from the given object.
      *
@@ -256,10 +255,34 @@ public final class Field {
      * @return a Date instance or null if d isn't a string
      */
     public static Date getDateTime(Object d) {
+        return getDateTime(d, DATETIME_FORMAT_ZTIMEZONE);
+    }
+
+    /**
+     * Gets a date with a time from the given object. The format date is
+     * specific to sprint obj from agile api
+     *
+     * @param d a string representation of a date
+     *
+     * @return a Date instance or null if d isn't a string
+     */
+    public static Date getDateTimeSprint(Object d) {
+        return getDateTime(d, DATETIME_FORMAT_XTIMEZONE);
+    }
+
+    /**
+     * Gets a date with a time from the given object.
+     *
+     * @param d a string representation of a date
+     * @param pattern the pattern that to be used do parse de string
+     *
+     * @return a Date instance or null if d isn't a string
+     */
+    private static Date getDateTime(Object d, String pattern) {
         Date result = null;
 
         if (d instanceof String) {
-            SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
+            SimpleDateFormat df = new SimpleDateFormat(pattern);
             result = df.parse((String)d, new ParsePosition(0));
         }
 
@@ -325,7 +348,7 @@ public final class Field {
      * @return a Map instance with all entries found in m
      */
     public static <TK extends Object, TV extends Object> Map<TK, TV> getMap(
-        Class<TK> keytype, Class<TV> valtype, Object m) {
+            Class<TK> keytype, Class<TV> valtype, Object m) {
 
         Map<TK, TV> result = new HashMap<TK, TV>();
 
@@ -351,7 +374,7 @@ public final class Field {
      * @return a Resource instance or null if r isn't a JSONObject instance
      */
     public static <T extends Resource> T getResource(
-        Class<T> type, Object r, RestClient restclient) {
+            Class<T> type, Object r, RestClient restclient) {
 
         return getResource(type, r, restclient, null);
     }
@@ -367,7 +390,7 @@ public final class Field {
      * @return a Resource instance or null if r isn't a JSONObject instance
      */
     public static <T extends Resource> T getResource(
-        Class<T> type, Object r, RestClient restclient, String parentId) {
+            Class<T> type, Object r, RestClient restclient, String parentId) {
 
         T result = null;
 
@@ -489,7 +512,7 @@ public final class Field {
      * @return a list of Resources found in ra
      */
     public static <T extends Resource> List<T> getResourceArray(
-        Class<T> type, Object ra, RestClient restclient) {
+            Class<T> type, Object ra, RestClient restclient) {
 
         return getResourceArray(type, ra, restclient, null);
     }
@@ -505,7 +528,7 @@ public final class Field {
      * @return a list of Resources found in ra
      */
     public static <T extends Resource> List<T> getResourceArray(
-        Class<T> type, Object ra, RestClient restclient, String parentId) {
+            Class<T> type, Object ra, RestClient restclient, String parentId) {
 
         List<T> results = new ArrayList<T>();
 
@@ -554,7 +577,7 @@ public final class Field {
      * @throws JiraException when the field is missing or metadata is bad
      */
     public static Meta getFieldMetadata(String name, JSONObject editmeta)
-        throws JiraException {
+            throws JiraException {
 
         if (editmeta.isNullObject() || !editmeta.containsKey(name))
             throw new JiraException("Field '" + name + "' does not exist or read-only");
@@ -593,7 +616,7 @@ public final class Field {
         String dateStr = value.toString();
         SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
         if (dateStr.length() > DATE_FORMAT.length()) {
-            df = new SimpleDateFormat(DATETIME_FORMAT);
+            df = new SimpleDateFormat(DATETIME_FORMAT_ZTIMEZONE);
         }
         return df.parse(dateStr, new ParsePosition(0));
     }
@@ -625,7 +648,7 @@ public final class Field {
                 realValue = val;
 
             if (type.equals("component") || type.equals("group") ||
-                type.equals("user") || type.equals("version")) {
+                    type.equals("user") || type.equals("version")) {
 
                 JSONObject itemMap = new JSONObject();
 
@@ -638,10 +661,10 @@ public final class Field {
                 realResult = itemMap;
             } else if ( type.equals("option") ||
                     (
-                    type.equals("string") && custom != null
-                    && (custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") ||
-                    custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multiselect")))) {
-                
+                            type.equals("string") && custom != null
+                                    && (custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") ||
+                                    custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multiselect")))) {
+
                 realResult = new JSONObject();
                 ((JSONObject)realResult).put(ValueType.VALUE.toString(), realValue.toString());
             } else if (type.equals("string"))
@@ -671,7 +694,7 @@ public final class Field {
      * @throws UnsupportedOperationException when a field type isn't supported
      */
     public static Object toJson(String name, Object value, JSONObject editmeta)
-        throws JiraException, UnsupportedOperationException {
+            throws JiraException, UnsupportedOperationException {
 
         Meta m = getFieldMetadata(name, editmeta);
         if (m.type == null)
@@ -700,7 +723,7 @@ public final class Field {
             else if (!(value instanceof Timestamp))
                 throw new JiraException("Field '" + name + "' expects a Timestamp value");
 
-            SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
+            SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT_ZTIMEZONE);
             return df.format(value);
         } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
                 m.type.equals("user") || m.type.equals("resolution")) {
@@ -746,7 +769,7 @@ public final class Field {
             else if (value instanceof TimeTracking)
                 return ((TimeTracking) value).toJsonObject();
         } else if (m.type.equals("number")) {
-            if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
+            if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value
                     instanceof java.lang.Float) && !(value instanceof java.lang.Long) )
             {
                 throw new JiraException("Field '" + name + "' expects a Numeric value");
@@ -811,4 +834,3 @@ public final class Field {
         return new ValueTuple(ValueType.ID_NUMBER, id);
     }
 }
-

@@ -90,6 +90,14 @@ public class Board extends AgileResource {
     }
 
     /**
+     * @return All board sprints affected by search criteria.
+     * @throws JiraException when the search fails
+     */
+    public Sprint.SearchResult getSprints(Integer maxResults, Integer startAt) throws JiraException {
+        return Sprint.getAllSprints(getRestclient(), getId(), maxResults, startAt);
+    }
+
+    /**
      * @return All issues in the Board backlog.
      * @throws JiraException when the retrieval fails
      */

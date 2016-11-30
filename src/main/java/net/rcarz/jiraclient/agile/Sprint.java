@@ -22,10 +22,14 @@ package net.rcarz.jiraclient.agile;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
-import java.util.Date;
-import java.util.List;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+
+import static net.rcarz.jiraclient.Resource.getBaseUri;
 
 /**
  * Represents an Agile Sprint.
@@ -74,6 +78,157 @@ public class Sprint extends AgileResource {
         return AgileResource.list(restclient, Sprint.class, RESOURCE_URI + "board/" + boardId + "/sprint");
     }
 
+    public static class SearchResult {
+        public int start = 0;
+        public int max = 0;
+        public int total = 0;
+        public List<Sprint> sprints = null;
+        private SprintIterator sprintIterator;
+
+        public SearchResult(RestClient restclient, Long boardId,
+                            Integer maxResults, Integer startAt)
+                throws JiraException {
+            this.sprintIterator = new SprintIterator(
+                    restclient,
+                    boardId,
+                    maxResults,
+                    startAt
+            );
+            /* backwards compatibility shim - first page only */
+            this.sprintIterator.hasNext();
+            this.max = sprintIterator.maxResults;
+            this.start = sprintIterator.startAt;
+            this.sprints = sprintIterator.sprints;
+            this.total = sprintIterator.total;
+        }
+
+        /**
+         * All sprints found.
+         *
+         * @return All sprints found.
+         */
+        public Iterator<Sprint> iterator() {
+            return sprintIterator;
+        }
+    }
+
+    private static class SprintIterator implements Iterator<Sprint> {
+        private Iterator<Sprint> currentPage;
+        private RestClient restclient;
+        private Sprint nextSprint;
+        private Integer maxResults = -1;
+        private Long boardId;
+        private Integer startAt;
+        private List<Sprint> sprints;
+        private int total;
+
+        public SprintIterator(RestClient restclient, Long boardId,  Integer maxResults, Integer startAt) throws JiraException {
+            this.restclient = restclient;
+            this.boardId = boardId;
+            this.maxResults = maxResults;
+            this.startAt = startAt;
+        }
+
+        public boolean hasNext() {
+            if (nextSprint != null) {
+                return true;
+            }
+            try {
+                nextSprint = getNextSprint();
+            } catch (JiraException e) {
+                throw new RuntimeException(e);
+            }
+            return nextSprint != null;
+        }
+
+        public Sprint next() {
+            if (! hasNext()) {
+                throw new NoSuchElementException();
+            }
+            Sprint result = nextSprint;
+            nextSprint = null;
+            return result;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException("Method remove() not support for class " +
+                    this.getClass().getName());
+        }
+
+        private Sprint getNextSprint() throws JiraException {
+            // first call
+            if (currentPage == null) {
+                currentPage = getNextSprints().iterator();
+                if (currentPage == null || !currentPage.hasNext()) {
+                    return null;
+                } else {
+                    return currentPage.next();
+                }
+            }
+
+            // check if we need to get the next set of sprintss
+            if (! currentPage.hasNext()) {
+                currentPage = getNextSprints().iterator();
+            }
+
+            // return the next item if available
+            if (currentPage.hasNext()) {
+                return currentPage.next();
+            } else {
+                return null;
+            }
+        }
+
+        private List<Sprint> getNextSprints() throws JiraException {
+            if (sprints == null && startAt == null) {
+                startAt = Integer.valueOf(0);
+            } else if (sprints != null) {
+                startAt = startAt + sprints.size();
+            }
+
+            JSON result = null;
+
+            try {
+                URI searchUri = createSearchURI(restclient, boardId, maxResults, startAt);
+                result = restclient.get(searchUri);
+            } catch (Exception ex) {
+                throw new JiraException("Failed to search sprints", ex);
+            }
+
+            if (!(result instanceof JSONObject)) {
+                throw new JiraException("JSON payload is malformed");
+            }
+
+
+            Map map = (Map) result;
+
+            this.startAt = Field.getInteger(map.get("startAt"));
+            this.maxResults = Field.getInteger(map.get("maxResults"));
+            this.total = Field.getInteger(map.get("total"));
+            this.sprints = AgileResource.getResourceArray(Sprint.class, map, restclient, "values");
+            return sprints;
+        }
+    }
+
+    private static URI createSearchURI(RestClient restclient, Long boardId, Integer maxResults,
+                                       Integer startAt) throws URISyntaxException {
+        Map<String, String> queryParams = new HashMap<String, String>();
+        if(maxResults != null){
+            queryParams.put("maxResults", String.valueOf(maxResults));
+        }
+        if (startAt != null) {
+            queryParams.put("startAt", String.valueOf(startAt));
+        }
+
+        URI searchUri = restclient.buildURI(RESOURCE_URI + "board/" + boardId + "/sprint", queryParams);
+        return searchUri;
+    }
+
+    public static SearchResult getAllSprints(RestClient restclient, Long boardId, Integer maxResults, Integer startAt)
+            throws JiraException {
+        return new SearchResult(restclient, boardId, maxResults, startAt);
+    }
+
     /**
      * @return All issues in the Sprint.
      * @throws JiraException when the retrieval fails
@@ -87,9 +242,9 @@ public class Sprint extends AgileResource {
         super.deserialize(json);
         state = Field.getString(json.get("state"));
         originBoardId = getLong(json.get("originBoardId"));
-        startDate = Field.getDateTime(json.get("startDate"));
-        endDate = Field.getDateTime(json.get("endDate"));
-        completeDate = Field.getDateTime(json.get("completeDate"));
+        startDate = Field.getDateTimeSprint(json.get("startDate"));
+        endDate = Field.getDateTimeSprint(json.get("endDate"));
+        completeDate = Field.getDateTimeSprint(json.get("completeDate"));
     }
 
     public String getState() {
