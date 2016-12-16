@@ -37,7 +37,7 @@ class EpicTest extends AbstractResourceTest {
 
     @Test
     void "Given an invalid epic ID, when calling getEpic(666), then throws an 404 error."() {
-        RestException unauthorized = new RestException("Do not have access", 404, "Unauthorized")
+        RestException unauthorized = new RestException("Do not have access", 404, "Unauthorized", [])
         RestClient mockRestClient = "given a REST Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "epic/666"))
                 .thenThrow(unauthorized)
