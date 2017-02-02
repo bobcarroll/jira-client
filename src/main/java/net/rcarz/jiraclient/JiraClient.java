@@ -397,6 +397,15 @@ public class JiraClient {
 
     /**
      *
+     * @return a list of all resolutions available in the Jira installation
+     * @throws JiraException
+     */
+    public List<Resolution> getResolutions() throws JiraException {
+        return Resolution.get(restclient);
+    }
+
+    /**
+     *
      * @return a list of all priorities available in the Jira installation
      * @throws JiraException
      */
@@ -416,6 +425,15 @@ public class JiraClient {
         } catch (Exception ex) {
             throw new JiraException(ex.getMessage(), ex);
         }
+    }
+
+    /**
+     *
+     * @return a list of all fields, both System and Custom
+     * @throws JiraException
+     */
+    public List<JiraField> getFields() throws JiraException {
+        return JiraField.get(restclient);
     }
 
     /**
