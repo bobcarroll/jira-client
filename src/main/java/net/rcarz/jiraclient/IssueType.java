@@ -22,6 +22,7 @@ package net.rcarz.jiraclient;
 import java.util.Map;
 
 import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -34,6 +35,7 @@ public class IssueType extends Resource {
     private String name = null;
     private boolean subtask = false;
     private JSONObject fields = null;
+    private JSONArray statuses = null;
 
     /**
      * Creates an issue type from a JSON payload.
@@ -60,6 +62,9 @@ public class IssueType extends Resource {
 
         if (map.containsKey("fields") && map.get("fields") instanceof JSONObject)
             fields = (JSONObject)map.get("fields");
+
+        if (map.containsKey("statuses") && map.get("statuses") instanceof JSONArray)
+            statuses = (JSONArray)map.get("statuses");
     }
 
     /**
@@ -112,6 +117,10 @@ public class IssueType extends Resource {
 
     public JSONObject getFields() {
         return fields;
+    }
+
+    public JSONArray getStatuses() {
+        return statuses;
     }
 }
 

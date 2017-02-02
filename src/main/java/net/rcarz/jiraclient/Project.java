@@ -19,6 +19,9 @@
 
 package net.rcarz.jiraclient;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -104,6 +107,29 @@ public class Project extends Resource {
             throw new JiraException("JSON payload is malformed");
 
         return new Project(restclient, (JSONObject)result);
+    }
+
+    public static Map<String, List<String>> getIssueTypesWithStatuses(RestClient restclient, String key) throws JiraException {
+        try {
+            Map<String, List<String>> result = new HashMap<String, List<String>>();
+
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "project/" + key + "/statuses/");
+            JSON response = restclient.get(uri);
+            List<IssueType> issueTypes = Field.getResourceArray(IssueType.class, response, restclient);
+
+            for (IssueType issueType : issueTypes) {
+                List<String> statusList = new ArrayList<String>();
+                List<Status> statuses = Field.getResourceArray(Status.class, issueType.getStatuses(), restclient);
+                for (Status status : statuses) {
+                    statusList.add(status.getName());
+                }
+                result.put(issueType.getName(), statusList);
+            }
+
+            return result;
+        } catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+        }
     }
 
     /**

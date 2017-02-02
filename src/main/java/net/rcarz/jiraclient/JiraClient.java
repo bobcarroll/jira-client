@@ -526,6 +526,17 @@ public class JiraClient {
             throw new JiraException(ex.getMessage(), ex);
         }
     }
+
+    /**
+     * Experimental method for
+     * GET /rest/api/2/project/{projectIdOrKey}/statuses
+     * @param key
+     * @return
+     * @throws JiraException
+     */
+    public Map<String, List<String>> getProjectStatuses(String key) throws JiraException {
+        return Project.getIssueTypesWithStatuses(restclient, key);
+    }
     
     /**
      * Obtains the list of all issue types in Jira.
