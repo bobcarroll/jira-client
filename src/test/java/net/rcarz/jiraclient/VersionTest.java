@@ -30,6 +30,7 @@ public class VersionTest {
         assertEquals(version.getName(), "1.0");
         assertFalse(version.isArchived());
         assertFalse(version.isReleased());
+        assertEquals(version.getStartDate(), "2013-11-01");
         assertEquals(version.getReleaseDate(), "2013-12-01");
         assertEquals(version.getDescription(), "First Full Functional Build");
     }
@@ -44,6 +45,7 @@ public class VersionTest {
         assertEquals(version.getName(), "1.0");
         assertFalse(version.isArchived());
         assertFalse(version.isReleased());
+        assertEquals(version.getStartDate(), "2013-11-01");
         assertEquals(version.getReleaseDate(), "2013-12-01");
         assertEquals(version.getDescription(), "First Full Functional Build");
     }
@@ -69,6 +71,7 @@ public class VersionTest {
         jsonObject.put("name", "1.0");
         jsonObject.put("archived", false);
         jsonObject.put("released", false);
+        jsonObject.put("startDate", "2013-11-01");
         jsonObject.put("releaseDate", "2013-12-01");
         return jsonObject;
     }
@@ -132,6 +135,12 @@ public class VersionTest {
     public void testIsReleased() throws Exception {
         Version version = new Version(null, getTestJSON());
         assertFalse(version.isReleased());
+    }
+
+    @Test
+    public void testGetStartDate() throws Exception {
+        Version version = new Version(null, getTestJSON());
+        assertEquals("2013-11-01",version.getStartDate());
     }
 
     @Test

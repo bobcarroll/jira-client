@@ -90,6 +90,17 @@ public class JiraClient {
     }
 
     /**
+     * Retreives JIRA Server Info.
+     *
+     * @return a ServerInfo instance
+     *
+     * @throws JiraException when something goes wrong
+     */
+    public ServerInfo getServerInfo() throws JiraException {
+        return ServerInfo.get(restclient);
+    }
+
+    /**
      * Creates a new issue in the given project.
      *
      * @param project Key of the project to create in
@@ -386,6 +397,15 @@ public class JiraClient {
 
     /**
      *
+     * @return a list of all resolutions available in the Jira installation
+     * @throws JiraException
+     */
+    public List<Resolution> getResolutions() throws JiraException {
+        return Resolution.get(restclient);
+    }
+
+    /**
+     *
      * @return a list of all priorities available in the Jira installation
      * @throws JiraException
      */
@@ -405,6 +425,15 @@ public class JiraClient {
         } catch (Exception ex) {
             throw new JiraException(ex.getMessage(), ex);
         }
+    }
+
+    /**
+     *
+     * @return a list of all fields, both System and Custom
+     * @throws JiraException
+     */
+    public List<JiraField> getFields() throws JiraException {
+        return JiraField.get(restclient);
     }
 
     /**
@@ -496,6 +525,17 @@ public class JiraClient {
         } catch (Exception ex) {
             throw new JiraException(ex.getMessage(), ex);
         }
+    }
+
+    /**
+     * Experimental method for
+     * GET /rest/api/2/project/{projectIdOrKey}/statuses
+     * @param key
+     * @return
+     * @throws JiraException
+     */
+    public Map<String, List<String>> getProjectStatuses(String key) throws JiraException {
+        return Project.getIssueTypesWithStatuses(restclient, key);
     }
     
     /**

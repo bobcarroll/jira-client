@@ -1,7 +1,7 @@
 /**
  * jira-client - a simple JIRA REST client
  * Copyright (c) 2013 Bob Carroll (bob.carroll@alum.rit.edu)
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -27,6 +27,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSON;
@@ -39,7 +41,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -126,47 +130,53 @@ public class RestClient {
         if (creds != null)
             creds.authenticate(req);
 
-        HttpResponse resp = httpClient.execute(req);
-        HttpEntity ent = resp.getEntity();
-        StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder();
+        HttpResponse resp = httpClient.execute(req, new ResponseHandler<HttpResponse>() {
+            public HttpResponse handleResponse(HttpResponse resp) throws ClientProtocolException, IOException {
+                HttpEntity ent = resp.getEntity();
 
-        if (ent != null) {
-            String encoding = null;
-            if (ent.getContentEncoding() != null) {
-            	encoding = ent.getContentEncoding().getValue();
-            }
-            
-            if (encoding == null) {
-    	        Header contentTypeHeader = resp.getFirstHeader("Content-Type");
-    	        HeaderElement[] contentTypeElements = contentTypeHeader.getElements();
-    	        for (HeaderElement he : contentTypeElements) {
-    	        	NameValuePair nvp = he.getParameterByName("charset");
-    	        	if (nvp != null) {
-    	        		encoding = nvp.getValue();
-    	        	}
-    	        }
-            }
-            
-            InputStreamReader isr =  encoding != null ?
-                new InputStreamReader(ent.getContent(), encoding) :
-                new InputStreamReader(ent.getContent());
-            BufferedReader br = new BufferedReader(isr);
-            String line = "";
+                if (ent != null) {
+                    String encoding = null;
+                    if (ent.getContentEncoding() != null) {
+                        encoding = ent.getContentEncoding().getValue();
+                    }
 
-            while ((line = br.readLine()) != null)
-                result.append(line);
-        }
+                    if (encoding == null) {
+                        Header contentTypeHeader = resp.getFirstHeader("Content-Type");
+                        HeaderElement[] contentTypeElements = contentTypeHeader.getElements();
+                        for (HeaderElement he : contentTypeElements) {
+                            NameValuePair nvp = he.getParameterByName("charset");
+                            if (nvp != null) {
+                                encoding = nvp.getValue();
+                            }
+                        }
+                    }
+
+                    InputStreamReader isr =  encoding != null ?
+                            new InputStreamReader(ent.getContent(), encoding) :
+                            new InputStreamReader(ent.getContent());
+                    BufferedReader br = new BufferedReader(isr);
+                    String line = "";
+
+                    while ((line = br.readLine()) != null)
+                        result.append(line);
+                }
+
+                return resp;
+            }
+        });
 
         StatusLine sl = resp.getStatusLine();
 
-        if (sl.getStatusCode() >= 300)
+        if (sl.getStatusCode() >= 300) {
             throw new RestException(sl.getReasonPhrase(), sl.getStatusCode(), result.toString());
+        }
 
         return result.length() > 0 ? JSONSerializer.toJSON(result.toString()): null;
     }
 
     private JSON request(HttpEntityEnclosingRequestBase req, String payload)
-        throws RestException, IOException {
+            throws RestException, IOException {
 
         if (payload != null) {
             StringEntity ent = null;
@@ -184,9 +194,9 @@ public class RestClient {
 
         return request(req);
     }
-    
+
     private JSON request(HttpEntityEnclosingRequestBase req, File file)
-        throws RestException, IOException {
+            throws RestException, IOException {
         if (file != null) {
             File fileUpload = file;
             req.setHeader("X-Atlassian-Token", "nocheck");
@@ -198,7 +208,7 @@ public class RestClient {
     }
 
     private JSON request(HttpEntityEnclosingRequestBase req, Issue.NewAttachment... attachments)
-        throws RestException, IOException {
+            throws RestException, IOException {
         if (attachments != null) {
             req.setHeader("X-Atlassian-Token", "nocheck");
             MultipartEntity ent = new MultipartEntity();
@@ -215,8 +225,8 @@ public class RestClient {
                     throw new IllegalArgumentException("Missing content for the file " + filename);
                 } else {
                     throw new IllegalArgumentException(
-                        "Expected file type byte[], java.io.InputStream or java.io.File but provided " +
-                            content.getClass().getName() + " for the file " + filename);
+                            "Expected file type byte[], java.io.InputStream or java.io.File but provided " +
+                                    content.getClass().getName() + " for the file " + filename);
                 }
             }
             req.setEntity(ent);
@@ -225,7 +235,7 @@ public class RestClient {
     }
 
     private JSON request(HttpEntityEnclosingRequestBase req, JSON payload)
-        throws RestException, IOException {
+            throws RestException, IOException {
 
         return request(req, payload != null ? payload.toString() : null);
     }
@@ -339,10 +349,10 @@ public class RestClient {
      * @throws IOException when an error reading the response occurs
      */
     public JSON post(URI uri, String payload) throws RestException, IOException {
-    	String quoted = null;
-    	if(payload != null && !payload.equals(new JSONObject())){
-    		quoted = String.format("\"%s\"", payload);
-    	}
+        String quoted = null;
+        if(payload != null && !payload.equals(new JSONObject())){
+            quoted = String.format("\"%s\"", payload);
+        }
         return request(new HttpPost(uri), quoted);
     }
 
@@ -359,11 +369,11 @@ public class RestClient {
      * @throws URISyntaxException when an error occurred appending the path to the URI
      */
     public JSON post(String path, JSON payload)
-        throws RestException, IOException, URISyntaxException {
+            throws RestException, IOException, URISyntaxException {
 
         return post(buildURI(path), payload);
     }
-    
+
     /**
      * Executes an HTTP POST with the given path.
      *
@@ -376,20 +386,20 @@ public class RestClient {
      * @throws URISyntaxException when an error occurred appending the path to the URI
      */
     public JSON post(String path)
-        throws RestException, IOException, URISyntaxException {
-    	
+            throws RestException, IOException, URISyntaxException {
+
         return post(buildURI(path), new JSONObject());
     }
-    
+
     /**
      * Executes an HTTP POST with the given path and file payload.
-     * 
+     *
      * @param path Full URI of the remote endpoint
      * @param file java.io.File
-     * 
-     * @throws URISyntaxException 
-     * @throws IOException 
-     * @throws RestException 
+     *
+     * @throws URISyntaxException
+     * @throws IOException
+     * @throws RestException
      */
     public JSON post(String path, File file) throws RestException, IOException, URISyntaxException{
         return request(new HttpPost(buildURI(path)), file);
@@ -406,7 +416,7 @@ public class RestClient {
      * @throws RestException
      */
     public JSON post(String path, Issue.NewAttachment... attachments)
-        throws RestException, IOException, URISyntaxException
+            throws RestException, IOException, URISyntaxException
     {
         return request(new HttpPost(buildURI(path)), attachments);
     }
@@ -439,11 +449,11 @@ public class RestClient {
      * @throws URISyntaxException when an error occurred appending the path to the URI
      */
     public JSON put(String path, JSON payload)
-        throws RestException, IOException, URISyntaxException {
+            throws RestException, IOException, URISyntaxException {
 
         return put(buildURI(path), payload);
     }
-    
+
     /**
      * Exposes the http client.
      *
