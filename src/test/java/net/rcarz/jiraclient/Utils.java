@@ -136,7 +136,7 @@ public class Utils {
         "    \"versions\": [\n" +
         "      \n" +
         "    ],\n" +
-        "    \"environment\": null,\n" +
+        "    \"environment\": \"DEV\",\n" +
         "    \"timeestimate\": 144000,\n" +
         "    \"lastViewed\": \"2013-11-24T16:37:50.358+0000\",\n" +
         "    \"aggregateprogress\": {\n" +

@@ -3,7 +3,7 @@
 
   <groupId>net.rcarz</groupId>
   <artifactId>jira-client</artifactId>
-  <version>0.6.4-perf</version>
+  <version>0.6.5-perf</version>
   <packaging>jar</packaging>
 
   <name>jira-client</name>

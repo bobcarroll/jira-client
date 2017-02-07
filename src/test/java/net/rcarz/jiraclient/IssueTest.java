@@ -125,6 +125,15 @@ public class IssueTest {
     }
 
     @Test
+    public void testGetEnvironment(){
+        Issue issue = new Issue(null, Utils.getTestIssue());
+        String environment = issue.getEnvironment();
+
+        assertNotNull(environment);
+        Assert.assertEquals(environment, "DEV");
+    }
+
+    @Test
     public void testPlainTimeTracking() {
         Issue issue = new Issue(null,Utils.getTestIssue());
 

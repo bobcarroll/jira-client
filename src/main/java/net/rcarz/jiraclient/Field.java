@@ -116,6 +116,7 @@ public final class Field {
     }
 
     public static final String ASSIGNEE = "assignee";
+    public static final String ENVIRONMENT = "environment";
     public static final String ATTACHMENT = "attachment";
     public static final String CHANGE_LOG = "changelog";
     public static final String CHANGE_LOG_ENTRIES = "histories";

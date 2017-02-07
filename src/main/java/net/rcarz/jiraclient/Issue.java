@@ -762,6 +762,7 @@ public class Issue extends Resource {
 
     /* system fields */
     private User assignee = null;
+    private String environment = null;
     private List<Attachment> attachments = null;
     private ChangeLog changeLog = null;
     private List<Comment> comments = null;
@@ -816,6 +817,7 @@ public class Issue extends Resource {
             return;
 
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
+        environment = fields.get(Field.ENVIRONMENT) == null ? null : fields.get(Field.ENVIRONMENT).toString();
         attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ATTACHMENT), restclient);
         changeLog = Field.getResource(ChangeLog.class, map.get(Field.CHANGE_LOG), restclient);
         comments = Field.getComments(fields.get(Field.COMMENT), restclient, key);
@@ -1517,6 +1519,10 @@ public class Issue extends Resource {
 
     public User getAssignee() {
         return assignee;
+    }
+
+    public String getEnvironment() {
+        return environment;
     }
 
     public List<Attachment> getAttachments() {
