@@ -19,6 +19,13 @@
 
 package net.rcarz.jiraclient;
 
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,14 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * A simple JIRA REST client.
@@ -74,10 +73,12 @@ public class JiraClient {
      */
     public JiraClient(HttpClient httpClient, String uri, ICredentials creds) throws JiraException {
         if (httpClient == null) {
-            PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
+            PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
             connManager.setDefaultMaxPerRoute(20);
             connManager.setMaxTotal(40);
-            httpClient = new DefaultHttpClient(connManager);
+            httpClient = HttpClients.custom()
+                    .setConnectionManager(connManager)
+                    .build();
         }
 
         restclient = new RestClient(httpClient, creds, URI.create(uri));
