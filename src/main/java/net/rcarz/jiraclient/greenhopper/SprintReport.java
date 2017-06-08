@@ -19,22 +19,21 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
-import net.rcarz.jiraclient.Field;
-import net.rcarz.jiraclient.Issue;
+import lombok.Getter;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-
 /**
  * GreenHopper sprint statistics.
  */
+@Getter
 public class SprintReport {
 
     private RestClient restclient = null;
@@ -128,42 +127,6 @@ public class SprintReport {
             throw new JiraException("Sprint report content is malformed");
 
         return new SprintReport(restclient, (JSONObject)jo.get("contents"));
-    }
-
-    public Sprint getSprint() {
-        return sprint;
-    }
-
-    public List<SprintIssue> getCompletedIssues() {
-        return completedIssues;
-    }
-
-    public List<SprintIssue> getIncompletedIssues() {
-        return incompletedIssues;
-    }
-
-    public List<SprintIssue> getPuntedIssues() {
-        return puntedIssues;
-    }
-
-    public EstimateSum getCompletedIssuesEstimateSum() {
-        return completedIssuesEstimateSum;
-    }
-
-    public EstimateSum getIncompletedIssuesEstimateSum() {
-        return incompletedIssuesEstimateSum;
-    }
-
-    public EstimateSum getAllIssuesEstimateSum() {
-        return allIssuesEstimateSum;
-    }
-
-    public EstimateSum getPuntedIssuesEstimateSum() {
-        return puntedIssuesEstimateSum;
-    }
-
-    public List<String> getIssueKeysAddedDuringSprint() {
-        return issueKeysAddedDuringSprint;
     }
 }
 

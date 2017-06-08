@@ -19,16 +19,17 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.RestClient;
+import net.sf.json.JSONObject;
 
 import java.util.Map;
-
-import net.sf.json.JSONObject;
 
 /**
  * Represents a GreenHopper sprint issue.
  */
+@Getter
 public class SprintIssue extends GreenHopperIssue {
 
     private String epic = null;
@@ -52,14 +53,6 @@ public class SprintIssue extends GreenHopperIssue {
 
         epic = Field.getString(map.get("epic"));
         estimateStatistic = GreenHopperField.getEstimateStatistic(map.get("estimateStatistic"));
-    }
-
-    public String getEpic() {
-        return epic;
-    }
-
-    public EstimateStatistic getEstimateStatistic() {
-        return estimateStatistic;
     }
 }
 

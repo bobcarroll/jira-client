@@ -19,20 +19,20 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.RestClient;
+import net.sf.json.JSONObject;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
-import org.joda.time.DateTime;
-
 /**
  * Represents a GreenHopper sprint.
  */
+@Getter
 public class Sprint extends GreenHopperResource {
 
     private String name = null;
@@ -73,35 +73,11 @@ public class Sprint extends GreenHopperResource {
         return name;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Boolean isClosed() {
-        return closed;
-    }
-
-    public DateTime getStartDate() {
-        return startDate;
-    }
-
-    public DateTime getEndDate() {
-        return endDate;
-    }
-
-    public DateTime getCompleteDate() {
-        return completeDate;
-    }
-
     public List<SprintIssue> getIssues(){
         if(issues == null){
             issues = new ArrayList<SprintIssue>();
         }
         return issues;
-    }
-
-    public List<Integer> getIssuesIds() {
-        return issuesIds;
     }
 }
 

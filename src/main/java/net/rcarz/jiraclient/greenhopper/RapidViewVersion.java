@@ -19,18 +19,19 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
 import net.rcarz.jiraclient.Version;
+import net.sf.json.JSONObject;
 
 import java.util.Map;
-
-import net.sf.json.JSONObject;
 
 /**
  * Represents a GreenHopper JIRA project version.
  */
+@Getter
 public class RapidViewVersion extends GreenHopperResource {
 
     private String name = null;
@@ -75,16 +76,5 @@ public class RapidViewVersion extends GreenHopperResource {
         return name;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getSequence() {
-        return sequence;
-    }
-
-    public boolean isReleased() {
-        return released;
-    }
 }
 

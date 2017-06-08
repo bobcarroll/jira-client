@@ -19,20 +19,21 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
-
-import java.util.List;
-import java.util.Map;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Represents a GreenHopper Rapid Board.
  */
+@Getter
 public class RapidView extends GreenHopperResource {
 
     private String name = null;
@@ -181,18 +182,6 @@ public class RapidView extends GreenHopperResource {
     @Override
     public String toString() {
         return name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Boolean canEdit() {
-        return canEdit;
-    }
-
-    public Boolean isSprintSupportEnabled() {
-        return sprintSupportEnabled;
     }
 }
 
