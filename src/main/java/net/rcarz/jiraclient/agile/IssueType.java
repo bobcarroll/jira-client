@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
@@ -29,6 +30,7 @@ import net.sf.json.JSONObject;
  *
  * @author pldupont
  */
+@Getter
 public class IssueType extends AgileResource {
 
     private String description;
@@ -56,13 +58,5 @@ public class IssueType extends AgileResource {
 
         this.description = Field.getString(json.get("description"));
         this.subTask = Field.getBoolean(json.get("subtask"));
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isSubTask() {
-        return subTask;
     }
 }

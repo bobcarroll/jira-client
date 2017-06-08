@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
@@ -32,6 +33,7 @@ import java.util.List;
  *
  * @author pldupont
  */
+@Getter
 public class Sprint extends AgileResource {
 
     private String state;
@@ -92,24 +94,5 @@ public class Sprint extends AgileResource {
         completeDate = Field.getDateTime(json.get("completeDate"));
     }
 
-    public String getState() {
-        return state;
-    }
-
-    public long getOriginBoardId() {
-        return originBoardId;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public Date getCompleteDate() {
-        return completeDate;
-    }
 }
 

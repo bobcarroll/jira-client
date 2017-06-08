@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
@@ -31,6 +32,7 @@ import java.util.List;
  *
  * @author pldupont
  */
+@Getter
 public class Epic extends AgileResource {
 
     private Issue issue;
@@ -93,17 +95,5 @@ public class Epic extends AgileResource {
         this.key = Field.getString(json.get("key"));
         this.summary = Field.getString(json.get("summary"));
         this.done = Field.getBoolean(json.get("done"));
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public boolean isDone() {
-        return done;
     }
 }

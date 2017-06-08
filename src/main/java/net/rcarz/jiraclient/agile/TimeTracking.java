@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
@@ -29,6 +30,7 @@ import net.sf.json.JSONObject;
  *
  * @author pldupont
  */
+@Getter
 public class TimeTracking extends AgileResource {
 
     private String originalEstimate;
@@ -69,29 +71,5 @@ public class TimeTracking extends AgileResource {
     public String toString() {
         return String.format("%s{original='%s', remaining='%s', timeSpent='%s'}",
                 getClass().getSimpleName(), getOriginalEstimate(), getRemainingEstimate(), getTimeSpent());
-    }
-
-    public String getOriginalEstimate() {
-        return originalEstimate;
-    }
-
-    public String getRemainingEstimate() {
-        return remainingEstimate;
-    }
-
-    public String getTimeSpent() {
-        return timeSpent;
-    }
-
-    public long getOriginalEstimateSeconds() {
-        return originalEstimateSeconds;
-    }
-
-    public long getRemainingEstimateSeconds() {
-        return remainingEstimateSeconds;
-    }
-
-    public long getTimeSpentSeconds() {
-        return timeSpentSeconds;
     }
 }

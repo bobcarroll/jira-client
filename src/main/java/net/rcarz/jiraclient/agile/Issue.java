@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
@@ -32,6 +33,7 @@ import java.util.List;
  *
  * @author pldupont
  */
+@Getter
 public class Issue extends AgileResource {
 
     private String key;
@@ -121,85 +123,5 @@ public class Issue extends AgileResource {
 
             addAttributes(fields);
         }
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public boolean isFlagged() {
-        return flagged;
-    }
-
-    public Sprint getSprint() {
-        return sprint;
-    }
-
-    public List<Sprint> getClosedSprints() {
-        return closedSprints;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public Epic getEpic() {
-        return epic;
-    }
-
-    public List<Worklog> getWorklogs() {
-        return worklogs;
-    }
-
-    public TimeTracking getTimeTracking() {
-        return timeTracking;
-    }
-
-    public IssueType getIssueType() {
-        return issueType;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public Resolution getResolution() {
-        return resolution;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public Priority getPriority() {
-        return priority;
-    }
-
-    public User getAssignee() {
-        return assignee;
-    }
-
-    public User getCreator() {
-        return creator;
-    }
-
-    public User getReporter() {
-        return reporter;
-    }
-
-    public String getEnvironment() {
-        return environment;
     }
 }
