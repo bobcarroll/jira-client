@@ -1,14 +1,14 @@
 package net.rcarz.jiraclient;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import lombok.Getter;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
+
+@Getter
 public class IssueHistory extends Resource {
 
     private static final long serialVersionUID = 1L;
@@ -51,18 +51,6 @@ public class IssueHistory extends Resource {
             JSONObject p = items.getJSONObject(i);
             changes.add(new IssueHistoryItem(restclient, p));
         }
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public ArrayList<IssueHistoryItem> getChanges() {
-        return changes;
-    }
-
-    public Date getCreated() {
-        return created;
     }
 
 }

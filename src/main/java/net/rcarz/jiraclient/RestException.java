@@ -19,8 +19,6 @@
 
 package net.rcarz.jiraclient;
 
-import java.lang.Throwable;
-
 /**
  * An exception for JIRA REST errors.
  */

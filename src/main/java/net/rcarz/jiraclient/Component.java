@@ -19,16 +19,16 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.rcarz.jiraclient.Issue.FluentCreate;
+import lombok.Getter;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents an issue component.
  */
+@Getter
 public class Component extends Resource {
     
     /**
@@ -183,23 +183,6 @@ public class Component extends Resource {
 
         return new Component(restclient, (JSONObject)result);
     }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isAssigneeTypeValid() {
-        return isAssigneeTypeValid;
-    }
     
     private static String getRestUri(String id) {
         return getBaseUri() + "component/" + (id != null ? id : "");
@@ -229,6 +212,11 @@ public class Component extends Resource {
         } catch (Exception ex) {
             throw new JiraException("Failed to delete component " + id, ex);
         }
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
 

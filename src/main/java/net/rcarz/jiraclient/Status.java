@@ -19,14 +19,16 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
+import lombok.Getter;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents an issue status.
  */
+@Getter
 public class Status extends Resource {
 
     private String description = null;
@@ -86,18 +88,6 @@ public class Status extends Resource {
     @Override
     public String toString() {
         return getName();
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
     }
 }
 

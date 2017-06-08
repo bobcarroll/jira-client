@@ -19,22 +19,23 @@
 
 package net.rcarz.jiraclient;
 
+import lombok.Getter;
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-
 /**
  * Represents an issue attachment.
  */
+@Getter
 public class Attachment extends Resource {
 
     private User author = null;
@@ -131,28 +132,9 @@ public class Attachment extends Resource {
         return getContentUrl();
     }
 
-    public User getAuthor() {
-        return author;
-    }
-
-    public Date getCreatedDate() {
-        return created;
-    }
 
     public String getContentUrl() {
         return content;
-    }
-
-    public String getFileName() {
-        return filename;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public int getSize() {
-        return size;
     }
 }
 

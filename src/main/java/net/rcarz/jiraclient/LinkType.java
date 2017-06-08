@@ -19,14 +19,16 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
+import lombok.Getter;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents an issue link type.
  */
+@Getter
 public class LinkType extends Resource {
 
     private String name = null;
@@ -86,18 +88,6 @@ public class LinkType extends Resource {
     @Override
     public String toString() {
         return getName();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getInward() {
-        return inward;
-    }
-
-    public String getOutward() {
-        return outward;
     }
 }
 

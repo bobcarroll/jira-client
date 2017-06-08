@@ -19,14 +19,16 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
+import lombok.Getter;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents a project category.
  */
+@Getter
 public class ProjectCategory extends Resource {
 
     private String name = null;
@@ -84,14 +86,6 @@ public class ProjectCategory extends Resource {
     @Override
     public String toString() {
         return getName();
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getName() {
-        return name;
     }
 }
 

@@ -1,9 +1,12 @@
 package net.rcarz.jiraclient;
 
-import java.util.Map;
+import lombok.Getter;
 import net.sf.json.JSONObject;
 
-public class RemoteLink extends Resource {
+import java.util.Map;
+
+@Getter
+class RemoteLink extends Resource {
     private String remoteUrl;
     private String title;
 
@@ -23,21 +26,5 @@ public class RemoteLink extends Resource {
         
         remoteUrl = Field.getString(object.get("url"));
         title = Field.getString(object.get("title"));
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getRemoteUrl() {
-        return remoteUrl;
-    }
-
-    public void setRemoteUrl(String remoteUrl) {
-        this.remoteUrl = remoteUrl;
     }
 }

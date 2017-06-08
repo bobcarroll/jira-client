@@ -19,6 +19,8 @@
 
 package net.rcarz.jiraclient;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import net.sf.json.JSONObject;
 
 import java.util.Date;
@@ -31,6 +33,7 @@ import java.util.Map;
  * field (expansion) must be explicitly provided in
  * {@link JiraClient#getIssue(String, String)}.
  */
+@Getter(AccessLevel.PACKAGE)
 public class ChangeLogEntry extends Resource {
     /**
      * Changelog author.
@@ -53,7 +56,7 @@ public class ChangeLogEntry extends Resource {
      * @param restclient REST client instance
      * @param json JSON payload
      */
-    protected ChangeLogEntry(RestClient restclient, JSONObject json) {
+    ChangeLogEntry(RestClient restclient, JSONObject json) {
         super(restclient);
 
         if (json != null)
@@ -94,7 +97,4 @@ public class ChangeLogEntry extends Resource {
      * Returns the list of items in the change log entry.
      * @return the list of items
      */
-    public List<ChangeLogItem> getItems() {
-        return items;
-    }
 }

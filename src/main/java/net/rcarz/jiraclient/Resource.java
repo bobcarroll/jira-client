@@ -19,9 +19,12 @@
 
 package net.rcarz.jiraclient;
 
+import lombok.Getter;
+
 /**
  * A base class for JIRA resources.
  */
+@Getter
 public abstract class Resource {
 
     public static final String DEFAULT_API_REV = "latest";
@@ -66,27 +69,6 @@ public abstract class Resource {
      */
     public static String getAuthUri() {
         return String.format("/rest/auth/%s/", apirev);
-    }
-
-    /**
-     * Internal JIRA ID.
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * REST API resource URL.
-     */
-    public String getUrl() {
-        return self;
-    }
-
-    /**
-     * Resource URL.
-     */
-    public String getSelf() {
-        return self;
     }
 }
 

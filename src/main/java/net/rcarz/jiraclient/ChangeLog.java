@@ -19,15 +19,18 @@
 
 package net.rcarz.jiraclient;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import net.sf.json.JSONObject;
+
 import java.util.List;
 import java.util.Map;
-
-import net.sf.json.JSONObject;
 
 /**
  * Issue change log.
  */
-public class ChangeLog extends Resource {
+@Getter(AccessLevel.PACKAGE)
+class ChangeLog extends Resource {
     /**
      * List of change log entries.
      */
@@ -55,13 +58,5 @@ public class ChangeLog extends Resource {
 
         entries = Field.getResourceArray(ChangeLogEntry.class, map.get(
                 Field.CHANGE_LOG_ENTRIES), restclient);
-    }
-
-    /**
-     * Returns the list of change log entries in the change log.
-     * @return the list of entries
-     */
-    public List<ChangeLogEntry> getEntries() {
-        return entries;
     }
 }

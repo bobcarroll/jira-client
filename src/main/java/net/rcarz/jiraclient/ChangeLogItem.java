@@ -19,14 +19,16 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
+import lombok.Getter;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Item in a {@link ChangeLogEntry}.
  */
-public class ChangeLogItem extends Resource {
+@Getter
+class ChangeLogItem extends Resource {
     /**
      * Field changed.
      */
@@ -83,53 +85,5 @@ public class ChangeLogItem extends Resource {
         fromString = Field.getString(map.get("fromString"));
         to = Field.getString(map.get("to"));
         toString = Field.getString(map.get("toString"));
-    }
-
-    /**
-     * Obtains the field changed.
-     * @return the field changed
-     */
-    public String getField() {
-        return field;
-    }
-
-    /**
-     * Obtains the type of field changed.
-     * @return the type of field
-     */
-    public String getFieldType() {
-        return fieldType;
-    }
-
-    /**
-     * Obtains the value the field was changed from.
-     * @return the value
-     */
-    public String getFrom() {
-        return from;
-    }
-
-    /**
-     * Obtains the value the field was changed from.
-     * @return the value in user-readable format
-     */
-    public String getFromString() {
-        return fromString;
-    }
-
-    /**
-     * Obtains the value the field was changed to.
-     * @return the value
-     */
-    public String getTo() {
-        return to;
-    }
-
-    /**
-     * Obtains the value the field was changed to.
-     * @return the value in user-readable format
-     */
-    public String getToString() {
-        return toString;
     }
 }
