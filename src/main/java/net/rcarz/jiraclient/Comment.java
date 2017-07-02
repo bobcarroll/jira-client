@@ -37,6 +37,12 @@ public class Comment extends Resource {
     private Date updated = null;
     private User updatedAuthor = null;
 
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    private Visibility visibility = null;
+
     /**
      * Creates a comment from a JSON payload.
      *
@@ -61,6 +67,8 @@ public class Comment extends Resource {
         created = Field.getDateTime(map.get("created"));
         updated = Field.getDateTime(map.get("updated"));
         updatedAuthor = Field.getResource(User.class, map.get("updatedAuthor"), restclient);
+        Object obj = map.get("visibility");
+        visibility = Field.getResource(Visibility.class, map.get("visibility"),restclient);
     }
 
     /**
