@@ -52,6 +52,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.util.EntityUtils;
 
 /**
  * A simple REST client that speaks JSON.
@@ -153,9 +154,16 @@ public class RestClient {
             BufferedReader br = new BufferedReader(isr);
             String line = "";
 
-            while ((line = br.readLine()) != null)
+            while ((line = br.readLine()) != null) {
                 result.append(line);
+            }
+
+            isr.close();
+            br.close();
+            isr=null;
+            br=null;
         }
+        EntityUtils.consumeQuietly(ent);
 
         StatusLine sl = resp.getStatusLine();
 
