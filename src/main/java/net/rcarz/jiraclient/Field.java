@@ -739,6 +739,20 @@ public final class Field {
                 throw new JiraException("Field '" + name + "' expects a Numeric value");
             }
             return value;
+        } else if (m.type.equals("any")) {
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (value instanceof List)
+                return toJsonMap((List)value);
+            else if (value instanceof ValueTuple) {
+                JSONObject json = new JSONObject();
+                ValueTuple tuple = (ValueTuple)value;
+                json.put(tuple.type, tuple.value.toString());
+                return json.toString();
+            } else if (value instanceof TimeTracking)
+                return ((TimeTracking) value).toJsonObject();
+
+            return value;
         }
 
         throw new UnsupportedOperationException(m.type + " is not a supported field type");
