@@ -32,7 +32,7 @@ class IssueTest extends AbstractResourceTest {
 
     @Test
     void "Given an invalid issue ID, when calling getIssue(666), then throws an 404 error."() {
-        RestException unauthorized = new RestException("Do not have access", 404, "Unauthorized")
+        RestException unauthorized = new RestException("Do not have access", 404, "Unauthorized", [])
         RestClient mockRestClient = "given a REST Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "issue/666"))
                 .thenThrow(unauthorized)
@@ -55,7 +55,7 @@ class IssueTest extends AbstractResourceTest {
 
     @Test
     void "Given an invalid issue Key, when calling getIssue('HSP-2'), then throws an 404 error."() {
-        RestException unauthorized = new RestException("Do not have access", 404, "Unauthorized")
+        RestException unauthorized = new RestException("Do not have access", 404, "Unauthorized", [])
         RestClient mockRestClient = "given a REST Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "issue/HSP-2"))
                 .thenThrow(unauthorized)
