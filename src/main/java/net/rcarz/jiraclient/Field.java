@@ -647,7 +647,9 @@ public final class Field {
      * Converts the given value to a JSON object.
      *
      * @param name Field name
-     * @param value New field value
+     * @param value New field value. If field's value validation against meta data is to be skipped then value's type
+     *              should
+     *              be {@link IgnoreMetadataCheck}.
      * @param editmeta Edit metadata JSON object
      *
      * @return a JSON-encoded field value
@@ -657,6 +659,13 @@ public final class Field {
      */
     public static Object toJson(String name, Object value, JSONObject editmeta)
         throws JiraException, UnsupportedOperationException {
+
+        if (value instanceof IgnoreMetadataCheck) {
+            boolean ignoreMetaDataCheck = ((IgnoreMetadataCheck)value).skipMetadataValidation();
+            if (ignoreMetaDataCheck) {
+                return value.toString();
+            }
+        }
 
         Meta m = getFieldMetadata(name, editmeta);
         if (m.type == null)
