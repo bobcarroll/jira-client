@@ -19,8 +19,11 @@
 
 package net.rcarz.jiraclient;
 
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static net.rcarz.jiraclient.Resource.getBaseUri;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
@@ -128,6 +131,24 @@ public class Project extends Resource {
             throw new JiraException("JSON payload is malformed");
 
         return Field.getResourceArray(Project.class, result, restclient);
+    }
+
+    public List<User> getAssignableUsers() throws JiraException {
+        JSON result = null;
+
+        try {			
+            Map<String, String> queryParams = new HashMap<String, String>();
+            queryParams.put("project", this.key);
+            URI searchUri = restclient.buildURI(getBaseUri() + "user/assignable/search", queryParams);
+            result = restclient.get(searchUri);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to retrieve assignable users", ex);
+        }
+
+        if (!(result instanceof JSONArray))
+            throw new JiraException("JSON payload is malformed");
+
+        return Field.getResourceArray(User.class, result, restclient);
     }
 
     @Override
