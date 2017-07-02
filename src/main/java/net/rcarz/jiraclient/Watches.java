@@ -22,6 +22,8 @@ package net.rcarz.jiraclient;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +34,7 @@ public class Watches extends Resource {
     private String name = null;
     private int watchCount = 0;
     private boolean isWatching = false;
+    private List<User> watchers = new ArrayList<User>();
 
     /**
      * Creates watches from a JSON payload.
@@ -53,6 +56,7 @@ public class Watches extends Resource {
         id = Field.getString(map.get("id"));
         watchCount = Field.getInteger(map.get("watchCount"));
         isWatching = Field.getBoolean(map.get("isWatching"));
+        watchers = Field.getResourceArray(User.class, map.get("watchers"), null);
     }
 
     /**
@@ -94,5 +98,9 @@ public class Watches extends Resource {
     public boolean isWatching() {
         return isWatching;
     }
+
+	public List<User> getWatchers() {
+		return watchers;
+	}
 }
 

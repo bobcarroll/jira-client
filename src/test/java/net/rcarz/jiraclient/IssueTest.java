@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -103,6 +104,7 @@ public class IssueTest {
         assertFalse(watches.isWatching());
         assertEquals(watches.getWatchCount(), 0);
         assertEquals(watches.getSelf(), "https://brainbubble.atlassian.net/rest/api/2/issue/FILTA-43/watchers");
+        assertEquals(watches.getWatchers(), new ArrayList<User>());
     }
 
     @Test
