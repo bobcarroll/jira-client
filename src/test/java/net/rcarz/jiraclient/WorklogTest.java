@@ -10,6 +10,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
@@ -17,7 +18,7 @@ import static org.mockito.Matchers.anyString;
 @RunWith(PowerMockRunner.class)
 public class WorklogTest {
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Field.DATETIME_FORMAT);
 
     @Test(expected = JiraException.class)
     public void testJiraExceptionFromRestException() throws Exception {
@@ -48,7 +49,7 @@ public class WorklogTest {
     }
 
     @Test
-    public void testWorklog() {
+    public void testWorklog() throws Exception {
 
         List<WorkLog> workLogs = Field.getResourceArray(WorkLog.class, Utils.getTestIssueWorklogs().get("worklogs"), null);
         assertEquals(2, workLogs.size());
@@ -59,11 +60,10 @@ public class WorklogTest {
         assertEquals("45517", workLog.getId());
         String author = "joseph";
         assertEquals(author, workLog.getAuthor().getName());
-        final long expectedStartedUnixTimeStamp = 1439803140000L; //unix timestamp in millis of 2015-08-17T13:19:00.000+0400
-        assertEquals(expectedStartedUnixTimeStamp, workLog.getStarted().getTime());
-        final long expectedCreatedAndUpdatedUnitTimeStamp = 1440062384000L; //unix timestamp in millis of 2015-08-20T13:19:44.000+0400
-        assertEquals(expectedCreatedAndUpdatedUnitTimeStamp, workLog.getCreatedDate().getTime());
-        assertEquals(expectedCreatedAndUpdatedUnitTimeStamp, workLog.getUpdatedDate().getTime());
+        String started = "2015-08-17T13:19:00.000+0400";
+        assertEquals(simpleDateFormat.parse(started), workLog.getStarted());
+        String created = "2015-08-20T13:19:44.000+0400";
+        assertEquals(simpleDateFormat.parse(created), workLog.getCreatedDate());
         assertEquals(21600, workLog.getTimeSpentSeconds());
         assertEquals(author, workLog.getUpdateAuthor().getName());
     }
