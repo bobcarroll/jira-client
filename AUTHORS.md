@@ -7,3 +7,4 @@
 * Anders Kreinøe <anders@kreinoee.dk> @Kreinoee
 * Andrey Kuzmin <agkoozmin@gmail.com> @nach-o-man
 * Pierre-Luc Dupont <pldupont@gmail.com> @pldupont
+* Vivek Ganesan <vivek@vivekganesan.com> @vivganes
