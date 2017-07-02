@@ -149,6 +149,7 @@ public final class Field {
     public static final String CREATED_DATE = "created";
     public static final String UPDATED_DATE = "updated";
     public static final String TRANSITION_TO_STATUS = "to";
+    public static final String SECURITY = "security";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
@@ -418,6 +419,8 @@ public final class Field {
                 result = (T)new Watches(restclient, (JSONObject)r);
             else if (type == WorkLog.class)
                 result = (T)new WorkLog(restclient, (JSONObject)r);
+            else if (type == Security.class)
+                result = (T)new Security(restclient, (JSONObject)r);
         }
 
         return result;
@@ -683,7 +686,7 @@ public final class Field {
             SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
             return df.format(value);
         } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
-                m.type.equals("user") || m.type.equals("resolution")) {
+                m.type.equals("user") || m.type.equals("resolution") || m.type.equals("securitylevel")) {
             JSONObject json = new JSONObject();
 
             if (value == null)
