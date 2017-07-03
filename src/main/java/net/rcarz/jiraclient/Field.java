@@ -149,6 +149,7 @@ public final class Field {
     public static final String CREATED_DATE = "created";
     public static final String UPDATED_DATE = "updated";
     public static final String TRANSITION_TO_STATUS = "to";
+    public static final String SECURITY = "security";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
@@ -410,6 +411,8 @@ public final class Field {
                 result = (T)new Transition(restclient, (JSONObject)r);
             else if (type == User.class)
                 result = (T)new User(restclient, (JSONObject)r);
+            else if (type == Visibility.class)
+                result = (T)new Visibility(restclient, (JSONObject)r);
             else if (type == Version.class)
                 result = (T)new Version(restclient, (JSONObject)r);
             else if (type == Votes.class)
@@ -418,6 +421,8 @@ public final class Field {
                 result = (T)new Watches(restclient, (JSONObject)r);
             else if (type == WorkLog.class)
                 result = (T)new WorkLog(restclient, (JSONObject)r);
+            else if (type == Security.class)
+                result = (T)new Security(restclient, (JSONObject)r);
         }
 
         return result;
@@ -683,7 +688,7 @@ public final class Field {
             SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
             return df.format(value);
         } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
-                m.type.equals("user") || m.type.equals("resolution")) {
+                m.type.equals("user") || m.type.equals("resolution") || m.type.equals("securitylevel")) {
             JSONObject json = new JSONObject();
 
             if (value == null)
@@ -707,7 +712,7 @@ public final class Field {
                 json.put(ValueType.KEY.toString(), value.toString());
 
             return json.toString();
-        } else if (m.type.equals("string") || (m.type.equals("securitylevel"))) {
+        } else if (m.type.equals("string") || (m.type.equals("securitylevel") || m.type.equals("option"))) {
             if (value == null)
                 return "";
             else if (value instanceof List)
@@ -726,11 +731,27 @@ public final class Field {
             else if (value instanceof TimeTracking)
                 return ((TimeTracking) value).toJsonObject();
         } else if (m.type.equals("number")) {
-            if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
+            if (value == null) //Non mandatory number fields can be set to null
+                return JSONNull.getInstance(); 
+            else if(!(value instanceof java.lang.Integer) && !(value instanceof java.lang.Double) && !(value 
                     instanceof java.lang.Float) && !(value instanceof java.lang.Long) )
             {
                 throw new JiraException("Field '" + name + "' expects a Numeric value");
             }
+            return value;
+        } else if (m.type.equals("any")) {
+            if (value == null)
+                return JSONNull.getInstance();
+            else if (value instanceof List)
+                return toJsonMap((List)value);
+            else if (value instanceof ValueTuple) {
+                JSONObject json = new JSONObject();
+                ValueTuple tuple = (ValueTuple)value;
+                json.put(tuple.type, tuple.value.toString());
+                return json.toString();
+            } else if (value instanceof TimeTracking)
+                return ((TimeTracking) value).toJsonObject();
+
             return value;
         }
 

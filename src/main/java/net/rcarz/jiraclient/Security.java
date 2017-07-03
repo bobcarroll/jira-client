@@ -19,30 +19,26 @@
 
 package net.rcarz.jiraclient;
 
+import java.util.Map;
+
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
- * Represents issue watches.
+ * Represents an issue security.
  */
-public class Watches extends Resource {
+public class Security extends Resource {
 
+    private String description = null;
     private String name = null;
-    private int watchCount = 0;
-    private boolean isWatching = false;
-    private List<User> watchers = new ArrayList<User>();
 
     /**
-     * Creates watches from a JSON payload.
+     * Creates a security from a JSON payload.
      *
      * @param restclient REST client instance
      * @param json JSON payload
      */
-    protected Watches(RestClient restclient, JSONObject json) {
+    protected Security(RestClient restclient, JSONObject json) {
         super(restclient);
 
         if (json != null)
@@ -54,53 +50,49 @@ public class Watches extends Resource {
 
         self = Field.getString(map.get("self"));
         id = Field.getString(map.get("id"));
-        watchCount = Field.getInteger(map.get("watchCount"));
-        isWatching = Field.getBoolean(map.get("isWatching"));
-        watchers = Field.getResourceArray(User.class, map.get("watchers"), null);
+        description = Field.getString(map.get("description"));
+        name = Field.getString(map.get("name"));
     }
 
     /**
-     * Retrieves the given watches record.
+     * Retrieves the given security record.
      *
      * @param restclient REST client instance
-     * @param issue Internal JIRA ID of the issue
+     * @param id Internal JIRA ID of the security
      *
-     * @return a watches instance
+     * @return a security instance
      *
      * @throws JiraException when the retrieval fails
      */
-    public static Watches get(RestClient restclient, String issue)
+    public static Security get(RestClient restclient, String id)
         throws JiraException {
 
         JSON result = null;
 
         try {
-            result = restclient.get(getBaseUri() + "issue/" + issue + "/watchers");
+            result = restclient.get(getBaseUri() + "securitylevel/" + id);
         } catch (Exception ex) {
-            throw new JiraException("Failed to retrieve watches for issue " + issue, ex);
+            throw new JiraException("Failed to retrieve security " + id, ex);
         }
 
         if (!(result instanceof JSONObject))
             throw new JiraException("JSON payload is malformed");
 
-        return new Watches(restclient, (JSONObject)result);
+        return new Security(restclient, (JSONObject)result);
     }
 
     @Override
     public String toString() {
-        return Integer.toString(getWatchCount());
+        return getName();
     }
 
-    public int getWatchCount() {
-        return watchCount;
+    public String getDescription() {
+        return description;
     }
 
-    public boolean isWatching() {
-        return isWatching;
+    public String getName() {
+        return name;
     }
 
-	public List<User> getWatchers() {
-		return watchers;
-	}
 }
 

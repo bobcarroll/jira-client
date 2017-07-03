@@ -31,6 +31,17 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.util.EntityUtils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 import java.io.*;
 import java.net.URI;
@@ -137,14 +148,21 @@ public class RestClient {
             BufferedReader br = new BufferedReader(isr);
             String line = "";
 
-            while ((line = br.readLine()) != null)
+            while ((line = br.readLine()) != null) {
                 result.append(line);
+            }
+
+            isr.close();
+            br.close();
+            isr=null;
+            br=null;
         }
+        EntityUtils.consumeQuietly(ent);
 
         StatusLine sl = resp.getStatusLine();
 
         if (sl.getStatusCode() >= 300)
-            throw new RestException(sl.getReasonPhrase(), sl.getStatusCode(), result.toString());
+            throw new RestException(sl.getReasonPhrase(), sl.getStatusCode(), result.toString(), resp.getAllHeaders());
 
         return result.length() > 0 ? JSONSerializer.toJSON(result.toString()): null;
     }

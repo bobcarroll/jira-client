@@ -39,7 +39,7 @@ class SprintTest extends AbstractResourceTest {
 
     @Test
     void "Given a RestClient, when calling getAll() and use doesn't have access, then throws an 401 error."() {
-        RestException unauthorized = new RestException("Do not have access", 401, "Unauthorized")
+        RestException unauthorized = new RestException("Do not have access", 401, "Unauthorized", [])
         RestClient mockRestClient = "given a REST Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "board/" + JSONResources.SPRINT_ORIGIN_BOARD_ID + "/sprint"))
                 .thenThrow(unauthorized)
@@ -62,7 +62,7 @@ class SprintTest extends AbstractResourceTest {
 
     @Test
     void "Given a RestClient, when calling getSprint(666), then throws an 404 error."() {
-        RestException unauthorized = new RestException("Do not have access", 404, "Unauthorized")
+        RestException unauthorized = new RestException("Do not have access", 404, "Unauthorized", [])
         RestClient mockRestClient = "given a REST Client"()
         when(mockRestClient.get(AgileResource.RESOURCE_URI + "sprint/666"))
                 .thenThrow(unauthorized)
