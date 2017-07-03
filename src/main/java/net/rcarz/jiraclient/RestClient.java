@@ -22,20 +22,9 @@ package net.rcarz.jiraclient;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -50,6 +39,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -179,12 +173,8 @@ public class RestClient {
         if (payload != null) {
             StringEntity ent = null;
 
-            try {
-                ent = new StringEntity(payload, "UTF-8");
-                ent.setContentType("application/json");
-            } catch (UnsupportedEncodingException ex) {
-                /* utf-8 should always be supported... */
-            }
+            ent = new StringEntity(payload, "UTF-8");
+            ent.setContentType("application/json");
 
             req.addHeader("Content-Type", "application/json");
             req.setEntity(ent);

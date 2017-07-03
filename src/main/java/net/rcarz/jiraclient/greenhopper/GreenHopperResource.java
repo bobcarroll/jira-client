@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.RestClient;
 
 /**
@@ -29,6 +30,7 @@ public abstract class GreenHopperResource {
     protected static final String RESOURCE_URI = "/rest/greenhopper/1.0/";
 
     protected RestClient restclient = null;
+    @Getter
     protected int id = 0;
 
     /**
@@ -38,13 +40,6 @@ public abstract class GreenHopperResource {
      */
     public GreenHopperResource(RestClient restclient) {
         this.restclient = restclient;
-    }
-
-    /**
-     * Internal JIRA ID.
-     */
-    public int getId() {
-        return id;
     }
 }
 

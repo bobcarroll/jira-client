@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient;
 
+import lombok.Getter;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +30,13 @@ import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Represents a JIRA project.
  */
+@Getter
 public class Project extends Resource {
 
     private Map<String, String> avatarUrls = null;
@@ -155,53 +160,4 @@ public class Project extends Resource {
     public String toString() {
         return getName();
     }
-
-    public Map<String, String> getAvatarUrls() {
-        return avatarUrls;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public User getLead() {
-        return lead;
-    }
-
-    public String getAssigneeType() {
-        return assigneeType;
-    }
-
-    public List<Component> getComponents() {
-        return components;
-    }
-
-    public List<IssueType> getIssueTypes() {
-        return issueTypes;
-    }
-
-    public List<Version> getVersions() {
-        return versions;
-    }
-
-    public Map<String, String> getRoles() {
-        return roles;
-    }
-
-    public ProjectCategory getCategory() {
-        return category;
-    }
-
-    public String getEmail() {
-        return email;
-    }
 }
-

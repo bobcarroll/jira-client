@@ -1,5 +1,6 @@
 package net.rcarz.jiraclient;
 
+import lombok.Getter;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
@@ -9,6 +10,7 @@ import java.util.Map;
 /**
  * Represens a Jira filter.
  */
+@Getter
 public class Filter extends Resource {
 
 	private String name;
@@ -30,18 +32,6 @@ public class Filter extends Resource {
 		name = Field.getString(map.get("name"));
 		jql = Field.getString(map.get("jql"));
 		favourite = Field.getBoolean(map.get("favourite"));
-	}
-
-	public boolean isFavourite() {
-		return favourite;
-	}
-
-	public String getJql() {
-		return jql;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public static Filter get(final RestClient restclient, final String id) throws JiraException {

@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
@@ -29,6 +30,7 @@ import net.sf.json.JSONObject;
  *
  * @author pldupont
  */
+@Getter
 public class Resolution extends AgileResource {
 
     private String description;
@@ -54,9 +56,5 @@ public class Resolution extends AgileResource {
         super.deserialize(json);
 
         this.description = Field.getString(json.get("description"));
-    }
-
-    public String getDescription() {
-        return description;
     }
 }

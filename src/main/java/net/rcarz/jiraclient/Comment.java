@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient;
 
+import lombok.Getter;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
@@ -28,6 +29,7 @@ import java.util.Map;
 /**
  * Represents an issue comment.
  */
+@Getter
 public class Comment extends Resource {
 
     private String issueKey = null;
@@ -154,26 +156,6 @@ public class Comment extends Resource {
     @Override
     public String toString() {
         return created + " by " + author;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public Date getCreatedDate() {
-        return created;
-    }
-
-    public User getUpdateAuthor() {
-        return updatedAuthor;
-    }
-
-    public Date getUpdatedDate() {
-        return updated;
     }
 }
 

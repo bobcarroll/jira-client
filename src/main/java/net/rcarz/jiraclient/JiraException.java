@@ -19,8 +19,6 @@
 
 package net.rcarz.jiraclient;
 
-import java.lang.Throwable;
-
 /**
  * A generic JIRA client exception.
  */

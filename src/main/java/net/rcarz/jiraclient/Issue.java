@@ -19,6 +19,11 @@
 
 package net.rcarz.jiraclient;
 
+import lombok.Getter;
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
@@ -37,6 +42,7 @@ import org.joda.time.format.DateTimeFormatter;
 /**
  * Represents a JIRA issue.
  */
+@Getter
 public class Issue extends Resource {
 
     /**
@@ -1544,70 +1550,6 @@ public class Issue extends Resource {
         return getKey();
     }
 
-    public ChangeLog getChangeLog() {
-        return changeLog;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public User getAssignee() {
-        return assignee;
-    }
-
-    public List<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public List<Component> getComponents() {
-        return components;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Date getDueDate() {
-        return dueDate;
-    }
-
-    public List<Version> getFixVersions() {
-        return fixVersions;
-    }
-
-    public List<IssueLink> getIssueLinks() {
-        return issueLinks;
-    }
-
-    public IssueType getIssueType() {
-        return issueType;
-    }
-
-    public List<String> getLabels() {
-        return labels;
-    }
-
-    public Issue getParent() {
-        return parent;
-    }
-
-    public Priority getPriority() {
-        return priority;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public User getReporter() {
-        return reporter;
-    }
-
     public List<RemoteLink> getRemoteLinks() throws JiraException {
         JSONArray obj;
         try {
@@ -1622,46 +1564,6 @@ public class Issue extends Resource {
         return Field.getRemoteLinks(obj, restclient);
     }
 
-    public Resolution getResolution() {
-        return resolution;
-    }
-
-    public Date getResolutionDate() {
-        return resolutionDate;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public List<Issue> getSubtasks() {
-        return subtasks;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public TimeTracking getTimeTracking() {
-        return timeTracking;
-    }
-
-    public List<Version> getVersions() {
-        return versions;
-    }
-
-    public Votes getVotes() {
-        return votes;
-    }
-
-    public Watches getWatches() {
-        return watches;
-    }
-
-    public List<WorkLog> getWorkLogs() {
-        return workLogs;
-    }
-
     public List<WorkLog> getAllWorkLogs() throws JiraException {
         JSONObject obj;
         try {
@@ -1674,26 +1576,6 @@ public class Issue extends Resource {
         }
 
         return Field.getWorkLogs(obj, restclient);
-    }
-
-    public Integer getTimeSpent() {
-        return timeSpent;
-    }
-
-    public Integer getTimeEstimate() {
-        return timeEstimate;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public Security getSecurity() {
-        return security;
     }
 
     public boolean delete(final boolean deleteSubtasks) throws JiraException {

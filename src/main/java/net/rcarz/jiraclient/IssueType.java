@@ -19,14 +19,16 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
+import lombok.Getter;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents an issue type.
  */
+@Getter
 public class IssueType extends Resource {
 
     private String description = null;
@@ -94,24 +96,6 @@ public class IssueType extends Resource {
         return getName();
     }
 
-    public String getDescription() {
-        return description;
-    }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    public boolean isSubtask() {
-        return subtask;
-    }
-
-    public JSONObject getFields() {
-        return fields;
-    }
 }
 

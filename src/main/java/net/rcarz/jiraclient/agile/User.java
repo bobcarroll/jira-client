@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
@@ -29,6 +30,7 @@ import net.sf.json.JSONObject;
  *
  * @author pldupont
  */
+@Getter
 public class User extends AgileResource {
 
     private String emailAddress;
@@ -64,21 +66,5 @@ public class User extends AgileResource {
     @Override
     public String toString() {
         return String.format("%s{name='%s', Display Name='%s'}", getClass().getSimpleName(), getName(), getDisplayName());
-    }
-
-    public String getEmailAddress() {
-        return emailAddress;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public String getTimeZone() {
-        return timeZone;
     }
 }

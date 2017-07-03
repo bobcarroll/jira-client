@@ -19,14 +19,16 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
+import lombok.Getter;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents an custom field option.
  */
+@Getter
 public class CustomFieldOption extends Resource {
 
     private String value = null;
@@ -82,10 +84,6 @@ public class CustomFieldOption extends Resource {
     @Override
     public String toString() {
         return getValue();
-    }
-
-    public String getValue() {
-        return value;
     }
 }
 

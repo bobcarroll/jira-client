@@ -19,16 +19,17 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.RestClient;
+import net.sf.json.JSONObject;
 
 import java.util.Map;
-
-import net.sf.json.JSONObject;
 
 /**
  * Represents a GreenHopper marker (a sprint that hasn't started).
  */
+@Getter
 public class Marker extends GreenHopperResource {
 
     private String name = null;
@@ -55,10 +56,6 @@ public class Marker extends GreenHopperResource {
 
     @Override
     public String toString() {
-        return name;
-    }
-
-    public String getName() {
         return name;
     }
 }

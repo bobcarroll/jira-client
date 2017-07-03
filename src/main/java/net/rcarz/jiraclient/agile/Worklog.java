@@ -19,6 +19,7 @@
 
 package net.rcarz.jiraclient.agile;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
@@ -31,6 +32,7 @@ import java.util.Date;
  *
  * @author pldupont
  */
+@Getter
 public class Worklog extends AgileResource {
 
     private User author;
@@ -74,37 +76,5 @@ public class Worklog extends AgileResource {
     @Override
     public String toString() {
         return String.format("%s{id=%s, comment='%s'}", getClass().getSimpleName(), getId(), getComment());
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public User getUpdateAuthor() {
-        return updateAuthor;
-    }
-
-    public Date getStarted() {
-        return started;
-    }
-
-    public String getTimeSpent() {
-        return timeSpent;
-    }
-
-    public long getTimeSpentSeconds() {
-        return timeSpentSeconds;
     }
 }

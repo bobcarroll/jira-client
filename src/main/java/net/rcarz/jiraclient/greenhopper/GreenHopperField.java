@@ -20,15 +20,13 @@
 package net.rcarz.jiraclient.greenhopper;
 
 import net.rcarz.jiraclient.RestClient;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 
 /**
  * Utility functions for translating between JSON and fields.

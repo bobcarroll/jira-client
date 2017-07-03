@@ -19,24 +19,22 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
-import net.rcarz.jiraclient.Issue;
-import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
-
-import java.util.List;
-import java.util.Map;
-
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents a GreenHopper epic issue.
  */
+@Getter
 public class Epic extends GreenHopperIssue {
 
-    public String epicLabel = null;
-    public String epicColour = null;
-    public EpicStats epicStats = null;
+    private  String epicLabel = null;
+    private String epicColour = null;
+    private EpicStats epicStats = null;
 
     /**
      * Creates an epic issue from a JSON payload.

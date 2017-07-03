@@ -20,10 +20,9 @@
 package net.rcarz.jiraclient.greenhopper;
 
 import net.rcarz.jiraclient.Field;
+import net.sf.json.JSONObject;
 
 import java.util.Map;
-
-import net.sf.json.JSONObject;
 
 /**
  * GreenHopper epic statistics.

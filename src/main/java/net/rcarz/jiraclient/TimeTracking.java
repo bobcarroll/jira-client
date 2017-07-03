@@ -19,9 +19,9 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents issue time tracking data.

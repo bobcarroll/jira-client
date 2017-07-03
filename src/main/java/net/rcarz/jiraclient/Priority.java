@@ -19,14 +19,16 @@
 
 package net.rcarz.jiraclient;
 
-import java.util.Map;
-
+import lombok.Getter;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Represents an issue priority.
  */
+@Getter
 public class Priority extends Resource {
 
     private String iconUrl = null;
@@ -84,14 +86,6 @@ public class Priority extends Resource {
     @Override
     public String toString() {
         return getName();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
     }
 }
 

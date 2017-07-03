@@ -19,19 +19,20 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
+import lombok.Getter;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
+import net.sf.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 /**
  * A base class for GreenHopper issues.
  */
+@Getter
 public abstract class GreenHopperIssue extends GreenHopperResource {
 
     private String key = null;
@@ -104,78 +105,6 @@ public abstract class GreenHopperIssue extends GreenHopperResource {
     @Override
     public String toString() {
         return key;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public Boolean isHidden() {
-        return hidden;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public String getTypeId() {
-        return typeId;
-    }
-
-    public String getTypeUrl() {
-        return typeUrl;
-    }
-
-    public String getPriorityUrl() {
-        return priorityUrl;
-    }
-
-    public String getPriorityName() {
-        return priorityName;
-    }
-
-    public Boolean isDone() {
-        return done;
-    }
-
-    public String getAssignee() {
-        return assignee;
-    }
-
-    public String getAssigneeName() {
-        return assigneeName;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public String getColour() {
-        return colour;
-    }
-
-    public String getStatusId() {
-        return statusId;
-    }
-
-    public String getStatusName() {
-        return statusName;
-    }
-
-    public String getStatusUrl() {
-        return statusUrl;
-    }
-
-    public List<Integer> getFixVersions() {
-        return fixVersions;
-    }
-
-    public int getProjectId() {
-        return projectId;
     }
 }
 
