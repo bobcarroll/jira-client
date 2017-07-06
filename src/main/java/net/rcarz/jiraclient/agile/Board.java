@@ -118,7 +118,7 @@ public class Board extends AgileResource {
      * @return All issues associated to the Board
      * @throws JiraException
      */
-    public List<Issue> getIssuesForBoard() throws JiraException {
+    public List<Issue> getAllIssuesOfBoard() throws JiraException {
     	return AgileResource.list(getRestclient(), Issue.class, RESOURCE_URI + "board/" + getId() + "/issue", "issues");
     }
     
