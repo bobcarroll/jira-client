@@ -8,3 +8,4 @@
 * Andrey Kuzmin <agkoozmin@gmail.com> @nach-o-man
 * Pierre-Luc Dupont <pldupont@gmail.com> @pldupont
 * Vivek Ganesan <vivek@vivekganesan.com> @vivganes
+* Hiren Savalia <hiren.savalia@gmail.com> @hiren879
