@@ -112,5 +112,23 @@ public class Board extends AgileResource {
     public List<Epic> getEpics() throws JiraException {
         return AgileResource.list(getRestclient(), Epic.class, RESOURCE_URI + "board/" + getId() + "/epic");
     }
+    
+    /**
+     * 
+     * @return All issues associated to the Board
+     * @throws JiraException
+     */
+    public List<Issue> getAllIssuesOfBoard() throws JiraException {
+    	return AgileResource.list(getRestclient(), Issue.class, RESOURCE_URI + "board/" + getId() + "/issue", "issues");
+    }
+    
+    /**
+     * 
+     * @return All projects that are associated with the Board
+     * @throws JiraException
+     */
+    public List<Project> getProjectsOfBoard() throws JiraException {
+    	return AgileResource.list(getRestclient(), Project.class, RESOURCE_URI + "board/" + getId() + "/project");
+    }
 }
 
