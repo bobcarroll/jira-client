@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.rcarz</groupId>
-  <artifactId>jira-client</artifactId>
+  <artifactId>de-bwl-lgl-jira-client</artifactId>
   <version>0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>jira-client</name>
+  <name>de-bwl-lgl-jira-client</name>
   <description>A simple JIRA REST client</description>
-  <url>https://github.com/rcarz/jira-client</url>
+  <url>https://github.com/andreas-wenzel/de-bwl-lgl-jira-client</url>
 
   <licenses>
     <license>
@@ -19,8 +19,8 @@
   </licenses>
 
   <scm>
-    <url>https://github.com/rcarz/jira-client</url>
-    <connection>https://github.com/rcarz/jira-client</connection>
+    <url>https://github.com/andreas-wenzel/de-bwl-lgl-jira-client</url>
+    <connection>https://github.com/andreas-wenzel/de-bwl-lgl-jira-client.git</connection>
   </scm>
 
   <developers>
@@ -28,6 +28,11 @@
       <id>rcarz</id>
       <name>Bob Carroll</name>
       <email>bob.carroll@alum.rit.edu</email>
+    </developer>
+    <developer>
+      <id>andreas-wenzel</id>
+      <name>Andreas Wenzel</name>
+      <email>Andreas.Wenzel@lgl.bwl.de</email>
     </developer>
   </developers>
 

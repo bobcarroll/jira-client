@@ -61,7 +61,11 @@ public class RestClient {
 
     private HttpClient httpClient = null;
     private ICredentials creds = null;
-    private URI uri = null;
+    public ICredentials getCreds() {
+		return creds;
+	}
+
+	private URI uri = null;
 
     /**
      * Creates a REST client instance with a URI.

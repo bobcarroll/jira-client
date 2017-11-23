@@ -688,7 +688,8 @@ public final class Field {
             SimpleDateFormat df = new SimpleDateFormat(DATETIME_FORMAT);
             return df.format(value);
         } else if (m.type.equals("issuetype") || m.type.equals("priority") ||
-                m.type.equals("user") || m.type.equals("resolution") || m.type.equals("securitylevel")) {
+                m.type.equals("user") || m.type.equals("resolution") || m.type.equals("securitylevel") || 
+                m.type.equals("version")) {
             JSONObject json = new JSONObject();
 
             if (value == null)
