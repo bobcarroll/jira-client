@@ -87,7 +87,7 @@ public class BoardConfiguration extends AgileResource {
 
         //Statuses in each Column do not have names - need to fetch all known statuses
         List<net.rcarz.jiraclient.Status> statuses = net.rcarz.jiraclient.Status.getAll(getRestclient());
-        HashMap<String,net.rcarz.jiraclient.Status> statMap = new HashMap<>(statuses.size());
+        HashMap<String,net.rcarz.jiraclient.Status> statMap = new HashMap<String,net.rcarz.jiraclient.Status>(statuses.size());
 		for (net.rcarz.jiraclient.Status status : statuses) {
 			statMap.put(status.getId(), status);
 		}

@@ -27,7 +27,7 @@ public class BoardColumn extends AgileResource {
         super.deserialize(json);
         setName(json.getString("name"));
         JSONArray statusesJSON = json.getJSONArray("statuses");
-        statuses = new ArrayList<>(statusesJSON.size());
+        statuses = new ArrayList<Status>(statusesJSON.size());
         for (int i = 0; i < statusesJSON.size(); i++) {
 			JSONObject status = statusesJSON.getJSONObject(i);
 			Status stat = new Status(getRestclient(),status);
