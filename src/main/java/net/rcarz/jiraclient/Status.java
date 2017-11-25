@@ -19,9 +19,12 @@
 
 package net.rcarz.jiraclient;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -54,6 +57,34 @@ public class Status extends Resource {
         description = Field.getString(map.get("description"));
         iconUrl = Field.getString(map.get("iconUrl"));
         name = Field.getString(map.get("name"));
+    }
+    
+    /**
+     * Retrieves all boards visible to the session user.
+     *
+     * @param restclient REST client instance
+     * @return a list of boards
+     * @throws JiraException when the retrieval fails
+     */
+    public static List<Status> getAll(RestClient restclient) throws JiraException {
+        JSON result = null;
+
+        try {
+            result = restclient.get(getBaseUri() + "status");
+        } catch (Exception ex) {
+            throw new JiraException("Failed to retrieve statuses ", ex);
+        }
+
+        if (!(result instanceof JSONArray))
+            throw new JiraException("JSON payload is malformed");
+
+        JSONArray array = (JSONArray) result;
+        List<Status> results = new ArrayList<Status>(array.size());
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject row = array.getJSONObject(i);
+            results.add(new Status(restclient, row));
+        }
+        return results;
     }
 
     /**

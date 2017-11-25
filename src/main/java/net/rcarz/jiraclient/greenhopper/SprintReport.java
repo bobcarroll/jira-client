@@ -19,16 +19,15 @@
 
 package net.rcarz.jiraclient.greenhopper;
 
-import net.rcarz.jiraclient.Field;
-import net.rcarz.jiraclient.Issue;
-import net.rcarz.jiraclient.JiraException;
-import net.rcarz.jiraclient.RestClient;
-
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.rcarz.jiraclient.Field;
+import net.rcarz.jiraclient.JiraException;
+import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
@@ -40,13 +39,15 @@ public class SprintReport {
     private RestClient restclient = null;
     private Sprint sprint = null;
     private List<SprintIssue> completedIssues = null;
-    private List<SprintIssue> incompletedIssues = null;
     private List<SprintIssue> puntedIssues = null;
     private EstimateSum completedIssuesEstimateSum = null;
     private EstimateSum incompletedIssuesEstimateSum = null;
     private EstimateSum allIssuesEstimateSum = null;
     private EstimateSum puntedIssuesEstimateSum = null;
     private List<String> issueKeysAddedDuringSprint = null;
+	private EstimateSum issuesCompletedInAnotherSprintInitialEstimateSum;
+	private List<SprintIssue> issuesCompletedInAnotherSprint;
+	private List<SprintIssue> issuesNotCompletedInCurrentSprint;
 
     /**
      * Creates a sprint report from a JSON payload.
@@ -69,10 +70,14 @@ public class SprintReport {
             SprintIssue.class,
             map.get("completedIssues"),
             restclient);
-        incompletedIssues = GreenHopperField.getResourceArray(
+        issuesNotCompletedInCurrentSprint = GreenHopperField.getResourceArray(
             SprintIssue.class,
-            map.get("incompletedIssues"),
+            map.get("issuesNotCompletedInCurrentSprint"),
             restclient);
+        issuesCompletedInAnotherSprint = GreenHopperField.getResourceArray(
+                SprintIssue.class,
+                map.get("issuesCompletedInAnotherSprint"),
+                restclient);
         puntedIssues = GreenHopperField.getResourceArray(
             SprintIssue.class,
             map.get("puntedIssues"),
@@ -81,12 +86,15 @@ public class SprintReport {
             map.get("completedIssuesEstimateSum"));
         incompletedIssuesEstimateSum = GreenHopperField.getEstimateSum(
             map.get("incompletedIssuesEstimateSum"));
+        issuesCompletedInAnotherSprintInitialEstimateSum = GreenHopperField.getEstimateSum(
+                map.get("issuesCompletedInAnotherSprintInitialEstimateSum"));
         allIssuesEstimateSum = GreenHopperField.getEstimateSum(
             map.get("allIssuesEstimateSum"));
         puntedIssuesEstimateSum = GreenHopperField.getEstimateSum(
             map.get("puntedIssuesEstimateSum"));
-        issueKeysAddedDuringSprint = GreenHopperField.getStringArray(
-            map.get("issueKeysAddedDuringSprint"));
+        //JIRA-1234,true
+        Map<String,Boolean> added = Field.getMap(String.class, Boolean.class, map.get("issueKeysAddedDuringSprint"));
+        issueKeysAddedDuringSprint = new ArrayList<String>(added.keySet());
     }
 
     /**
@@ -139,9 +147,16 @@ public class SprintReport {
     }
 
     public List<SprintIssue> getIncompletedIssues() {
-        return incompletedIssues;
+        return issuesNotCompletedInCurrentSprint;
     }
 
+    public List<SprintIssue> getIssuesCompletedInAnotherSprint() {
+        return issuesCompletedInAnotherSprint;
+    }
+    public EstimateSum getIssuesCompletedInAnotherSprintInitialEstimateSum() {
+        return issuesCompletedInAnotherSprintInitialEstimateSum;
+    }
+ 
     public List<SprintIssue> getPuntedIssues() {
         return puntedIssues;
     }
