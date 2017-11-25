@@ -88,5 +88,6 @@ public abstract class Resource {
     public String getSelf() {
         return self;
     }
+    
 }
 

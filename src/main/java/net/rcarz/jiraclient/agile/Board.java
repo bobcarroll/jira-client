@@ -90,6 +90,14 @@ public class Board extends AgileResource {
     }
 
     /**
+     * @return Configuarion the current board.
+     * @throws JiraException when the retrieval fails
+     */
+    public BoardConfiguration getConfiguarion() throws JiraException {
+        return BoardConfiguration.get(getRestclient(), getId());
+    }
+
+    /**
      * @return All issues in the Board backlog.
      * @throws JiraException when the retrieval fails
      */
