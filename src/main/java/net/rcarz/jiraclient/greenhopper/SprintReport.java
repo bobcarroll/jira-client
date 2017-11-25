@@ -94,7 +94,7 @@ public class SprintReport {
             map.get("puntedIssuesEstimateSum"));
         //JIRA-1234,true
         Map<String,Boolean> added = Field.getMap(String.class, Boolean.class, map.get("issueKeysAddedDuringSprint"));
-        issueKeysAddedDuringSprint = new ArrayList<>(added.keySet());
+        issueKeysAddedDuringSprint = new ArrayList<String>(added.keySet());
     }
 
     /**
