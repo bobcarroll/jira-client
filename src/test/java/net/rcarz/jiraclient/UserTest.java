@@ -1,19 +1,26 @@
 package net.rcarz.jiraclient;
 
-import net.sf.json.JSONObject;
-import org.junit.Test;
-import org.powermock.api.mockito.PowerMockito;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.powermock.api.mockito.PowerMockito.when;
+import org.hamcrest.core.IsEqual;
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+
+import net.sf.json.JSONObject;
 
 public class UserTest {
 
@@ -107,4 +114,17 @@ public class UserTest {
 
         assertTrue(user.isActive());
     }
+    
+    @Test
+	public void testUserSet() throws Exception {
+		final RestClient restClient = Mockito.mock(RestClient.class);
+		when(restClient.get(anyString(), anyMap())).thenReturn(getTestJSON());
+
+		HashSet<User> users = new HashSet<User>();
+		users.add(User.get(restClient, "username"));
+		users.add(User.get(restClient, "username"));
+		
+		assertThat(users.size(), equalTo(1));
+	}
+    
 }
