@@ -858,17 +858,31 @@ public class Issue extends Resource {
     }
 
     public static JSONObject getCreateMetadata(
-        RestClient restclient, String project, String issueType) throws JiraException {
+            RestClient restclient, String project, final String issueTypeName) throws JiraException {
+        return getCreateMetadata(restclient, project, null, issueTypeName);
+    }
+
+    public static JSONObject getCreateMetadata(
+            RestClient restclient, String project, final IssueType issueType) throws JiraException {
+        return getCreateMetadata(restclient, project, issueType.getId(), null);
+    }
+
+    private static JSONObject getCreateMetadata(
+        RestClient restclient, String project, final String issueTypeId, final String issueTypeName) throws JiraException {
 
         final String pval = project;
-        final String itval = issueType;
         JSON result = null;
 
         try {
             Map<String, String> params = new HashMap<String, String>();
             params.put("expand", "projects.issuetypes.fields");
             params.put("projectKeys", pval);
-            params.put("issuetypeNames", itval);
+            if (issueTypeId != null) {
+                params.put("issuetypeIds", issueTypeId);
+            }
+            if (issueTypeName != null) {
+                params.put("issuetypeNames", issueTypeName);
+            }
             URI createuri = restclient.buildURI(
                 getBaseUri() + "issue/createmeta",
                 params);
@@ -892,7 +906,7 @@ public class Issue extends Resource {
             restclient);
 
         if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty())
-            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType +
+            throw new JiraException("Project '"+ project + "'  or issue type '" + issueTypeName +
                     "' missing from create metadata. Do you have enough permissions?");
 
         return projects.get(0).getIssueTypes().get(0).getFields();
@@ -1192,24 +1206,46 @@ public class Issue extends Resource {
      *
      * @param restclient REST client instance
      * @param project Key of the project to create the issue in
-     * @param issueType Name of the issue type to create
+     * @param issueTypeName Name of the issue type to create
      *
      * @return a fluent create instance
      *
      * @throws JiraException when the client fails to retrieve issue metadata
      */
-    public static FluentCreate create(RestClient restclient, String project, String issueType)
+    public static FluentCreate create(RestClient restclient, String project, String issueTypeName)
         throws JiraException {
 
         FluentCreate fc = new FluentCreate(
             restclient,
-            getCreateMetadata(restclient, project, issueType));
+            getCreateMetadata(restclient, project, issueTypeName));
 
         return fc
             .field(Field.PROJECT, project)
-            .field(Field.ISSUE_TYPE, issueType);
+            .field(Field.ISSUE_TYPE, issueTypeName);
     }
 
+    /**
+     * Creates a new JIRA issue.
+     *
+     * @param restclient REST client instance
+     * @param project Key of the project to create the issue in
+     * @param issueType The type of issue to create
+     *
+     * @return a fluent create instance
+     *
+     * @throws JiraException when the client fails to retrieve issue metadata
+     */
+    public static FluentCreate create(RestClient restclient, String project, IssueType issueType)
+            throws JiraException {
+
+        FluentCreate fc = new FluentCreate(
+                restclient,
+                getCreateMetadata(restclient, project, issueType));
+
+        return fc
+                .field(Field.PROJECT, project)
+                .field(Field.ISSUE_TYPE, issueType);
+    }
     /**
      * Creates a new sub-task.
      *
