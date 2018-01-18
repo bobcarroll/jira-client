@@ -19,19 +19,20 @@
 
 package net.rcarz.jiraclient.agile;
 
+import java.util.List;
+
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
-
-import java.util.List;
 
 /**
  * Represents an Agile Epic.
  *
  * @author pldupont
  */
-public class Epic extends AgileResource {
+public class Epic extends AgileResource
+{
 
     private Issue issue;
     private String key;
@@ -42,9 +43,12 @@ public class Epic extends AgileResource {
      * Creates a new Agile resource.
      *
      * @param restclient REST client instance
-     * @param json       JSON payload
+     * @param json JSON payload
      */
-    public Epic(RestClient restclient, JSONObject json) throws JiraException {
+    public Epic(RestClient restclient,
+                JSONObject json)
+        throws JiraException
+    {
         super(restclient, json);
     }
 
@@ -52,11 +56,14 @@ public class Epic extends AgileResource {
      * Retrieves the epic matching the ID.
      *
      * @param restclient REST client instance
-     * @param id         Internal JIRA ID of the epic
+     * @param id Internal JIRA ID of the epic
      * @return an epic instance
      * @throws JiraException when the retrieval fails
      */
-    public static Epic get(RestClient restclient, long id) throws JiraException {
+    public static Epic get(RestClient restclient,
+                           long id)
+        throws JiraException
+    {
         return AgileResource.get(restclient, Epic.class, RESOURCE_URI + "epic/" + id);
     }
 
@@ -65,8 +72,11 @@ public class Epic extends AgileResource {
      * @return The Issue representation of this Epic.
      * @throws JiraException when the retrieval fails
      */
-    public Issue asIssue(boolean refresh) throws JiraException {
-        if (this.issue == null || refresh) {
+    public Issue asIssue(boolean refresh)
+        throws JiraException
+    {
+        if (this.issue == null || refresh)
+        {
             this.issue = Issue.get(getRestclient(), getId());
         }
         return this.issue;
@@ -76,8 +86,14 @@ public class Epic extends AgileResource {
      * @return All issues in the Epic.
      * @throws JiraException when the retrieval fails
      */
-    public List<Issue> getIssues() throws JiraException {
-        return AgileResource.list(getRestclient(), Issue.class, RESOURCE_URI + "epic/" + getId() + "/issue", "issues");
+    public List<Issue> getIssues(String... jql)
+        throws JiraException
+    {
+        return AgileResource.list(getRestclient(),
+                                  Issue.class,
+                                  RESOURCE_URI + "epic/" + getId() + "/issue",
+                                  "issues",
+                                  jql.length > 0 ? jql[0] : "");
     }
 
     /**
@@ -87,7 +103,9 @@ public class Epic extends AgileResource {
      * @param json The JSON object to read.
      */
     @Override
-    void deserialize(JSONObject json) throws JiraException {
+    void deserialize(JSONObject json)
+        throws JiraException
+    {
         super.deserialize(json);
 
         this.key = Field.getString(json.get("key"));
@@ -95,15 +113,18 @@ public class Epic extends AgileResource {
         this.done = Field.getBoolean(json.get("done"));
     }
 
-    public String getKey() {
+    public String getKey()
+    {
         return key;
     }
 
-    public String getSummary() {
+    public String getSummary()
+    {
         return summary;
     }
 
-    public boolean isDone() {
+    public boolean isDone()
+    {
         return done;
     }
 }
