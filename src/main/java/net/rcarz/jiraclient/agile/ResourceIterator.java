@@ -159,7 +159,7 @@ public class ResourceIterator<T extends AgileResource> implements Iterator<T>
         }
 
         if (isLast || (startAt != 0 && total != 0 && startAt >= total))
-            return new ArrayList<>();
+            return new ArrayList<T>();
 
         JSON result = null;
         try
