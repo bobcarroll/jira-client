@@ -187,10 +187,10 @@ public abstract class AgileResource
         throws JiraException
     {
 
-        final ResourceIterator iter =
+        final ResourceIterator<T> iter =
             new ResourceIterator<T>(restclient, type, url, listName, jql, null, null, null, null);
 
-        List<T> list = new ArrayList<>();
+        List<T> list = new ArrayList<T>();
         while (iter.hasNext())
         {
             list.add((T) iter.next());
