@@ -1564,6 +1564,19 @@ public class Issue extends Resource {
         return comments;
     }
 
+    public List<Comment> getAllComments() throws JiraException {
+        JSONObject obj;
+        try {
+            URI uri = restclient.buildURI(getBaseUri() + "issue/" + key + "/comment");
+            JSON json = restclient.get(uri);
+            obj = (JSONObject) json;
+        } catch (Exception ex) {
+            throw new JiraException("Failed to get comments for issue "
+                    + key, ex);
+        }
+        return Field.getComments(obj, restclient, key);
+    }
+
     public List<Component> getComponents() {
         return components;
     }
