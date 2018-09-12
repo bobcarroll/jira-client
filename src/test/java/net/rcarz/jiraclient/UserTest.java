@@ -73,7 +73,7 @@ public class UserTest {
     public void testGetUserJSONError() throws Exception {
 
         final RestClient restClient = PowerMockito.mock(RestClient.class);
-        when(restClient.get(anyString(),anyMap())).thenReturn(null);
+        when(restClient.get(anyString(), anyMap())).thenReturn(null);
          User.get(restClient, "username");
 
     }

@@ -136,13 +136,13 @@ public class IssueTest {
     @Test
     public void testCreatedDate(){
         Issue issue = new Issue(null,Utils.getTestIssue());
-        assertEquals(new DateTime(2013, 9, 29, 20, 16, 19, 854, DateTimeZone.forOffsetHours(1)).toDate(), issue.getCreatedDate());
+        assertEquals(new DateTime(2013, 9, 29, 20, 16, 19, 854).toDate(), issue.getCreatedDate());
     }
 
     @Test
     public void testUpdatedDate(){
       Issue issue = new Issue(null,Utils.getTestIssue());
-      assertEquals(new DateTime(2013, 10, 9, 22, 24, 55, 961, DateTimeZone.forOffsetHours(1)).toDate(), issue.getUpdatedDate());
+      assertEquals(new DateTime(2013, 10, 9, 22, 24, 55, 961).toDate(), issue.getUpdatedDate());
     }
 
     @Test
