@@ -21,11 +21,14 @@ package net.rcarz.jiraclient.agile;
 
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
+import net.rcarz.jiraclient.Parameter;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents an Agile Issue.
@@ -55,6 +58,7 @@ public class Issue extends AgileResource {
     private User reporter;
     private String environment;
 
+    private JSONObject changelog;
 
     /**
      * Creates a new Agile Issue resource.
@@ -74,8 +78,8 @@ public class Issue extends AgileResource {
      * @return an issue instance
      * @throws JiraException when the retrieval fails
      */
-    public static Issue get(RestClient restclient, long id) throws JiraException {
-        return AgileResource.get(restclient, Issue.class, RESOURCE_URI + "issue/" + id);
+    public static Issue get(RestClient restclient, long id, Parameter... parameters) throws JiraException {
+        return AgileResource.get(restclient, Issue.class, RESOURCE_URI + "issue/" + id, parameters);
     }
 
     /**
@@ -86,8 +90,8 @@ public class Issue extends AgileResource {
      * @return an issue instance
      * @throws JiraException when the retrieval fails
      */
-    public static Issue get(RestClient restclient, String key) throws JiraException {
-        return AgileResource.get(restclient, Issue.class, RESOURCE_URI + "issue/" + key);
+    public static Issue get(RestClient restclient, String key, Parameter... parameters) throws JiraException {
+        return AgileResource.get(restclient, Issue.class, RESOURCE_URI + "issue/" + key, parameters);
     }
 
     @Override
@@ -119,7 +123,13 @@ public class Issue extends AgileResource {
             this.creator = getSubResource(User.class, fields, "creator");
             this.reporter = getSubResource(User.class, fields, "reporter");
 
+            //.getJSONArray("histories")
+
             addAttributes(fields);
+        }
+
+        if (json.containsKey("changelog")) {
+            this.changelog = json.getJSONObject("changelog");
         }
     }
 
@@ -201,5 +211,9 @@ public class Issue extends AgileResource {
 
     public String getEnvironment() {
         return environment;
+    }
+
+    public JSONObject getChangelog() {
+        return changelog;
     }
 }

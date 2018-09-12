@@ -21,6 +21,7 @@ package net.rcarz.jiraclient.agile;
 
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
+import net.rcarz.jiraclient.Parameter;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
 
@@ -78,8 +79,8 @@ public class Sprint extends AgileResource {
      * @return All issues in the Sprint.
      * @throws JiraException when the retrieval fails
      */
-    public List<Issue> getIssues() throws JiraException {
-        return AgileResource.list(getRestclient(), Issue.class, RESOURCE_URI + "sprint/" + getId() + "/issue", "issues");
+    public List<Issue> getIssues(Parameter... parameters) throws JiraException {
+        return AgileResource.list(getRestclient(), Issue.class, RESOURCE_URI + "sprint/" + getId() + "/issue", "issues", parameters);
     }
 
     @Override

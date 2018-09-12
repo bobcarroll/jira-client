@@ -21,6 +21,7 @@ package net.rcarz.jiraclient.agile;
 
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
+import net.rcarz.jiraclient.Parameter;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
@@ -29,7 +30,9 @@ import org.apache.commons.lang.math.NumberUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A base class for Agile resources.
@@ -154,11 +157,11 @@ public abstract class AgileResource {
      * @throws JiraException when the retrieval fails
      */
     static <T extends AgileResource> List<T> list(
-            RestClient restclient, Class<T> type, String url, String listName) throws JiraException {
+            RestClient restclient, Class<T> type, String url, String listName, Parameter... parameters) throws JiraException {
 
         JSON result;
         try {
-            result = restclient.get(url);
+            result = restclient.get(url, Parameter.map(parameters));
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve a list of " + type.getSimpleName() + " : " + url, ex);
         }
@@ -178,11 +181,11 @@ public abstract class AgileResource {
      * @return a list of boards
      * @throws JiraException when the retrieval fails
      */
-    static <T extends AgileResource> T get(RestClient restclient, Class<T> type, String url) throws JiraException {
+    static <T extends AgileResource> T get(RestClient restclient, Class<T> type, String url, Parameter... parameters) throws JiraException {
 
         JSON result;
         try {
-            result = restclient.get(url);
+            result = restclient.get(url, Parameter.map(parameters));
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve " + type.getSimpleName() + " : " + url, ex);
         }
