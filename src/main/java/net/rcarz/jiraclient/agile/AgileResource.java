@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A base class for Agile resources.
@@ -162,6 +165,27 @@ public abstract class AgileResource {
         JSON result;
         try {
             result = restclient.get(url, Parameter.map(parameters));
+            if (result instanceof JSONObject) {
+                JSONObject container = (JSONObject) result;
+                if (container.containsKey("isLast") && !container.getBoolean("isLast")) {
+                    System.out.println(url);
+                    return Stream.concat(
+                            getResourceArray(
+                                    type,
+                                    result,
+                                    restclient,
+                                    listName
+                            ).stream(),
+                            list(
+                                restclient,
+                                type,
+                                url,
+                                listName,
+                                Parameter.increment(parameters, "startAt", 50)).stream()
+                            )
+                            .collect(Collectors.toList());
+                }
+            }
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve a list of " + type.getSimpleName() + " : " + url, ex);
         }
@@ -172,6 +196,10 @@ public abstract class AgileResource {
                 restclient,
                 listName
         );
+
+
+
+
     }
 
     /**
@@ -316,6 +344,20 @@ public abstract class AgileResource {
     @Override
     public String toString() {
         return String.format("%s{id=%s, name='%s'}", getClass().getSimpleName(), id, name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        AgileResource that = (AgileResource) o;
+        return id == that.id &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }
 
