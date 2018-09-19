@@ -19,11 +19,12 @@
 
 package net.rcarz.jiraclient.agile;
 
+import java.util.List;
+
 import net.rcarz.jiraclient.JiraClient;
 import net.rcarz.jiraclient.JiraException;
+import net.rcarz.jiraclient.Parameter;
 import net.rcarz.jiraclient.RestClient;
-
-import java.util.List;
 
 /**
  * An Agile extension to the JIRA client.
@@ -83,8 +84,8 @@ public class AgileClient {
      * @return an Issue instance
      * @throws JiraException when something goes wrong
      */
-    public Issue getIssue(long id) throws JiraException {
-        return Issue.get(restclient, id);
+    public Issue getIssue(long id, Parameter... parameters) throws JiraException {
+        return Issue.get(restclient, id, parameters);
     }
 
     /**
@@ -94,8 +95,8 @@ public class AgileClient {
      * @return an Issue instance
      * @throws JiraException when something goes wrong
      */
-    public Issue getIssue(String key) throws JiraException {
-        return Issue.get(restclient, key);
+    public Issue getIssue(String key, Parameter... parameters) throws JiraException {
+        return Issue.get(restclient, key, parameters);
     }
 
     /**
