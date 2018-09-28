@@ -1,10 +1,13 @@
 package net.rcarz.jiraclient;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * Represens a Jira filter.
@@ -18,8 +21,9 @@ public class Filter extends Resource {
 	public Filter(RestClient restclient, JSONObject json) {
 		super(restclient);
 
-		if (json != null)
-			deserialise(json);
+		if (json != null) {
+      deserialise(json);
+    }
 	}
 
 	private void deserialise(JSONObject json) {
@@ -42,6 +46,29 @@ public class Filter extends Resource {
 
 	public String getName() {
 		return name;
+	}
+
+	public static List<Filter> getAll(final RestClient restclient) throws JiraException {
+	  JSON result = null;
+
+	  try {
+	    URI uri = restclient.buildURI(getBaseUri() + "filter/");
+	    result = restclient.get(uri);
+	  } catch (Exception ex) {
+	    throw new JiraException("Failed to retrieve filters", ex);
+	  }
+
+	  if (!(result instanceof JSONArray)) {
+	    throw new JiraException("JSON payload is malformed");
+	  }
+	  List<Filter> filters = new ArrayList<Filter>();
+	  for (int i = 0; i < ((JSONArray)result).size(); i++) {
+	    if (!(((JSONArray)result).get(i) instanceof JSONObject)) {
+	      throw new JiraException("JSON payload is malformed");
+	    }
+	    filters.add(new Filter(restclient, (JSONObject) ((JSONArray)result).get(i)));
+	  }
+	  return filters;
 	}
 
 	public static Filter get(final RestClient restclient, final String id) throws JiraException {
