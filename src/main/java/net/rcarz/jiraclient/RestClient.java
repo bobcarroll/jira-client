@@ -42,6 +42,8 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -53,6 +55,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+
 /**
  * A simple REST client that speaks JSON.
  */
@@ -61,6 +64,7 @@ public class RestClient {
     private HttpClient httpClient = null;
     private ICredentials creds = null;
     private URI uri = null;
+    private HttpContext httpContext = null;
 
     /**
      * Creates a REST client instance with a URI.
@@ -72,6 +76,13 @@ public class RestClient {
         this(httpclient, null, uri);
     }
 
+    public RestClient(HttpClient httpclient, ICredentials creds, URI uri) {
+        this.httpClient = httpclient;
+        this.creds = creds;
+        this.uri = uri;
+        this.httpContext = new BasicHttpContext();
+    }
+
     /**
      * Creates an authenticated REST client instance with a URI.
      *
@@ -79,10 +90,11 @@ public class RestClient {
      * @param creds Credentials to send with each request
      * @param uri Base URI of the remote REST service
      */
-    public RestClient(HttpClient httpclient, ICredentials creds, URI uri) {
+    public RestClient(HttpClient httpclient, ICredentials creds, URI uri, HttpContext httpContext) {
         this.httpClient = httpclient;
         this.creds = creds;
         this.uri = uri;
+        this.httpContext = httpContext;
     }
 
     /**
@@ -121,35 +133,42 @@ public class RestClient {
     }
 
     private JSON request(HttpRequestBase req) throws RestException, IOException {
+        return httpContext == null?request(req,new BasicHttpContext()):request(req, httpContext);
+
+    }
+
+    private JSON request(HttpRequestBase req, HttpContext ctx) throws RestException, IOException {
         req.addHeader("Accept", "application/json");
 
-        if (creds != null)
+        if (creds != null) {
             creds.authenticate(req);
+        }
 
-        HttpResponse resp = httpClient.execute(req);
+
+        HttpResponse resp = httpClient.execute(req, ctx);
         HttpEntity ent = resp.getEntity();
         StringBuilder result = new StringBuilder();
 
         if (ent != null) {
             String encoding = null;
             if (ent.getContentEncoding() != null) {
-            	encoding = ent.getContentEncoding().getValue();
+                encoding = ent.getContentEncoding().getValue();
             }
-            
+
             if (encoding == null) {
-    	        Header contentTypeHeader = resp.getFirstHeader("Content-Type");
-    	        HeaderElement[] contentTypeElements = contentTypeHeader.getElements();
-    	        for (HeaderElement he : contentTypeElements) {
-    	        	NameValuePair nvp = he.getParameterByName("charset");
-    	        	if (nvp != null) {
-    	        		encoding = nvp.getValue();
-    	        	}
-    	        }
+                Header contentTypeHeader = resp.getFirstHeader("Content-Type");
+                HeaderElement[] contentTypeElements = contentTypeHeader.getElements();
+                for (HeaderElement he : contentTypeElements) {
+                    NameValuePair nvp = he.getParameterByName("charset");
+                    if (nvp != null) {
+                        encoding = nvp.getValue();
+                    }
+                }
             }
-            
+
             InputStreamReader isr =  encoding != null ?
-                new InputStreamReader(ent.getContent(), encoding) :
-                new InputStreamReader(ent.getContent());
+                    new InputStreamReader(ent.getContent(), encoding) :
+                    new InputStreamReader(ent.getContent());
             BufferedReader br = new BufferedReader(isr);
             String line = "";
 
@@ -171,12 +190,9 @@ public class RestClient {
         if (payload != null) {
             StringEntity ent = null;
 
-            try {
                 ent = new StringEntity(payload, "UTF-8");
                 ent.setContentType("application/json");
-            } catch (UnsupportedEncodingException ex) {
-                /* utf-8 should always be supported... */
-            }
+
 
             req.addHeader("Content-Type", "application/json");
             req.setEntity(ent);
@@ -328,7 +344,6 @@ public class RestClient {
      * Content-Type header. You should not use this function when proper JSON
      * is expected.
      *
-     * @see https://jira.atlassian.com/browse/JRA-29304
      *
      * @param uri Full URI of the remote endpoint
      * @param payload Raw string to send to the remote service
