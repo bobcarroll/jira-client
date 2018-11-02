@@ -24,6 +24,9 @@ import java.lang.UnsupportedOperationException;
 import java.sql.Timestamp;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -152,7 +155,7 @@ public final class Field {
     public static final String SECURITY = "security";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
-    public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
     private Field() { }
 
@@ -242,8 +245,10 @@ public final class Field {
         Date result = null;
 
         if (d instanceof String) {
-            SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
-            result = df.parse((String)d, new ParsePosition(0));
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATETIME_FORMAT);
+            result = Date.from(ZonedDateTime.parse((String)d,  dtf)
+                    .withZoneSameInstant(ZoneId.of("UTC"))
+                    .toInstant());
         }
 
         return result;

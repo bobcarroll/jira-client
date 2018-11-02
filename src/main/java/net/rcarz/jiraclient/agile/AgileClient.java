@@ -73,8 +73,8 @@ public class AgileClient {
      * @return a Sprint instance
      * @throws JiraException when something goes wrong
      */
-    public Sprint getSprint(long id) throws JiraException {
-        return Sprint.get(restclient, id);
+    public Sprint getSprint(long id, Parameter... parameters) throws JiraException {
+        return Sprint.get(restclient, id, parameters);
     }
 
     /**

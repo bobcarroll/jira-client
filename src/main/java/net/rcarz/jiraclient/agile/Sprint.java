@@ -41,6 +41,8 @@ public class Sprint extends AgileResource {
     private Date endDate;
     private Date completeDate;
 
+    private JSONObject changelog;
+
     /**
      * Creates a rapid view from a JSON payload.
      *
@@ -59,8 +61,8 @@ public class Sprint extends AgileResource {
      * @return The sprint for the specified ID.
      * @throws JiraException when the retrieval fails
      */
-    public static Sprint get(RestClient restclient, long sprintId) throws JiraException {
-        return AgileResource.get(restclient, Sprint.class, RESOURCE_URI + "sprint/" + sprintId);
+    public static Sprint get(RestClient restclient, long sprintId, Parameter... parameters) throws JiraException {
+        return AgileResource.get(restclient, Sprint.class, RESOURCE_URI + "sprint/" + sprintId, parameters);
     }
 
     /**
@@ -71,8 +73,8 @@ public class Sprint extends AgileResource {
      * @return The list of sprints associated to the board.
      * @throws JiraException when the retrieval fails
      */
-    public static List<Sprint> getAll(RestClient restclient, long boardId) throws JiraException {
-        return AgileResource.list(restclient, Sprint.class, RESOURCE_URI + "board/" + boardId + "/sprint");
+    public static List<Sprint> getAll(RestClient restclient, long boardId, Parameter... parameters) throws JiraException {
+        return AgileResource.list(restclient, Sprint.class, RESOURCE_URI + "board/" + boardId + "/sprint", parameters);
     }
 
     /**
@@ -91,6 +93,10 @@ public class Sprint extends AgileResource {
         startDate = Field.getDateTime(json.get("startDate"));
         endDate = Field.getDateTime(json.get("endDate"));
         completeDate = Field.getDateTime(json.get("completeDate"));
+
+        if (json.containsKey("changelog")) {
+            this.changelog = json.getJSONObject("changelog");
+        }
     }
 
     public String getState() {
@@ -113,6 +119,7 @@ public class Sprint extends AgileResource {
         return completeDate;
     }
 
+    public JSONObject getChangelog() { return changelog; }
 
 }
 

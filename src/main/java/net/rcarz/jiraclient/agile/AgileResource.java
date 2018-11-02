@@ -145,8 +145,8 @@ public abstract class AgileResource {
      * @throws JiraException when the retrieval fails
      */
     static <T extends AgileResource> List<T> list(
-            RestClient restclient, Class<T> type, String url) throws JiraException {
-        return list(restclient, type, url, "values");
+            RestClient restclient, Class<T> type, String url, Parameter... parameters) throws JiraException {
+        return list(restclient, type, url, "values", parameters);
     }
 
     /**

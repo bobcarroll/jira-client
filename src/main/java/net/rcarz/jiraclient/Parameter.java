@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Parameter {
+	public static final Parameter EXPAND_CHANGELOG = Parameter.of("expand", "changelog");
+
 	private String key;
 	private String value;
 
