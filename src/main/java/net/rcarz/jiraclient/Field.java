@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -246,9 +247,14 @@ public final class Field {
 
         if (d instanceof String) {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATETIME_FORMAT);
-            result = Date.from(ZonedDateTime.parse((String)d,  dtf)
-                    .withZoneSameInstant(ZoneId.of("UTC"))
-                    .toInstant());
+            try {
+                result = Date.from(ZonedDateTime.parse((String) d, dtf)
+                        .withZoneSameInstant(ZoneId.of("UTC"))
+                        .toInstant());
+            } catch (DateTimeParseException dtpe) {
+                SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
+                result = df.parse((String)d, new ParsePosition(0));
+            }
         }
 
         return result;
