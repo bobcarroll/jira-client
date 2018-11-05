@@ -1,0 +1,38 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'net.rcarz'
+version = '0.6-SNAPSHOT'
+
+description = """jira-client"""
+
+String powermockVersion = '2.0.0-beta.5'
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+configurations.all {
+}
+
+repositories {
+        
+     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version:'4.2.5'
+    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version:'4.2.5'
+    implementation group: 'net.sf.json-lib', name: 'json-lib', version:'2.4', classifier:'jdk15'
+    implementation group: 'joda-time', name: 'joda-time', version:'2.3'
+    testImplementation group: 'junit', name: 'junit', version:'4.12'
+    testImplementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.8.22'
+    testImplementation group: 'org.powermock', name: 'powermock-core', version: powermockVersion
+    testImplementation group: 'org.powermock', name: 'powermock-module-junit4', version: powermockVersion
+    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: powermockVersion
+
+    testImplementation group: 'org.codehaus.groovy', name: 'groovy-all', version:'2.4.6'
+}

@@ -21,6 +21,7 @@ package net.rcarz.jiraclient.agile;
 
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
+import net.rcarz.jiraclient.Parameter;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
 
@@ -85,8 +86,8 @@ public class Board extends AgileResource {
      * @return All sprints related to the current board.
      * @throws JiraException when the retrieval fails
      */
-    public List<Sprint> getSprints() throws JiraException {
-        return Sprint.getAll(getRestclient(), getId());
+    public List<Sprint> getSprints(Parameter... parameters) throws JiraException {
+        return Sprint.getAll(getRestclient(), getId(), parameters);
     }
 
     /**

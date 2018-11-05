@@ -497,15 +497,24 @@ public class JiraClient {
             throw new JiraException(ex.getMessage(), ex);
         }
     }
-    
+
+
+    public List<IssueType> getIssueTypes() throws JiraException {
+        return getIssueTypes(false);
+    }
+
     /**
      * Obtains the list of all issue types in Jira.
      * @return all issue types
      * @throws JiraException failed to obtain the issue type list.
      */
-    public List<IssueType> getIssueTypes() throws JiraException {
+    public List<IssueType> getIssueTypes(boolean expandFields) throws JiraException {
         try {
-            URI uri = restclient.buildURI(Resource.getBaseUri() + "issuetype");
+            Map<String, String> params = new HashMap<String, String>();
+            if (expandFields) {
+                params.put("expand", "fields,properties,issuetype.properties,issuetype.fields");
+            }
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "issuetype", params);
             JSON response = restclient.get(uri);
             JSONArray issueTypeArray = JSONArray.fromObject(response);
 
