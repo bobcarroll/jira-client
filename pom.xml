@@ -37,6 +37,19 @@
     <version>7</version>
   </parent>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>nexus</id>
+      <name>Releases</name>
+      <url>http://localhost:8081/repository/maven-snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>nexus</id>
+      <name>Releases</name>
+      <url>http://localhost:8081/repository/maven-releases</url>
+    </repository>
+  </distributionManagement>
+
   <dependencies>
 
     <dependency>
