@@ -1,7 +1,8 @@
 package net.rcarz.jiraclient;
 
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -24,6 +25,12 @@ public class FilterTest {
 		final String expectedJql = "project = 10240 AND issuetype = 1 ORDER BY key DESC";
 		assertEquals("with jql: " + expectedJql, expectedJql, filter.getJql());
 		assertEquals("None favourite", false, filter.isFavourite());
+
+		MatcherAssert.assertThat(
+			"The filter owner is Scott Farquhar.",
+			filter.getOwner().getDisplayName(),
+			new IsEqual("Scott Farquhar")
+		);
 	}
 
 }

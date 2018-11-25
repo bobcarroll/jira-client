@@ -1,0 +1,29 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto eol=lf
+
+
+# Add readily-visible signature (in SHA format) to all files (tagged by $Id$) with extension below.
+# Read more https://gist.github.com/treyharris/f98b708c9f5b753d60a2 .
+*.java ident
+*.yml ident
+*.xml ident
+
+
+# Explicitly declare text files we want to always be normalized and converted
+# to native line endings on checkout.
+*.txt text
+*.java text
+*.groovy text
+*.xml text
+*.md text
+*.pom text
+*.properties text
+*.tex text
+*.vm text
+*.xsl text
+*.yml text
+
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
