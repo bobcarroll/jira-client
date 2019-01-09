@@ -54,7 +54,7 @@ public class ResourceIterator<T extends AgileResource> implements Iterator<T>
         this.jql = jql;
         this.includedFields = includedFields;
         this.expandFields = expandFields;
-        this.maxResults = (maxResults == null ? 500 : maxResults);
+        this.maxResults = (maxResults == null ? 100 : maxResults);
         this.startAt = startAt;
     }
 
@@ -189,16 +189,19 @@ public class ResourceIterator<T extends AgileResource> implements Iterator<T>
         throws URISyntaxException
     {
         Map<String, String> queryParams = new HashMap<String, String>();
-        queryParams.put("jql", jql);
+        if (jql != null && !jql.isEmpty())
+        {
+            queryParams.put("jql", jql);
+        }
         if (maxResults != null)
         {
             queryParams.put("maxResults", String.valueOf(maxResults));
         }
-        if (includedFields != null)
+        if (includedFields != null && !includedFields.isEmpty())
         {
             queryParams.put("fields", includedFields);
         }
-        if (expandFields != null)
+        if (expandFields != null && !expandFields.isEmpty())
         {
             queryParams.put("expand", expandFields);
         }
@@ -208,7 +211,6 @@ public class ResourceIterator<T extends AgileResource> implements Iterator<T>
         }
 
         URI uri = restclient.buildURI(url, queryParams);
-        // System.out.println(uri);
         return uri;
     }
 }

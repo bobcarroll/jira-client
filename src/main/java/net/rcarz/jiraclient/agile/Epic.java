@@ -86,14 +86,15 @@ public class Epic extends AgileResource
      * @return All issues in the Epic.
      * @throws JiraException when the retrieval fails
      */
-    public List<Issue> getIssues(String... jql)
+    public List<Issue> getIssues(final String fields)
         throws JiraException
     {
         return AgileResource.list(getRestclient(),
                                   Issue.class,
                                   RESOURCE_URI + "epic/" + getId() + "/issue",
                                   "issues",
-                                  jql.length > 0 ? jql[0] : "");
+                                  "",
+                                  fields);
     }
 
     /**

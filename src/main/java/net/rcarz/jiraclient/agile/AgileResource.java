@@ -71,6 +71,38 @@ public abstract class AgileResource
         }
     }
 
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime * result + ((self == null) ? 0 : self.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AgileResource other = (AgileResource) obj;
+        if (id != other.id)
+            return false;
+        if (self == null)
+        {
+            if (other.self != null)
+                return false;
+        }
+        else if (!self.equals(other.self))
+            return false;
+        return true;
+    }
+
     /**
      * Gets an Agile resource from the given object.
      *
@@ -162,11 +194,67 @@ public abstract class AgileResource
      */
     static <T extends AgileResource> List<T> list(RestClient restclient,
                                                   Class<T> type,
-                                                  String url,
-                                                  String... jql)
+                                                  String url)
         throws JiraException
     {
-        return list(restclient, type, url, "values", jql.length > 0 ? jql[0] : "");
+        return list(restclient, type, url, "values", null, null, null);
+    }
+
+    /**
+     * Retrieves all boards visible to the session user.
+     *
+     * @param restclient REST client instance
+     * @param type The type of the object to deserialize.
+     * @param url The URL to call.
+     * @return a list of boards
+     * @throws JiraException when the retrieval fails
+     */
+    static <T extends AgileResource> List<T> list(RestClient restclient,
+                                                  Class<T> type,
+                                                  String url,
+                                                  String listName)
+        throws JiraException
+    {
+        return list(restclient, type, url, listName, null, null, null);
+    }
+
+    /**
+     * Retrieves all boards visible to the session user.
+     *
+     * @param restclient REST client instance
+     * @param type The type of the object to deserialize.
+     * @param url The URL to call.
+     * @return a list of boards
+     * @throws JiraException when the retrieval fails
+     */
+    static <T extends AgileResource> List<T> list(RestClient restclient,
+                                                  Class<T> type,
+                                                  String url,
+                                                  String listName,
+                                                  String jql)
+        throws JiraException
+    {
+        return list(restclient, type, url, listName, jql, null, null);
+    }
+
+    /**
+     * Retrieves all boards visible to the session user.
+     *
+     * @param restclient REST client instance
+     * @param type The type of the object to deserialize.
+     * @param url The URL to call.
+     * @return a list of boards
+     * @throws JiraException when the retrieval fails
+     */
+    static <T extends AgileResource> List<T> list(RestClient restclient,
+                                                  Class<T> type,
+                                                  String url,
+                                                  String listName,
+                                                  String jql,
+                                                  String includedFields)
+        throws JiraException
+    {
+        return list(restclient, type, url, listName, jql, includedFields, null);
     }
 
     /**
@@ -183,12 +271,14 @@ public abstract class AgileResource
                                                   Class<T> type,
                                                   String url,
                                                   String listName,
-                                                  String jql)
+                                                  String jql,
+                                                  String includedFields,
+                                                  String expandFields)
         throws JiraException
     {
 
         final ResourceIterator<T> iter =
-            new ResourceIterator<T>(restclient, type, url, listName, jql, null, null, null, null);
+            new ResourceIterator<T>(restclient, type, url, listName, jql, includedFields, expandFields, null, null);
 
         List<T> list = new ArrayList<T>();
         while (iter.hasNext())
@@ -240,7 +330,9 @@ public abstract class AgileResource
         throws JiraException
     {
         List<T> result = null;
-        if (subJson.containsKey(resourceName))
+        if (subJson.containsKey(resourceName)
+            && !subJson.get(resourceName)
+                       .equals("null"))
         {
             result = getResourceArray(type, subJson.get(resourceName), getRestclient(), resourceName + "s");
         }
