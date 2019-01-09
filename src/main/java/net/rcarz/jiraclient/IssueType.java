@@ -27,7 +27,8 @@ import net.sf.json.JSONObject;
 /**
  * Represents an issue type.
  */
-public class IssueType extends Resource {
+public class IssueType extends Resource
+{
 
     private String description = null;
     private String iconUrl = null;
@@ -41,14 +42,17 @@ public class IssueType extends Resource {
      * @param restclient REST client instance
      * @param json JSON payload
      */
-    protected IssueType(RestClient restclient, JSONObject json) {
+    protected IssueType(RestClient restclient,
+                        JSONObject json)
+    {
         super(restclient);
 
         if (json != null)
             deserialise(json);
     }
 
-    private void deserialise(JSONObject json) {
+    private void deserialise(JSONObject json)
+    {
         Map map = json;
 
         self = Field.getString(map.get("self"));
@@ -59,7 +63,7 @@ public class IssueType extends Resource {
         subtask = Field.getBoolean(map.get("subtask"));
 
         if (map.containsKey("fields") && map.get("fields") instanceof JSONObject)
-            fields = (JSONObject)map.get("fields");
+            fields = (JSONObject) map.get("fields");
     }
 
     /**
@@ -72,46 +76,56 @@ public class IssueType extends Resource {
      *
      * @throws JiraException when the retrieval fails
      */
-    public static IssueType get(RestClient restclient, String id)
-        throws JiraException {
+    public static IssueType get(RestClient restclient,
+                                String id)
+        throws JiraException
+    {
 
         JSON result = null;
 
-        try {
+        try
+        {
             result = restclient.get(getBaseUri() + "issuetype/" + id);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             throw new JiraException("Failed to retrieve issue type " + id, ex);
         }
 
         if (!(result instanceof JSONObject))
             throw new JiraException("JSON payload is malformed");
 
-        return new IssueType(restclient, (JSONObject)result);
+        return new IssueType(restclient, (JSONObject) result);
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return getName();
     }
 
-    public String getDescription() {
+    public String getDescription()
+    {
         return description;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public String getIconUrl() {
+    public String getIconUrl()
+    {
         return iconUrl;
     }
 
-    public boolean isSubtask() {
+    public boolean isSubtask()
+    {
         return subtask;
     }
 
-    public JSONObject getFields() {
+    public JSONObject getFields()
+    {
         return fields;
     }
 }
-
