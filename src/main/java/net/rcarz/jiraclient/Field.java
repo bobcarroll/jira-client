@@ -712,7 +712,7 @@ public final class Field {
                 json.put(ValueType.KEY.toString(), value.toString());
 
             return json.toString();
-        } else if (m.type.equals("string") || (m.type.equals("securitylevel") || m.type.equals("option"))) {
+        } else if (m.type.equals("string") || (m.type.equals("securitylevel") || m.type.equals("option") || m.type.equals("option-with-child"))) {
             if (value == null)
                 return "";
             else if (value instanceof List)
@@ -722,6 +722,13 @@ public final class Field {
                 ValueTuple tuple = (ValueTuple)value;
                 json.put(tuple.type, tuple.value.toString());
                 return json.toString();
+            }
+            else if (value instanceof Map) {
+                JSONObject json = new JSONObject();
+                json.putAll((Map) value);
+
+                return json.toString();
+
             }
 
             return value.toString();
