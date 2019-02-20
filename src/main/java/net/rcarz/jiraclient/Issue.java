@@ -23,16 +23,23 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import net.rcarz.utils.WorklogUtils;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Represents a JIRA issue.
@@ -433,6 +440,7 @@ public class Issue extends Resource {
     public final class FluentTransition {
 
         Map<String, Object> fields = new HashMap<String, Object>();
+        String comment = StringUtils.EMPTY;
         List<Transition> transitions = null;
 
         private FluentTransition(List<Transition> transitions) {
@@ -477,6 +485,19 @@ public class Issue extends Resource {
             t.put("id", Field.getString(trans.getId()));
 
             req.put("transition", t);
+            if (comment != StringUtils.EMPTY && comment != null) {
+                JSONObject jsonUpdate = new JSONObject();
+                JSONArray jsonArrayObjectComment = new JSONArray();
+                JSONObject jsonObjectBody = new JSONObject();
+                JSONObject jsonObjectAdd = new JSONObject();
+
+                jsonObjectBody.put("body", comment);
+                jsonObjectAdd.put("add", jsonObjectBody);
+                jsonArrayObjectComment.add(jsonObjectAdd);
+                jsonUpdate.put("comment", jsonArrayObjectComment);
+
+                req.put("update", jsonUpdate);
+            }
 
             try {
                 restclient.post(getRestUri(key) + "/transitions", req);
@@ -528,6 +549,20 @@ public class Issue extends Resource {
          */
         public FluentTransition field(String name, Object value) {
             fields.put(name, value);
+            return this;
+        }
+
+        /**
+         * Adds a comment to this transition.
+         *
+         * @param body
+         *            Comment text
+         *
+         * @throws JiraException
+         *             when the comment creation fails
+         */
+        public FluentTransition addComment(String body) throws JiraException {
+            this.comment = body;
             return this;
         }
     }
