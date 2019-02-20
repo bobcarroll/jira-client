@@ -500,7 +500,6 @@ public class Issue extends Resource {
             }
 
             try {
-                System.out.println(req.toString());
                 restclient.post(getRestUri(key) + "/transitions", req);
             } catch (Exception ex) {
                 throw new JiraException("Failed to transition issue " + key, ex);
