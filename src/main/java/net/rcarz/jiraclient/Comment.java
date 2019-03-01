@@ -85,6 +85,26 @@ public class Comment extends Resource {
      *            Internal JIRA ID of the associated issue
      * @param id
      *            Internal JIRA ID of the comment
+     *
+     * @return a comment instance
+     *
+     * @throws JiraException
+     *             when the retrieval fails
+     */
+    @Deprecated
+    public static Comment get(RestClient restclient, String issue, String id) throws JiraException {
+        return get(restclient, issue, id, false);
+    }
+
+    /**
+     * Retrieves the given comment record.
+     *
+     * @param restclient
+     *            REST client instance
+     * @param issue
+     *            Internal JIRA ID of the associated issue
+     * @param id
+     *            Internal JIRA ID of the comment
      * @param expand
      *            Optional flags: renderedBody (provides body rendered in HTML)
      *
