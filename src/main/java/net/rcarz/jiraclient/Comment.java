@@ -19,11 +19,12 @@
 
 package net.rcarz.jiraclient;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
-
-import java.util.Date;
-import java.util.Map;
 
 /**
  * Represents an issue comment.
@@ -33,6 +34,7 @@ public class Comment extends Resource {
     private String issueKey = null;
     private User author = null;
     private String body = null;
+    private String renderedBody = null;
     private Date created = null;
     private Date updated = null;
     private User updatedAuthor = null;
@@ -46,8 +48,10 @@ public class Comment extends Resource {
     /**
      * Creates a comment from a JSON payload.
      *
-     * @param restclient REST client instance
-     * @param json JSON payload
+     * @param restclient
+     *            REST client instance
+     * @param json
+     *            JSON payload
      */
     protected Comment(RestClient restclient, JSONObject json, String issueKey) {
         super(restclient);
@@ -64,31 +68,64 @@ public class Comment extends Resource {
         id = Field.getString(map.get("id"));
         author = Field.getResource(User.class, map.get("author"), restclient);
         body = Field.getString(map.get("body"));
+        renderedBody = Field.getString(map.get("renderedBody"));
         created = Field.getDateTime(map.get("created"));
         updated = Field.getDateTime(map.get("updated"));
         updatedAuthor = Field.getResource(User.class, map.get("updatedAuthor"), restclient);
         Object obj = map.get("visibility");
-        visibility = Field.getResource(Visibility.class, map.get("visibility"),restclient);
+        visibility = Field.getResource(Visibility.class, map.get("visibility"), restclient);
     }
 
     /**
      * Retrieves the given comment record.
      *
-     * @param restclient REST client instance
-     * @param issue Internal JIRA ID of the associated issue
-     * @param id Internal JIRA ID of the comment
+     * @param restclient
+     *            REST client instance
+     * @param issue
+     *            Internal JIRA ID of the associated issue
+     * @param id
+     *            Internal JIRA ID of the comment
      *
      * @return a comment instance
      *
-     * @throws JiraException when the retrieval fails
+     * @throws JiraException
+     *             when the retrieval fails
      */
-    public static Comment get(RestClient restclient, String issue, String id)
-        throws JiraException {
+    @Deprecated
+    public static Comment get(RestClient restclient, String issue, String id) throws JiraException {
+        return get(restclient, issue, id, false);
+    }
+
+    /**
+     * Retrieves the given comment record.
+     *
+     * @param restclient
+     *            REST client instance
+     * @param issue
+     *            Internal JIRA ID of the associated issue
+     * @param id
+     *            Internal JIRA ID of the comment
+     * @param expand
+     *            Optional flags: renderedBody (provides body rendered in HTML)
+     *
+     * @return a comment instance
+     *
+     * @throws JiraException
+     *             when the retrieval fails
+     */
+    public static Comment get(RestClient restclient, String issue, String id, Boolean expand) throws JiraException {
 
         JSON result = null;
 
         try {
-            result = restclient.get(getBaseUri() + "issue/" + issue + "/comment/" + id);
+            if (expand) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("expand", "renderedBody");
+
+                result = restclient.get(getBaseUri() + "issue/" + issue + "/comment/" + id, params);
+            } else {
+                result = restclient.get(getBaseUri() + "issue/" + issue + "/comment/" + id);
+            }
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve comment " + id + " on issue " + issue, ex);
         }
@@ -96,16 +133,19 @@ public class Comment extends Resource {
         if (!(result instanceof JSONObject))
             throw new JiraException("JSON payload is malformed");
 
-        return new Comment(restclient, (JSONObject)result, issue);
+        return new Comment(restclient, (JSONObject) result, issue);
     }
 
     /**
      * Updates the comment body.
      *
-     * @param issue associated issue record
-     * @param body Comment text
+     * @param issue
+     *            associated issue record
+     * @param body
+     *            Comment text
      *
-     * @throws JiraException when the comment update fails
+     * @throws JiraException
+     *             when the comment update fails
      */
     public void update(String body) throws JiraException {
         update(body, null, null);
@@ -114,15 +154,19 @@ public class Comment extends Resource {
     /**
      * Updates the comment body with limited visibility.
      *
-     * @param issue associated issue record
-     * @param body Comment text
-     * @param visType Target audience type (role or group)
-     * @param visName Name of the role or group to limit visibility to
+     * @param issue
+     *            associated issue record
+     * @param body
+     *            Comment text
+     * @param visType
+     *            Target audience type (role or group)
+     * @param visName
+     *            Name of the role or group to limit visibility to
      *
-     * @throws JiraException when the comment update fails
+     * @throws JiraException
+     *             when the comment update fails
      */
-    public void update(String body, String visType, String visName)
-        throws JiraException {
+    public void update(String body, String visType, String visName) throws JiraException {
 
         JSONObject req = new JSONObject();
         req.put("body", body);
@@ -164,6 +208,10 @@ public class Comment extends Resource {
         return body;
     }
 
+    public String getRenderedBody() {
+        return renderedBody;
+    }
+
     public Date getCreatedDate() {
         return created;
     }
@@ -176,4 +224,3 @@ public class Comment extends Resource {
         return updated;
     }
 }
-
