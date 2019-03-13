@@ -67,7 +67,7 @@ public class ServerInfo extends Resource {
         JSON result = null;
 
         try {
-            result = restclient.get(getBaseUri() + "ServerInfo");
+            result = restclient.get(getBaseUri() + "serverInfo");
         } catch (Exception ex) {
             throw new JiraException("Failed to retrieve ServerInfo", ex);
         }
