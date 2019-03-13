@@ -281,6 +281,25 @@ public class Utils {
         return jsonObject;
     }
 
+    public static JSONObject getTestPriorityScheme() {
+        JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON("{" +
+                "    \"expand\": \"projectKeys\"," +
+                "    \"self\": \"http://www.example.com/jira/rest/api/2/priorityschemes/1000\"," +
+                "    \"id\": 10000," +
+                "    \"name\": \"default priority scheme\"," +
+                "    \"description\": \"This is default priority scheme used by all projects without any other scheme assigned.\"," +
+                "    \"optionIds\": [" +
+                "           \"1\"," +
+                "           \"2\"," +
+                "           \"3\"," +
+                "           \"4\"," +
+                "           \"5\"," +
+                "    ]," +
+                "   \"defaultScheme\": true" +
+                "}");
+        return jsonObject;
+    }
+
     public static JSONObject getTestProject() {
         JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON("{" +
                 "    \"expand\": \"description,lead,url,projectKeys\"," +
