@@ -113,11 +113,8 @@ public class JiraClient {
      * @throws JiraException failed to obtain the server info
      */
     public ServerInfo getServerInfo() throws JiraException {
-        try {
-            return ServerInfo.get(restclient);
-        } catch (Exception ex) {
-            throw new JiraException(ex.getMessage(), ex);
-        }
+
+        return ServerInfo.get(restclient);
     }
 
     /**
