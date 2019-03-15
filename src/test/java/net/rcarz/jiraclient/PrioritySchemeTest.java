@@ -13,7 +13,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
-public class PrioritytySchemeTest {
+public class PrioritySchemeTest {
 
     @Test
     public void testCreatePriorityScheme() {
