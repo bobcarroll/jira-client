@@ -47,7 +47,7 @@ public class PrioritySchemeTest {
     }
 
     @Test(expected = JiraException.class)
-    public void testGetPrioritiesJiraExcpetionFromNonJSON() throws Exception {
+    public void testGetPrioritiesJiraExceptionFromNonJSON() throws Exception {
         PriorityScheme priorityScheme = new PriorityScheme(null, Utils.getTestPriorityScheme());
         priorityScheme.restclient = PowerMockito.mock(RestClient.class);
 
