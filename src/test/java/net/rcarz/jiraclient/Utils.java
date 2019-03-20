@@ -5,6 +5,26 @@ import net.sf.json.JSONSerializer;
 
 public class Utils {
 
+    public static JSONObject getTestServerInfo() {
+        JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON("{\n" +
+                "    \"baseUrl\": \"http://www.example.com/jira\"," +
+                "    \"version\": \"8.0.0\"," +
+                "    \"versionNumbers\": [" +
+                "           8," +
+                "           0," +
+                "           0," +
+                "    ]," +
+                "   \"deploymentType\": \"Server\"," +
+                "   \"buildNumber\": 80007," +
+                "   \"buildDate\": \"2019-02-09T00:00:00.000+0000\"," +
+                "   \"serverTime\": \"2019-03-13T12:24:49.769+0000\"," +
+                "   \"scmInfo\": \"b1ea48b1170e88fff48488fb6d451a50948b5f19\"," +
+                "   \"serverTitle\": \"Jira\"" +
+                "}");
+
+        return jsonObject;
+    }
+
     public static JSONObject getTestIssue() {
         JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON("{\n" +
         "  \"expand\": \"renderedFields,names,schema,transitions,operations,editmeta,changelog\",\n" +
@@ -277,6 +297,25 @@ public class Utils {
                 "         \"id\":\"45518\"\n" +
                 "      }\n" +
                 "   ]\n" +
+                "}");
+        return jsonObject;
+    }
+
+    public static JSONObject getTestPriorityScheme() {
+        JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON("{" +
+                "    \"expand\": \"projectKeys\"," +
+                "    \"self\": \"http://www.example.com/jira/rest/api/2/priorityschemes/1000\"," +
+                "    \"id\": 10000," +
+                "    \"name\": \"default priority scheme\"," +
+                "    \"description\": \"This is default priority scheme used by all projects without any other scheme assigned.\"," +
+                "    \"optionIds\": [" +
+                "           \"1\"," +
+                "           \"2\"," +
+                "           \"3\"," +
+                "           \"4\"," +
+                "           \"5\"," +
+                "    ]," +
+                "   \"defaultScheme\": true" +
                 "}");
         return jsonObject;
     }

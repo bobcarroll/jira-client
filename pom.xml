@@ -3,7 +3,7 @@
 
   <groupId>net.rcarz</groupId>
   <artifactId>jira-client</artifactId>
-  <version>0.7.2-IRIUS</version>
+  <version>0.7.3-IRIUS</version>
   <packaging>jar</packaging>
 
   <name>jira-client</name>
@@ -19,17 +19,9 @@
   </licenses>
 
   <scm>
-    <url>https://github.com/rcarz/jira-client</url>
-    <connection>https://github.com/rcarz/jira-client</connection>
+    <url>https://github.com/continuumsecurity/jira-client</url>
+    <connection>https://github.com/continuumsecurity/jira-client</connection>
   </scm>
-
-  <developers>
-    <developer>
-      <id>rcarz</id>
-      <name>Bob Carroll</name>
-      <email>bob.carroll@alum.rit.edu</email>
-    </developer>
-  </developers>
 
   <parent>
     <groupId>org.sonatype.oss</groupId>

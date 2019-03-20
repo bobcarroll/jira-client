@@ -108,6 +108,16 @@ public class JiraClient {
     }
 
     /**
+     * Obtains information about the server.
+     * @return the server information
+     * @throws JiraException failed to obtain the server info
+     */
+    public ServerInfo getServerInfo() throws JiraException {
+
+        return ServerInfo.get(restclient);
+    }
+
+    /**
      * Creates a new issue in the given project.
      *
      * @param project Key of the project to create in
@@ -400,6 +410,21 @@ public class JiraClient {
      */
     public Filter getFilter(final String id) throws JiraException {
         return  Filter.get(restclient, id);
+    }
+
+    /**
+     *
+     * @return a list of all priorities available for a project by scheme in the Jira installation
+     * @throws JiraException
+     */
+    public List<Priority> getProjectPriorities(String project) throws JiraException {
+        try {
+            PriorityScheme priorityScheme = ProjectPriorityScheme.get(restclient, project);
+            return priorityScheme.getPriorities();
+
+        } catch (Exception ex) {
+            throw new JiraException(ex.getMessage(), ex);
+        }
     }
 
     /**
