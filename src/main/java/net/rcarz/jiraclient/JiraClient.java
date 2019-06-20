@@ -41,7 +41,7 @@ import net.sf.json.JSONObject;
  */
 public class JiraClient {
 
-    private RestClient restclient = null;
+    protected RestClient restclient = null;
     private String username = null;
 
     /**
@@ -131,6 +131,22 @@ public class JiraClient {
             throws JiraException {
 
         return Issue.create(restclient, project, issueType);
+    }
+
+    /**
+     * Creates a list of new issues in the given project.
+     *
+     * @param project Key of the project to create in
+     * @param issueType Name of the issue type to create
+     *
+     * @return a fluent create instance
+     *
+     * @throws JiraException when something goes wrong
+     */
+    public Issue.FluentCreateComposed createIssues(String project, String issueType)
+            throws JiraException {
+
+        return Issue.createBulk(restclient, project, issueType);
     }
 
     /**

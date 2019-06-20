@@ -37,6 +37,91 @@ public class Issue extends Resource {
     /**
      * Used to chain fields to a create action.
      */
+
+    public static final class FluentCreateComposed {
+        List<IssueFields> issuesTocreate = new ArrayList<IssueFields>();
+        RestClient restclient = null;
+        JSONObject createmeta = null;
+        String project = null;
+        String issueType = null;
+
+        private FluentCreateComposed(RestClient restclient, JSONObject createmeta, String project, String issueType) {
+            this.restclient = restclient;
+            this.createmeta = createmeta;
+            this.project = project;
+            this.issueType = issueType;
+        }
+
+        public IssueFields createNewIssue(){
+            IssueFields issueFields = new IssueFields();
+            issueFields.field(Field.PROJECT, project)
+                    .field(Field.ISSUE_TYPE, issueType);
+            issuesTocreate.add(issueFields);
+            return issueFields;
+        }
+
+        /**
+         * Executes the create action and specify which fields to retrieve.
+         * @throws JiraException when the create fails
+         */
+        public List<String> execute() throws JiraException {
+
+            JSONObject req = new JSONObject();
+            JSONArray issueList = new JSONArray();
+            for(IssueFields issueTocreate : issuesTocreate){
+                JSONObject issue = new JSONObject();
+                JSONObject fieldmap = new JSONObject();
+
+                if (issueTocreate.fields.size() == 0) {
+                    throw new JiraException("No fields were given for create");
+                }
+
+                for (Map.Entry<String, Object> ent : issueTocreate.fields.entrySet()) {
+                    Object newval = Field.toJson(ent.getKey(), ent.getValue(), createmeta);
+                    fieldmap.put(ent.getKey(), newval);
+                }
+
+                issue.put("fields", fieldmap);
+                issueList.add(issue);
+
+            }
+            req.put("issueUpdates",issueList);
+
+            JSON result = null;
+
+            try {
+                result = restclient.post(getRestUriBulk(), req);
+            } catch (Exception ex) {
+                throw new JiraException("Failed to create issue", ex);
+            }
+
+            if (!(result instanceof JSONObject) || !((JSONObject) result).containsKey("issues")
+                    || !(((JSONObject) result).get("issues") instanceof JSONArray)) {
+                throw new JiraException("Unexpected result on create issue");
+            }
+
+            List<String> ids = new ArrayList<String>();
+            JSONArray issues = ((JSONObject) result).getJSONArray("issues");
+            for(int i = 0; i< issues.size(); i++){
+                ids.add(issues.getJSONObject(i).getString("id"));
+            }
+            return ids;
+        }
+
+
+    }
+
+    public static final class IssueFields{
+
+        Map<String, Object> fields = new HashMap<String, Object>();
+
+        public IssueFields field(String name, Object value) {
+            fields.put(name, value);
+            return this;
+        }
+
+    }
+
     public static final class FluentCreate {
 
         Map<String, Object> fields = new HashMap<String, Object>();
@@ -850,6 +935,10 @@ public class Issue extends Resource {
         return getBaseUri() + "issue/" + (key != null ? key : "");
     }
 
+    private static String getRestUriBulk() {
+        return getBaseUri() + "issue/bulk";
+    }
+
     public static JSONObject getCreateMetadata(
         RestClient restclient, String project, String issueType) throws JiraException {
 
@@ -1171,6 +1260,16 @@ public class Issue extends Resource {
         return fc
             .field(Field.PROJECT, project)
             .field(Field.ISSUE_TYPE, issueType);
+    }
+
+    public static FluentCreateComposed createBulk(RestClient restclient, String project, String issueType)
+            throws JiraException {
+
+        return new FluentCreateComposed(
+                restclient,
+                getCreateMetadata(restclient, project, issueType),
+                project,
+                issueType);
     }
 
     /**
