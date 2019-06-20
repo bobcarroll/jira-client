@@ -103,7 +103,7 @@ public class Issue extends Resource {
             List<String> ids = new ArrayList<String>();
             JSONArray issues = ((JSONObject) result).getJSONArray("issues");
             for(int i = 0; i< issues.size(); i++){
-                ids.add(issues.getJSONObject(i).getString("id"));
+                ids.add(issues.getJSONObject(i).getString("key"));
             }
             return ids;
         }
