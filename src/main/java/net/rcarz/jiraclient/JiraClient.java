@@ -143,10 +143,10 @@ public class JiraClient {
      *
      * @throws JiraException when something goes wrong
      */
-    public Issue.FluentCreateComposed createIssues(String project, String issueType)
+    public Issue.FluentCreateComposed createIssues(JSONObject createmeta, String project, String issueType)
             throws JiraException {
 
-        return Issue.createBulk(restclient, project, issueType);
+        return Issue.createBulk(restclient,createmeta, project, issueType);
     }
 
     /**

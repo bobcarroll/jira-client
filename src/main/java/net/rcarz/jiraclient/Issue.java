@@ -1262,12 +1262,12 @@ public class Issue extends Resource {
             .field(Field.ISSUE_TYPE, issueType);
     }
 
-    public static FluentCreateComposed createBulk(RestClient restclient, String project, String issueType)
+    public static FluentCreateComposed createBulk(RestClient restclient,JSONObject createmetadata, String project, String issueType)
             throws JiraException {
 
         return new FluentCreateComposed(
                 restclient,
-                getCreateMetadata(restclient, project, issueType),
+                createmetadata,
                 project,
                 issueType);
     }

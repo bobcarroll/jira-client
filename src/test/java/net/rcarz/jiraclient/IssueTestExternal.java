@@ -29,7 +29,7 @@ public class IssueTestExternal {
     public void testGetIssueStatus() throws JiraException{
 
         JiraClient jiraClient = new JiraClient(URL, new BasicCredentials(USERNAME,PASSWORD));
-        Issue.FluentCreateComposed issuesCreator = jiraClient.createIssues(PROJECT_KEY, ISSUE_TYPE);
+        Issue.FluentCreateComposed issuesCreator = jiraClient.createIssues(Issue.getCreateMetadata(jiraClient.getRestClient(), PROJECT_KEY, ISSUE_TYPE),PROJECT_KEY, ISSUE_TYPE);
 
         Issue.IssueFields issueFieldsA = issuesCreator.createNewIssue();
         issueFieldsA.field(Field.SUMMARY, "Summary for issue A");
