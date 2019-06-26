@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 
 public class IssueTestExternal {
@@ -38,31 +39,34 @@ public class IssueTestExternal {
         Issue.IssueFields issueFieldsB = issuesCreator.createNewIssue();
         issueFieldsB.field(Field.SUMMARY, "Summary for issue B");
         issueFieldsB.field(Field.DESCRIPTION, "Description for issue B");
+        issueFieldsB.field(Field.PRIORITY, Integer.toString(Integer.MAX_VALUE));
 
         Issue.IssueFields issueFieldsC = issuesCreator.createNewIssue();
         issueFieldsC.field(Field.SUMMARY, "Summary for issue C");
         issueFieldsC.field(Field.DESCRIPTION, "Description for issue C");
 
-        List<String> ids = issuesCreator.execute();
+        Issue.Results results = issuesCreator.execute();
 
 
-        assertEquals(ids.size(), 3);
+        assertEquals(results.created.size(), 2);
+        assertEquals(results.failed.size(), 1);
+        assertEquals(results.created.get(0).name, "Summary for issue A");
+        assertEquals(results.created.get(1).name, "Summary for issue C");
+        assertEquals(results.failed.get(0).name, "Summary for issue B");
+        assertTrue(results.failed.get(0).messages.contains("priority -> The priority selected is invalid."));
 
         List<Issue> issues = new ArrayList<Issue>();
-        for (String id : ids){
-            issues.add(jiraClient.getIssue(id));
+        for (Issue.ResultCreated rc : results.created){
+            issues.add(jiraClient.getIssue(rc.key));
         }
 
-        assertEquals(issues.size(), 3);
+        assertEquals(issues.size(), 2);
 
         assertEquals(issues.get(0).getSummary(), "Summary for issue A");
         assertEquals(issues.get(0).getDescription(), "Description for issue A");
 
-        assertEquals(issues.get(1).getSummary(), "Summary for issue B");
-        assertEquals(issues.get(1).getDescription(), "Description for issue B");
-
-        assertEquals(issues.get(2).getSummary(), "Summary for issue C");
-        assertEquals(issues.get(2).getDescription(), "Description for issue C");
+        assertEquals(issues.get(1).getSummary(), "Summary for issue C");
+        assertEquals(issues.get(1).getDescription(), "Description for issue C");
 
     }
 

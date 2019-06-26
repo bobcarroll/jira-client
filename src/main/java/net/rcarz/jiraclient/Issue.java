@@ -64,7 +64,7 @@ public class Issue extends Resource {
          * Executes the create action and specify which fields to retrieve.
          * @throws JiraException when the create fails
          */
-        public List<String> execute() throws JiraException {
+        public Results execute() throws JiraException {
 
             JSONObject req = new JSONObject();
             JSONArray issueList = new JSONArray();
@@ -100,19 +100,78 @@ public class Issue extends Resource {
                 throw new JiraException("Unexpected result on create issue");
             }
 
-            List<String> ids = new ArrayList<String>();
+            Results results =  new Results();
+            JSONArray errors = ((JSONObject) result).getJSONArray("errors");
+            for(int i = 0; i< errors.size(); i++){
+                JSONObject failed = errors.getJSONObject(i);
+                IssueFields issueFields = issuesTocreate.get(errors.getJSONObject(i).getInt("failedElementNumber"));
+                results.failed.add(parseFailed((String) issueFields.fields.get(Field.SUMMARY), failed));
+                issuesTocreate.remove(issueFields);
+
+            }
+
             JSONArray issues = ((JSONObject) result).getJSONArray("issues");
             for(int i = 0; i< issues.size(); i++){
-                ids.add(issues.getJSONObject(i).getString("key"));
+                results.created.add(parseCreated((String) issuesTocreate.get(i).fields.get(Field.SUMMARY), issues.getJSONObject(i)));
             }
-            return ids;
+            return results;
         }
 
 
     }
 
-    public static final class IssueFields{
+    protected static  ResultCreated parseCreated(String name, JSONObject object){
+        return new ResultCreated(object.getString("key"), name);
+    }
 
+    protected static  ResultFailed parseFailed(String name, JSONObject object){
+        List<String> messages = new ArrayList<String>();
+        JSONObject objectError = object.getJSONObject("elementErrors");
+
+
+        JSONArray errorMessages = objectError.getJSONArray("errorMessages");
+        for(int i = 0; i < errorMessages.size(); i++){
+            errorMessages.add(errorMessages.getString(i));
+        }
+
+        JSONObject errorsDetailed = objectError.getJSONObject("errors");
+        for (Object key : errorsDetailed.keySet()){
+            messages.add(key+" -> "+errorsDetailed.getString((String)key));
+        }
+
+
+        return new ResultFailed(name, object.getInt("status"), messages);
+    }
+
+    public static final class Results{
+        List<ResultCreated> created = new ArrayList<ResultCreated>();
+        List<ResultFailed> failed = new ArrayList<ResultFailed>();
+    }
+
+    public static final class ResultCreated{
+        String key;
+        String name;
+
+        public ResultCreated(String key, String name){
+            this.key = key;
+            this.name = name;
+        }
+    }
+
+    public static final class ResultFailed{
+        String name;
+        int errorCode;
+        List<String> messages;
+
+        public ResultFailed(String name, int errorCode, List<String> messages){
+            this.name = name;
+            this.errorCode = errorCode;
+            this.messages = messages;
+        }
+
+    }
+
+    public static final class IssueFields{
         Map<String, Object> fields = new HashMap<String, Object>();
 
         public IssueFields field(String name, Object value) {
