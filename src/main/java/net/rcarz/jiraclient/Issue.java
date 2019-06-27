@@ -146,6 +146,14 @@ public class Issue extends Resource {
     public static final class Results{
         List<ResultCreated> created = new ArrayList<ResultCreated>();
         List<ResultFailed> failed = new ArrayList<ResultFailed>();
+
+        public List<ResultCreated> getCreated() {
+            return created;
+        }
+
+        public List<ResultFailed> getFailed() {
+            return failed;
+        }
     }
 
     public static final class ResultCreated{
@@ -155,6 +163,14 @@ public class Issue extends Resource {
         public ResultCreated(String key, String name){
             this.key = key;
             this.name = name;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 
@@ -169,6 +185,17 @@ public class Issue extends Resource {
             this.messages = messages;
         }
 
+        public String getName() {
+            return name;
+        }
+
+        public int getErrorCode() {
+            return errorCode;
+        }
+
+        public List<String> getMessages() {
+            return messages;
+        }
     }
 
     public static final class IssueFields{
