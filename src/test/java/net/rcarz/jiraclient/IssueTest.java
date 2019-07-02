@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -184,6 +185,17 @@ public class IssueTest {
                 restClient.postPayload.toString(0));
     }
 
+    @Test
+    public void testValidateQuery() throws JiraException {
+        try {
+            final TestableRestClient restClient = new TestableRestClient(new URI("http://localhost"));
+            URI searchUri = Issue.createSearchURI(restClient, "jql", null, null, null, null);
+            assertTrue(searchUri.getRawQuery().contains("validateQuery=false"));
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static class TestableRestClient extends RestClient {
 
@@ -192,6 +204,10 @@ public class IssueTest {
 
         public TestableRestClient() {
             super(null, null);
+        }
+
+        public TestableRestClient(URI uri) {
+            super(null, uri);
         }
 
         @Override
