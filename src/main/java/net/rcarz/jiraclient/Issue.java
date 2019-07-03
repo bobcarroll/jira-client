@@ -1526,7 +1526,7 @@ public class Issue extends Resource {
      * @return the URI to execute a jql search.
      * @throws URISyntaxException
      */
-    private static URI createSearchURI(RestClient restclient, String jql,
+    protected static URI createSearchURI(RestClient restclient, String jql,
             String includedFields, String expandFields, Integer maxResults,
             Integer startAt) throws URISyntaxException {
         Map<String, String> queryParams = new HashMap<String, String>();
@@ -1543,6 +1543,7 @@ public class Issue extends Resource {
         if (startAt != null) {
             queryParams.put("startAt", String.valueOf(startAt));
         }
+        queryParams.put("validateQuery", "false");
 
         URI searchUri = restclient.buildURI(getBaseUri() + "search", queryParams);
         return searchUri;
