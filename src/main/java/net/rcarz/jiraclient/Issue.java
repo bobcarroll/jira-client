@@ -1218,7 +1218,7 @@ public class Issue extends Resource {
      * @throws JiraException when the client fails to retrieve issue metadata
      */
     public FluentCreate createSubtask() throws JiraException {
-        return Issue.create(restclient, getProject().getKey(), "Sub-task")
+        return Issue.create(restclient, getProject().getKey(), "Sub-Task")
                 .field(Field.PARENT, getKey());
     }
 
