@@ -34,6 +34,8 @@ import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 /**
  * A simple JIRA REST client.
@@ -42,6 +44,7 @@ public class JiraClient {
 
     private RestClient restclient = null;
     private String username = null;
+    private static int defaultTimeout = 60;
 
     /**
      * Creates a JIRA client.
@@ -50,7 +53,11 @@ public class JiraClient {
      * @throws JiraException 
      */
     public JiraClient(String uri) throws JiraException {
-        this(null, uri, null);
+        this(null, uri, null, defaultTimeout);
+    }
+
+    public JiraClient(String uri, int timeout) throws JiraException {
+        this(null, uri, null, timeout);
     }
 
     /**
@@ -61,9 +68,13 @@ public class JiraClient {
      * @throws JiraException 
      */
     public JiraClient(String uri, ICredentials creds) throws JiraException {
-        this(null, uri, creds);
+        this(null, uri, creds, defaultTimeout);
     }
-    
+
+    public JiraClient(String uri, ICredentials creds, int timeout) throws JiraException {
+        this(null, uri, creds, timeout);
+    }
+
     /**
      * Creates an authenticated JIRA client with custom HttpClient.
      *
@@ -72,12 +83,16 @@ public class JiraClient {
      * @param creds Credentials to authenticate with
      * @throws JiraException 
      */
-    public JiraClient(HttpClient httpClient, String uri, ICredentials creds) throws JiraException {
+    public JiraClient(HttpClient httpClient, String uri, ICredentials creds, int timeout) throws JiraException {
         if (httpClient == null) {
             PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
             connManager.setDefaultMaxPerRoute(20);
             connManager.setMaxTotal(40);
             httpClient = new DefaultHttpClient(connManager);
+
+            HttpParams httpParams = httpClient.getParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, timeout * 1000); // http.connection.timeout
+            HttpConnectionParams.setSoTimeout(httpParams, timeout * 1000); // http.socket.timeout
         }
 
         restclient = new RestClient(httpClient, creds, URI.create(uri));
