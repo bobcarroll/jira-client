@@ -179,12 +179,8 @@ public class RestClient {
         if (payload != null) {
             StringEntity ent = null;
 
-            try {
-                ent = new StringEntity(payload, "UTF-8");
-                ent.setContentType("application/json");
-            } catch (UnsupportedEncodingException ex) {
-                /* utf-8 should always be supported... */
-            }
+            ent = new StringEntity(payload, "UTF-8");
+            ent.setContentType("application/json");
 
             req.addHeader("Content-Type", "application/json");
             req.setEntity(ent);
