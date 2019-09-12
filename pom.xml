@@ -3,7 +3,7 @@
 
   <groupId>io.takari.jira</groupId>
   <artifactId>jira-client</artifactId>
-  <version>0.6</version>
+  <version>0.7-SNAPSHOT</version>
   <packaging>takari-jar</packaging>
 
   <name>jira-client</name>
@@ -21,7 +21,7 @@
   <scm>
     <url>https://github.com/rcarz/jira-client</url>
     <connection>https://github.com/rcarz/jira-client</connection>
-    <tag>jira-client-0.6</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <developers>
