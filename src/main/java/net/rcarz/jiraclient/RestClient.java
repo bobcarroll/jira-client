@@ -53,15 +53,21 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * A simple REST client that speaks JSON.
  */
+
+
 public class RestClient {
+
 
     private HttpClient httpClient = null;
     private ICredentials creds = null;
     private URI uri = null;
+
+    private static Logger logger = Logger.getLogger("RestClient");
 
     /**
      * Creates a REST client instance with a URI.
@@ -139,6 +145,7 @@ public class RestClient {
             
             if (encoding == null) {
     	        Header contentTypeHeader = resp.getFirstHeader("Content-Type");
+                logger.info("ContentTypeHeader :" + contentTypeHeader);
     	        HeaderElement[] contentTypeElements = contentTypeHeader.getElements();
     	        for (HeaderElement he : contentTypeElements) {
     	        	NameValuePair nvp = he.getParameterByName("charset");

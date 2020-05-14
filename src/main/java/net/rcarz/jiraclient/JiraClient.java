@@ -34,14 +34,19 @@ import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import java.util.logging.Logger;
+
 
 /**
  * A simple JIRA REST client.
  */
+
+
 public class JiraClient {
 
     private RestClient restclient = null;
     private String username = null;
+    private static Logger logger = Logger.getLogger("JiraClient");
 
     /**
      * Creates a JIRA client.
@@ -468,6 +473,7 @@ public class JiraClient {
         try {
             URI uri = restclient.buildURI(Resource.getBaseUri() + "project");
             JSON response = restclient.get(uri);
+            logger.info("RESPONSE" + response.toString());
             JSONArray projectsArray = JSONArray.fromObject(response);
 
             List<Project> projects = new ArrayList<Project>(projectsArray.size());
