@@ -53,6 +53,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * A simple REST client that speaks JSON.
@@ -63,15 +64,17 @@ public class RestClient {
     private ICredentials creds = null;
     private URI uri = null;
 
-    /**
-     * Creates a REST client instance with a URI.
-     *
-     * @param httpclient Underlying HTTP client to use
-     * @param uri Base URI of the remote REST service
-     */
-    public RestClient(HttpClient httpclient, URI uri) {
-        this(httpclient, null, uri);
-    }
+    private static Logger logger = Logger.getLogger("RestClient");
+
+  /**
+   * Creates a REST client instance with a URI.
+   *
+   * @param httpclient Underlying HTTP client to use
+   * @param uri Base URI of the remote REST service
+   */
+  public RestClient(HttpClient httpclient, URI uri) {
+    this(httpclient, null, uri);
+  }
 
     /**
      * Creates an authenticated REST client instance with a URI.
@@ -128,6 +131,9 @@ public class RestClient {
             creds.authenticate(req);
 
         HttpResponse resp = httpClient.execute(req);
+        logger.info("REST - RESPONSE" + resp.toString());
+        logger.info("RESPONSE HEADERS : " + resp.getAllHeaders());
+        logger.info("STATUS CODE: " + resp.getStatusLine().getStatusCode());
         HttpEntity ent = resp.getEntity();
         StringBuilder result = new StringBuilder();
 
@@ -139,6 +145,7 @@ public class RestClient {
             
             if (encoding == null) {
     	        Header contentTypeHeader = resp.getFirstHeader("Content-Type");
+                logger.info("ContentTypeHeader : " + contentTypeHeader);
     	        HeaderElement[] contentTypeElements = contentTypeHeader.getElements();
     	        for (HeaderElement he : contentTypeElements) {
     	        	NameValuePair nvp = he.getParameterByName("charset");
@@ -170,6 +177,7 @@ public class RestClient {
         if (sl.getStatusCode() >= 300)
             throw new RestException(sl.getReasonPhrase(), sl.getStatusCode(), result.toString(), resp.getAllHeaders());
 
+        logger.info("Rest Client Result: " + result );
         return result.length() > 0 ? JSONSerializer.toJSON(result.toString()): null;
     }
 
