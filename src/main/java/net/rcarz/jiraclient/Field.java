@@ -739,7 +739,7 @@ public final class Field {
                 throw new JiraException("Field '" + name + "' expects a Numeric value");
             }
             return value;
-        } else if (m.type.equals("any")) {
+        } else if (m.type.equals("any") || m.type.equals("account") ) {
             if (value == null)
                 return JSONNull.getInstance();
             else if (value instanceof List)
