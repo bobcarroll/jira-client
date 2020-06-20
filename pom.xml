@@ -1,9 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <url>https://nexus.atypon.com/nexus/service/local/repositories/ops-tools/content/</url>
+        </repository>
+    </distributionManagement>
+
   <groupId>net.rcarz</groupId>
   <artifactId>jira-client</artifactId>
-  <version>0.6-SNAPSHOT</version>
+  <version>0.6.5</version>
   <packaging>jar</packaging>
 
   <name>jira-client</name>
@@ -31,11 +38,11 @@
     </developer>
   </developers>
 
-  <parent>
+  <!-- <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
-  </parent>
+  </parent> -->
 
   <dependencies>
 
