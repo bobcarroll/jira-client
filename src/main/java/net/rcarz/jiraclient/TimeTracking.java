@@ -71,10 +71,10 @@ public class TimeTracking {
         if (remainingEstimate != null)
             object.put("remainingEstimate", remainingEstimate);
 
-        if (originalEstimateSeconds >= 0)
+        if (originalEstimateSeconds != null && originalEstimateSeconds >= 0)
             object.put("originalEstimateSeconds", originalEstimateSeconds);
 
-        if (remainingEstimateSeconds >= 0)
+        if (remainingEstimateSeconds != null && remainingEstimateSeconds >= 0)
             object.put("remainingEstimateSeconds", remainingEstimateSeconds);
 
         return object;
