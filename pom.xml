@@ -3,7 +3,7 @@
 
   <groupId>de.bwl.lgl.jira.client</groupId>
   <artifactId>de-bwl-lgl-jira-client</artifactId>
-  <version>0.6-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
 
   <name>de-bwl-lgl-jira-client</name>

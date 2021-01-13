@@ -956,9 +956,9 @@ public class Issue extends Resource {
      *
      * @throws JiraException when the attachment creation fails
      */
-    public void addAttachment(File file) throws JiraException {
+    public JSON addAttachment(File file) throws JiraException {
         try {
-            restclient.post(getRestUri(key) + "/attachments", file);
+            return restclient.post(getRestUri(key) + "/attachments", file);
         } catch (Exception ex) {
             throw new JiraException("Failed add attachment to issue " + key, ex);
         }
