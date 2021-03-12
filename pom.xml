@@ -3,7 +3,7 @@
 
   <groupId>de.bwl.lgl.jira.client</groupId>
   <artifactId>de-bwl-lgl-jira-client</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
 
   <name>de-bwl-lgl-jira-client</name>
@@ -41,6 +41,12 @@
     <artifactId>oss-parent</artifactId>
     <version>7</version>
   </parent>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
 
   <dependencies>
 

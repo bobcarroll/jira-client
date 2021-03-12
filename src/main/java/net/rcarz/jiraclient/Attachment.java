@@ -61,7 +61,7 @@ public class Attachment extends Resource {
         Map map = json;
 
         self = Field.getString(map.get("self"));
-        id = Field.getString(map.get("id"));
+        id = getAttachmentId();
         author = Field.getResource(User.class, map.get("author"), restclient);
         filename = Field.getString(map.get("filename"));
         created = Field.getDate(map.get("created"));
@@ -153,6 +153,11 @@ public class Attachment extends Resource {
 
     public int getSize() {
         return size;
+    }
+
+    private String getAttachmentId() {
+        String[] parts = self.split("/");
+        return parts[parts.length-1];
     }
 }
 
