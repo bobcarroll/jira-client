@@ -28,6 +28,7 @@ import java.util.Map;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -62,6 +63,9 @@ public class Attachment extends Resource {
 
         self = Field.getString(map.get("self"));
         id = Field.getString(map.get("id"));
+        if (StringUtils.isEmpty(id)) {
+            id = getAttachmentId();
+        }
         author = Field.getResource(User.class, map.get("author"), restclient);
         filename = Field.getString(map.get("filename"));
         created = Field.getDate(map.get("created"));
@@ -153,6 +157,11 @@ public class Attachment extends Resource {
 
     public int getSize() {
         return size;
+    }
+
+    private String getAttachmentId() {
+        String[] parts = self.split("/");
+        return parts[parts.length-1];
     }
 }
 
