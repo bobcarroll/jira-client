@@ -22,6 +22,7 @@ package net.rcarz.jiraclient;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,8 @@ public class User extends Resource {
     private String displayName = null;
     private String email = null;
     private String name = null;
+
+    private Collection<Group> groups = null;
 
     /**
      * Creates a user from a JSON payload.
@@ -50,7 +53,7 @@ public class User extends Resource {
     }
 
     /**
-     * Retrieves the given user record.
+     * Retrieves the given user record including the memberships in groups.
      *
      * @param restclient REST client instance
      * @param username   User logon name
@@ -64,6 +67,7 @@ public class User extends Resource {
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("username", username);
+        params.put("expand", "groups");
 
         try {
             result = restclient.get(getBaseUri() + "user", params);
@@ -87,6 +91,10 @@ public class User extends Resource {
         displayName = Field.getString(map.get("displayName"));
         email = getEmailFromMap(map);
         name = Field.getString(map.get("name"));
+
+        if (json.containsKey("groups")) {
+            groups = Field.getResourceArray(Group.class, json.getJSONObject("groups").getJSONArray("items"), restclient);
+        }
     }
 
     /**
@@ -126,6 +134,18 @@ public class User extends Resource {
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get the groups this user is member of
+     * @return The groups
+     * @throws JiraException failed to obtain the groups
+     */
+    public Collection<Group> getGroups() throws JiraException {
+        if (groups == null) {
+            User.get(restclient, name);
+        }
+        return groups;
     }
 }
 

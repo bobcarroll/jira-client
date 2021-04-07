@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONNull;
@@ -387,6 +388,8 @@ public final class Field {
                 result = (T)new Component(restclient, (JSONObject)r);
             else if (type == CustomFieldOption.class)
                 result = (T)new CustomFieldOption(restclient, (JSONObject)r);
+            else if (type == Group.class)
+                result = (T)new Group(restclient, (JSONObject) r);
             else if (type == Issue.class)
                 result = (T)new Issue(restclient, (JSONObject)r);
             else if (type == IssueLink.class)
