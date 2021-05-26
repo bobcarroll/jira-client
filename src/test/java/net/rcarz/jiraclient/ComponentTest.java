@@ -34,7 +34,7 @@ public class ComponentTest {
     }
 
     @Test
-    public void getLead() {
+    public void getLead() throws Exception {
         assertEquals("fred", component.getLead().getName());
     }
 

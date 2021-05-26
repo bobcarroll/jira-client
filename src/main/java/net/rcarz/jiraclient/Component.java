@@ -283,8 +283,8 @@ public class Component extends Resource {
         return isAssigneeTypeValid;
     }
 
-    public User getLead() {
-        return lead;
+    public User getLead() throws JiraException {
+        return get(restclient, id).lead;
     }
     
     private static String getRestUri(String id) {
