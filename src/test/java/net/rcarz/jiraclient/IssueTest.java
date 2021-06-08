@@ -5,7 +5,9 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
 import org.junit.Test;
+import org.powermock.api.mockito.PowerMockito;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
@@ -95,16 +98,20 @@ public class IssueTest {
     }
 
     @Test
-    public void testGetWatchers(){
-        Issue issue = new Issue(null, Utils.getTestIssue());
+    public void testGetWatchers() throws Exception {
+        final RestClient restClient = PowerMockito.mock(RestClient.class);
+        PowerMockito.when(restClient.get(matches(".*/watchers"))).thenReturn(Utils.getTestIssueWatchers());
+        Issue issue = new Issue(restClient, Utils.getTestIssue());
         Watches watches = issue.getWatches();
 
         assertNotNull(watches);
 
         assertFalse(watches.isWatching());
-        assertEquals(watches.getWatchCount(), 0);
+        assertEquals(watches.getWatchCount(), 2);
         assertEquals(watches.getSelf(), "https://brainbubble.atlassian.net/rest/api/2/issue/FILTA-43/watchers");
-        assertEquals(watches.getWatchers(), new ArrayList<User>());
+        assertEquals(watches.getWatchers().size(), 2);
+        assertEquals("fred", watches.getWatchers().get(0).getName());
+        assertEquals("john", watches.getWatchers().get(1).getName());
     }
 
     @Test

@@ -1654,8 +1654,12 @@ public class Issue extends Resource {
         return votes;
     }
 
-    public Watches getWatches() {
-        return watches;
+    public Watches getWatches() throws JiraException {
+        try {
+            return Watches.get(restclient, key);
+        } catch (JiraException e){
+            throw new JiraException("Failed to get watchers for issue " + key, e);
+        }
     }
 
     public List<WorkLog> getWorkLogs() {

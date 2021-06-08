@@ -130,9 +130,90 @@ public class Component extends Resource {
         }
     }
 
+    /**
+     * Used to chain field to an update action.
+     */
+    public static final class FluentUpdate {
+
+        /**
+         * The Jira rest client.
+         */
+        RestClient restclient = null;
+
+        /**
+         * The JSON request that will be built incrementally as fluent methods
+         * are invoked.
+         */
+        JSONObject req = new JSONObject();
+
+        /**
+         * The ID of the component to update
+         */
+        String id;
+
+        private FluentUpdate(RestClient restClient, String id) {
+            this.restclient = restClient;
+            this.id = id;
+        }
+
+        /**
+         * Sets the new name of the component
+         * @param name The new name
+         * @return <code>this</code>
+         */
+        public FluentUpdate name(final String name) {
+            req.put("name", name);
+            return this;
+        }
+
+        /**
+         * Sets the new description of the component
+         * @param description The new description
+         * @return <code>this</code>
+         */
+        public FluentUpdate description(final String description) {
+            req.put("description", description);
+            return this;
+        }
+
+        /**
+         * Sets the new component lead-user
+         * @param name The name of the new component-lead
+         * @return <code>this</code>
+         */
+        public FluentUpdate leadUserName(final String name) {
+            req.put("leadUserName", name);
+            return this;
+        }
+
+        /**
+         * Executes the create action.
+         * @return the created component
+         *
+         * @throws JiraException when the create fails
+         */
+        public Component execute() throws JiraException {
+            JSON result = null;
+
+            try {
+                result = restclient.put(getRestUri(id), req);
+            } catch (Exception ex) {
+                throw new JiraException("Failed to update component", ex);
+            }
+
+            if (!(result instanceof JSONObject) || !((JSONObject) result).containsKey("id")
+                    || !(((JSONObject) result).get("id") instanceof String)) {
+                throw new JiraException("Unexpected result on update component");
+            }
+
+            return new Component(restclient, (JSONObject) result);
+        }
+    }
+
     private String name = null;
     private String description = null;
     private boolean isAssigneeTypeValid = false;
+    private User lead = null;
 
     /**
      * Creates a component from a JSON payload.
@@ -155,6 +236,7 @@ public class Component extends Resource {
         name = Field.getString(map.get("name"));
         description = Field.getString(map.get("description"));
         isAssigneeTypeValid = Field.getBoolean(map.get("isAssigneeTypeValid"));
+        lead = Field.getResource(User.class, map.get("lead"), restclient);
     }
 
     /**
@@ -200,6 +282,10 @@ public class Component extends Resource {
     public boolean isAssigneeTypeValid() {
         return isAssigneeTypeValid;
     }
+
+    public User getLead() throws JiraException {
+        return get(restclient, id).lead;
+    }
     
     private static String getRestUri(String id) {
         return getBaseUri() + "component/" + (id != null ? id : "");
@@ -216,6 +302,15 @@ public class Component extends Resource {
     public static FluentCreate create(RestClient restclient, String project) {
         FluentCreate fc = new FluentCreate(restclient, project);
         return fc;
+    }
+
+    /**
+     * Updates a  JIRA component.
+     *
+     * @return a fluent update instance
+     */
+    public FluentUpdate update() {
+        return new FluentUpdate(restclient, id);
     }
 
     /**

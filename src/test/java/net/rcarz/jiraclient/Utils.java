@@ -281,6 +281,27 @@ public class Utils {
         return jsonObject;
     }
 
+    public static JSONObject getTestIssueWatchers() {
+        return (JSONObject) JSONSerializer.toJSON("{\n" +
+                "    \"self\": \"https://brainbubble.atlassian.net/rest/api/2/issue/FILTA-43/watchers\",\n" +
+                "    \"isWatching\": false,\n" +
+                "    \"watchCount\": 2,\n" +
+                "    \"watchers\": [\n" +
+                "        {\n" +
+                "            \"self\": \"http://www.example.com/jira/rest/api/2/user?username=fred\",\n" +
+                "            \"name\": \"fred\",\n" +
+                "            \"displayName\": \"Fred F. User\",\n" +
+                "            \"active\": false\n" +
+                "        },\n" +                "        {\n" +
+                "            \"self\": \"http://www.example.com/jira/rest/api/2/user?username=john\",\n" +
+                "            \"name\": \"john\",\n" +
+                "            \"displayName\": \"John J. User\",\n" +
+                "            \"active\": false\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}");
+    }
+
     public static JSONObject getTestProject() {
         JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON("{" +
                 "    \"expand\": \"description,lead,url,projectKeys\"," +
