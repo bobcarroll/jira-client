@@ -6,9 +6,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.*;
@@ -16,11 +18,14 @@ import static org.mockito.Matchers.*;
 
 public class ComponentTest {
 
+    private RestClient restClient;
     private Component component;
 
     @Before
-    public void setup() {
-        component = new Component(null, getComponentJson());
+    public void setup() throws RestException, IOException, URISyntaxException {
+        restClient = PowerMockito.mock(RestClient.class);
+        Mockito.when(restClient.get(anyString())).thenReturn(getComponentJson());
+        component = new Component(restClient, getComponentJson());
     }
 
     @Test
