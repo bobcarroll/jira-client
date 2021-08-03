@@ -2,11 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>de.bwl.lgl.jira.client</groupId>
-  <artifactId>de-bwl-lgl-jira-client</artifactId>
-  <version>1.0.1</version>
+  <artifactId>jira-client</artifactId>
+  <version>1.2.0</version>
   <packaging>jar</packaging>
 
-  <name>de-bwl-lgl-jira-client</name>
   <description>A simple JIRA REST client</description>
   <url>https://github.com/andreas-wenzel/de-bwl-lgl-jira-client</url>
 
@@ -35,13 +34,6 @@
       <email>Andreas.Wenzel@lgl.bwl.de</email>
     </developer>
   </developers>
-
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-	<relativePath></relativePath>
-  </parent>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
