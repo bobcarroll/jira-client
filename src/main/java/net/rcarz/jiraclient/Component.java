@@ -187,7 +187,17 @@ public class Component extends Resource {
         }
 
         /**
-         * Executes the create action.
+         * Sets the assignee type.
+         * @param assigneeType the assignee type
+         * @return <code>this</code>
+         */
+        public FluentUpdate assigneeType(String assigneeType) {
+            req.put("assigneeType", assigneeType);
+            return this;
+        }
+
+        /**
+         * Executes the update action.
          * @return the created component
          *
          * @throws JiraException when the create fails
