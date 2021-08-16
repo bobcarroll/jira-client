@@ -3,7 +3,7 @@
 
   <groupId>de.bwl.lgl.jira.client</groupId>
   <artifactId>jira-client</artifactId>
-  <version>1.2.0</version>
+  <version>1.3.0</version>
   <packaging>jar</packaging>
 
   <description>A simple JIRA REST client</description>
