@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
 
 public class ComponentTest {
 
@@ -53,10 +53,12 @@ public class ComponentTest {
                 .name("New Component 1")
                 .description("New Description")
                 .leadUserName("marcello")
+                .assigneeType("COMPONENT_LEAD")
                 .execute();
         assertEquals("New Component 1", payloadSpy.getValue().get("name"));
         assertEquals("New Description", payloadSpy.getValue().get("description"));
         assertEquals("marcello", payloadSpy.getValue().get("leadUserName"));
+        assertEquals("COMPONENT_LEAD", payloadSpy.getValue().get("assigneeType"));
     }
 
     private JSONObject getComponentJson() {
