@@ -20,11 +20,14 @@
 package net.rcarz.jiraclient;
 
 import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Represents a JIRA user.
@@ -79,6 +82,35 @@ public class User extends Resource {
             throw new JiraException("JSON payload is malformed");
 
         return new User(restclient, (JSONObject) result);
+    }
+
+    /**
+     * Searches for User by their name.
+     *
+     * @param restClient REST client instance
+     * @param name   User logon name to search for
+     * @return All matching users or empty list if nothing found.
+     * @throws JiraException when the retrieval fails
+     */
+    public static Collection<User> searchUser(RestClient restClient, String name) throws JiraException {
+        JSON result = null;
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("username", name);
+
+        try {
+            result = restClient.get(getBaseUri() + "user/search", params);
+        } catch (Exception ex) {
+            throw new JiraException("Failed to search users with query: " + name, ex);
+        }
+
+        if (!(result instanceof JSONArray))
+            throw new JiraException("JSON payload is malformed");
+
+        Collection<User> users = (Collection<User>) ((JSONArray) result).stream()
+                .map(obj -> new User(restClient, (JSONObject) obj))
+                .collect(Collectors.toList());
+        return users;
     }
 
     private void deserialise(JSONObject json) {
