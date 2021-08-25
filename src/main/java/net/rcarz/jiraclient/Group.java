@@ -141,6 +141,7 @@ public class Group extends Resource {
             Map<String, String> params = new HashMap<>();
             params.put("groupname", this.getName());
             URI addUserUri = restclient.buildURI("rest/api/2/group/user", params);
+            // TODO: JIRA requires Websudo here ...
             response = restclient.post(addUserUri, new JSONObject().accumulate("name", user.getName()));
         } catch (Exception e) {
             throw new JiraException(String.format("Problem add User: %s to Group: %s", user.getName(), getName()),e);
@@ -167,6 +168,7 @@ public class Group extends Resource {
             params.put("groupname", this.getName());
             params.put("username", user.getName());
             URI removeUserUri = restclient.buildURI("api/2/group/user", params);
+            // TODO: JIRA requires Websudo here ...
             response = restclient.delete(removeUserUri);
         } catch (Exception e) {
             throw new JiraException(String.format("Problem remove User: %s from Group: %s", user.getName(), getName()),e);
