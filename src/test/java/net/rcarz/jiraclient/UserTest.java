@@ -121,24 +121,22 @@ public class UserTest {
         assertEquals("https://secure.gravatar.com/avatar/a5a271f9eee8bbb3795f41f290274f8c?d=mm&s=48", avatars.get("48x48"));
 
         assertTrue(user.isActive());
-
         assertEquals(user.getGroups().size(), 2);
-
     }
 
     @Test
     public void testGetAllUsers() throws Exception {
-        JiraClient jiraClient = getJiraClientMock(GroupTest.getGroupJSON());
+        JiraClient jiraClient = getJiraClientMock(GroupTest.getGroupJSON(), GroupTest.getMemberJSON());
         when(jiraClient.getAllUsers(anyBoolean())).thenCallRealMethod();
 
         Collection<User> members = jiraClient.getAllUsers(false);
-        assertEquals(1, members.size());
+        assertEquals(GroupTest.GROUP_SIZE, members.size());
         assertEquals(username, members.iterator().next().getName());
     }
 
-    private JiraClient getJiraClientMock(JSON testJSONArray) throws RestException, IOException {
+    private JiraClient getJiraClientMock(JSON firstResponse, JSON secondResponse) throws RestException, IOException {
         final RestClient restClient = PowerMockito.mock(RestClient.class);
-        when(restClient.get((URI) any())).thenReturn(testJSONArray);
+        when(restClient.get((URI) any())).thenReturn(firstResponse).thenReturn(secondResponse);
         JiraClient jiraClient = PowerMockito.mock(JiraClient.class);
         when(jiraClient.getRestClient()).thenReturn(restClient);
         return jiraClient;

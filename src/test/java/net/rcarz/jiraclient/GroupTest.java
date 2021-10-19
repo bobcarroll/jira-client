@@ -6,6 +6,7 @@ import net.sf.json.JSONObject;
 import org.junit.Test;
 import org.powermock.api.mockito.PowerMockito;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static org.junit.Assert.*;
@@ -16,6 +17,7 @@ public class GroupTest {
 
     private static final String groupName = "special-group";
     private static final String self = "http://anyhost.org/rest/api/2/group?groupname=" + groupName;
+    public static final int GROUP_SIZE = 420;
 
     protected static JSONObject getGroupJSON() {
         return new JSONObject()
@@ -31,6 +33,28 @@ public class GroupTest {
                 .accumulate("expand", "users");
     }
 
+    protected static JSON getMemberJSON() {
+        JSONArray users = new JSONArray();
+        users.add(UserTest.getUserJSON());
+        for (int i = 1; i < GROUP_SIZE; i++) {
+            String name = "user-" + i;
+            users.add(new JSONObject()
+                    .accumulate("name", name)
+                    .accumulate("key", name)
+                    .accumulate("emailAddress", name+"@universum.org")
+                    .accumulate("displayName", name)
+                    .accumulate("active", true)
+                    .accumulate("timezone", "Europe/Berlin"));
+        }
+
+        return new JSONObject()
+                .accumulate("maxResults", String.valueOf(GROUP_SIZE))
+                .accumulate("total", String.valueOf(GROUP_SIZE))
+                .accumulate("isLast", true)
+                .accumulate("startAt", "0")
+                .accumulate("values", users);
+    }
+
     @Test
     public void testDeserialize() throws Exception {
         Group group = new Group(new RestClient(null, new URI("/123/asd")), getGroupJSON());
@@ -44,13 +68,15 @@ public class GroupTest {
     @Test
     public void testGetGroup() throws Exception {
         RestClient restClient = PowerMockito.mock(RestClient.class);
-        when(restClient.get((URI) any())).thenReturn(getGroupJSON());
+        when(restClient.get((URI) any()))
+                .thenReturn(getGroupJSON())
+                .thenReturn(getMemberJSON());
         Group group = Group.get(restClient, groupName);
 
         assertEquals(groupName, group.getName());
         assertEquals(groupName, group.getId());
         assertEquals(self, group.getSelf());
-        assertEquals(1, group.getMembers().size());
+        assertEquals(GROUP_SIZE, group.getMembers().size());
     }
 
     @Test
@@ -73,27 +99,39 @@ public class GroupTest {
     @Test
     public void testAddMember() throws Exception {
         RestClient restClient = PowerMockito.mock(RestClient.class);
-        when(restClient.get((URI) any())).thenReturn(getGroupJSON());
+        when(restClient.get((URI) any()))
+                .thenReturn(getGroupJSON())
+                .thenReturn(getMemberJSON());
         Group group = Group.get(restClient, groupName);
 
         when(restClient.get(anyString(), anyMap())).thenReturn(UserTest.getUserJSON());
         User newMember = User.get(restClient, "fritz");
-        when(restClient.put((URI) any(), (JSON) any())).thenReturn(getGroupJSON());
+        when(restClient.post((URI) any(), (JSON) any())).thenReturn(getGroupJSON());
         group.addUser(newMember);
     }
 
     @Test
     public void testRemoveMember() throws Exception {
         RestClient restClient = PowerMockito.mock(RestClient.class);
-        when(restClient.get((URI) any())).thenReturn(getGroupJSON());
+        when(restClient.get((URI) any()))
+                .thenReturn(getGroupJSON())
+                .thenReturn(getMemberJSON());
         Group group = Group.get(restClient, groupName);
 
         when(restClient.get(anyString(), anyMap())).thenReturn(UserTest.getUserJSON());
-        User member = User.get(restClient, "fritz");
-
-        when(restClient.delete((URI) any())).thenReturn(getGroupJSON());
+        User member = User.get(restClient, "joseph");
         group.removeUser(member);
-        assertTrue(group.getMembers().isEmpty());
+        assertEquals(GROUP_SIZE - 1, group.getMembers().size());
+    }
+
+    @Test
+    public void testGetAllMembers() throws Exception {
+        RestClient restClient = PowerMockito.mock(RestClient.class);
+        when(restClient.get((URI) any()))
+                .thenReturn(getGroupJSON())
+                .thenReturn(getMemberJSON());
+        Group group = Group.get(restClient, groupName);
+        assertEquals(GROUP_SIZE, group.getMembers().size());
     }
 
     @Test(expected = JiraException.class)

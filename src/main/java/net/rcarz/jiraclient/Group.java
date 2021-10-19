@@ -6,10 +6,7 @@ import net.sf.json.JSONObject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,7 +54,7 @@ public class Group extends Resource {
         }
 
         Group group = new Group(restClient, jsonObject);
-        group.loadMembers();
+        group.loadAllMembers();
         return group;
     }
 
@@ -110,8 +107,22 @@ public class Group extends Resource {
 
         return ((JSONObject) response).getJSONArray("groups").stream()
                 .anyMatch(obj ->((JSONObject) obj).getString("name").equalsIgnoreCase(groupName));
+    }
 
-
+    /**
+     * Deletes the group with that name (exact match).
+     * @param restClient REST client interface
+     * @param groupName The group to remove
+     * @throws JiraException failed to delete group
+     */
+    public static void removeGroup(RestClient restClient, String groupName) throws  JiraException {
+        try {
+            Map<String, String> params = Collections.singletonMap("groupname", groupName);
+            URI removeUri = restClient.buildURI(getBaseUri() + "group", params);
+            restClient.delete(removeUri);
+        } catch (Exception e) {
+            throw new JiraException("Problem deleting Group with name: "+ groupName, e);
+        }
     }
 
     /**
@@ -140,8 +151,7 @@ public class Group extends Resource {
         try {
             Map<String, String> params = new HashMap<>();
             params.put("groupname", this.getName());
-            URI addUserUri = restclient.buildURI("rest/api/2/group/user", params);
-            // TODO: JIRA requires Websudo here ...
+            URI addUserUri = restclient.buildURI(getBaseUri() + "group/user", params);
             response = restclient.post(addUserUri, new JSONObject().accumulate("name", user.getName()));
         } catch (Exception e) {
             throw new JiraException(String.format("Problem add User: %s to Group: %s", user.getName(), getName()),e);
@@ -153,7 +163,7 @@ public class Group extends Resource {
                     user.getName(), getName(), jsonObject.getString("errorMessages")));
         }
         deserialize(jsonObject);
-        loadMembers();
+        loadAllMembers();
     }
 
     /**
@@ -167,8 +177,7 @@ public class Group extends Resource {
             Map<String, String> params = new HashMap<>();
             params.put("groupname", this.getName());
             params.put("username", user.getName());
-            URI removeUserUri = restclient.buildURI("api/2/group/user", params);
-            // TODO: JIRA requires Websudo here ...
+            URI removeUserUri = restclient.buildURI(getBaseUri() + "group/user", params);
             response = restclient.delete(removeUserUri);
         } catch (Exception e) {
             throw new JiraException(String.format("Problem remove User: %s from Group: %s", user.getName(), getName()),e);
@@ -191,10 +200,11 @@ public class Group extends Resource {
         }
     }
 
-    private void loadMembers() throws JiraException {
+    private void loadAllMembers() throws JiraException {
         boolean allMembersLoaded = false;
         int startAt = 0;
         JSONObject response = null;
+        Collection<User> loadedMembers = new ArrayList<>();
 
         // get paginated results
         Map<String, String> params = new HashMap<>();
@@ -204,13 +214,13 @@ public class Group extends Resource {
         while (!allMembersLoaded) {
             try {
                 params.put("startAt", String.valueOf(startAt));
-                URI getGroupUri = restclient.buildURI( "rest/api/2/group/member", params);
+                URI getGroupUri = restclient.buildURI( getBaseUri() + "group/member", params);
                 response = (JSONObject) restclient.get(getGroupUri);
 
                 if (response.containsKey("errors")) {
                     throw new JiraException("Problem getting Group: " + response.getString("errorMessages"));
                 }
-                members.addAll(Field.getResourceArray(User.class, response.getJSONArray("values"), restclient));
+                loadedMembers.addAll(Field.getResourceArray(User.class, response.getJSONArray("values"), restclient));
 
                 // prepare next page
                 startAt = startAt + response.getInt("maxResults");
@@ -219,5 +229,8 @@ public class Group extends Resource {
                 throw new JiraException("Problem getting Group-Members: " + e.getMessage(),e);
             }
         }
+        // take over the freshly loaded members
+        members.clear();
+        members.addAll(loadedMembers);
     }
 }
