@@ -8,6 +8,7 @@ import org.powermock.api.mockito.PowerMockito;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
@@ -88,12 +89,23 @@ public class GroupTest {
     }
 
     @Test
-    public void testFindGroup() throws Exception {
+    public void testHasGroup() throws Exception {
         RestClient restClient = PowerMockito.mock(RestClient.class);
         when(restClient.get((URI) any())).thenReturn(getGroupPickerJSON());
         assertTrue(Group.hasGroup(restClient, groupName));
         assertTrue(Group.hasGroup(restClient, "some-group"));
         assertFalse(Group.hasGroup(restClient, "not existing group"));
+    }
+
+    @Test
+    public void testFindGroup() throws Exception {
+        RestClient restClient = PowerMockito.mock(RestClient.class);
+        when(restClient.get((URI) any())).thenReturn(getGroupPickerJSON());
+        Collection<String> searchResult = Group.findGroups(restClient, "group");
+        assertTrue(searchResult.contains(groupName));
+        assertTrue(searchResult.contains("some-group"));
+        assertTrue(searchResult.contains("other-group"));
+        assertEquals(3, searchResult.size());
     }
 
     @Test

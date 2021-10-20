@@ -91,22 +91,34 @@ public class Group extends Resource {
      * @throws JiraException failed on search groups
      */
     public static boolean hasGroup(RestClient restClient, String groupName) throws JiraException {
+        return findGroups(restClient, groupName).stream().anyMatch(name ->name.equalsIgnoreCase(groupName));
+    }
+
+    /**
+     * Searches for Groups which contain the given substring in their name.
+     * @param restClient REST client interface
+     * @param query A part of the Group-Names to find.
+     * @return The list of matching group names.
+     * @throws JiraException failed on search groups.
+     */
+    public static Collection<String> findGroups(RestClient restClient, String query) throws JiraException {
         JSON response = null;
         try {
-            Map<String, String> params = Collections.singletonMap("query", groupName);
+            Map<String, String> params = Collections.singletonMap("query", query);
             URI findUri = restClient.buildURI(getBaseUri() + "groups/picker", params);
             response = restClient.get(findUri);
         } catch (Exception e) {
-            throw new JiraException("Problem searching Groups with name: "+ groupName, e);
+            throw new JiraException("Problem searching Groups with name: "+ query, e);
         }
 
-        JSONObject jsonObject = (JSONObject) response;
-        if (jsonObject != null && jsonObject.containsKey("errors")) {
-            throw new JiraException("Problem searching Groups with name: "+ jsonObject.getString("errorMessages"));
+        JSONObject responseObj = (JSONObject) response;
+        if (responseObj != null && responseObj.containsKey("errors")) {
+            throw new JiraException("Problem searching Groups with name: "+ responseObj.getString("errorMessages"));
         }
 
-        return ((JSONObject) response).getJSONArray("groups").stream()
-                .anyMatch(obj ->((JSONObject) obj).getString("name").equalsIgnoreCase(groupName));
+        return (Collection<String>) responseObj.getJSONArray("groups").stream()
+                .map(obj -> ((JSONObject) obj).getString("name"))
+                .collect(Collectors.toList());
     }
 
     /**
