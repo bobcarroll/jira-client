@@ -116,9 +116,11 @@ public class Group extends Resource {
             throw new JiraException("Problem searching Groups with name: "+ responseObj.getString("errorMessages"));
         }
 
-        return (Collection<String>) responseObj.getJSONArray("groups").stream()
-                .map(obj -> ((JSONObject) obj).getString("name"))
-                .collect(Collectors.toList());
+        Collection<String> names = new ArrayList<>();
+        for (Object obj : responseObj.getJSONArray("groups")) {
+            names.add(((JSONObject) obj).getString("name"));
+        }
+        return names;
     }
 
     /**
