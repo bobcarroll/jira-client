@@ -37,7 +37,7 @@ public class Group extends Resource {
      * @throws JiraException failed to obtain the group
      */
     public static Group get(RestClient restClient, String groupName) throws JiraException {
-        JSON response = null;
+        JSON response;
         try {
             Map<String, String> params = new HashMap<>();
             params.put("groupname", groupName);
@@ -66,7 +66,7 @@ public class Group extends Resource {
      * @throws JiraException failed to create the group
      */
     public static Group create(RestClient restClient, String groupName)  throws JiraException {
-        JSON response = null;
+        JSON response;
         JSONObject payload = new JSONObject().accumulate("name", groupName);
         try {
             URI createGroupUri = restClient.buildURI(getBaseUri() +"group");
@@ -102,7 +102,7 @@ public class Group extends Resource {
      * @throws JiraException failed on search groups.
      */
     public static Collection<String> findGroups(RestClient restClient, String query) throws JiraException {
-        JSON response = null;
+        JSON response;
         try {
             Map<String, String> params = Collections.singletonMap("query", query);
             URI findUri = restClient.buildURI(getBaseUri() + "groups/picker", params);
@@ -161,7 +161,7 @@ public class Group extends Resource {
      * @throws JiraException on any problem adding the user
      */
     public void addUser(User user) throws JiraException {
-        JSON response = null;
+        JSON response;
         try {
             Map<String, String> params = new HashMap<>();
             params.put("groupname", this.getName());
@@ -186,7 +186,7 @@ public class Group extends Resource {
      * @throws JiraException on any problem removing this user
      */
     public void removeUser(User user) throws JiraException  {
-        JSON response = null;
+        JSON response;
         try {
             Map<String, String> params = new HashMap<>();
             params.put("groupname", this.getName());
@@ -203,7 +203,7 @@ public class Group extends Resource {
                     user.getName(), getName(), jsonObject.getString("errorMessages")));
         }
         // remove the member (be aware User has no equals)
-        members = members.stream().filter(m -> m.getId() != user.getId()).collect(Collectors.toList());
+        members = members.stream().filter(m -> !m.getName().equalsIgnoreCase(user.getName())).collect(Collectors.toList());
     }
 
     private void deserialize(JSONObject json) {
@@ -217,7 +217,7 @@ public class Group extends Resource {
     private void loadAllMembers() throws JiraException {
         boolean allMembersLoaded = false;
         int startAt = 0;
-        JSONObject response = null;
+        JSONObject response;
         Collection<User> loadedMembers = new ArrayList<>();
 
         // get paginated results
