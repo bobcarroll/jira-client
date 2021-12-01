@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 
 import net.sf.json.JSON;
@@ -74,18 +72,17 @@ public class JiraClient {
      */
     public JiraClient(HttpClient httpClient, String uri, ICredentials creds) throws JiraException {
         if (httpClient == null) {
-            httpClient = HttpClients.custom()
-                    .useSystemProperties()
-                    .setMaxConnPerRoute(20)
-                    .setMaxConnTotal(40)
-                    .build();
+            PoolingClientConnectionManager connManager = new PoolingClientConnectionManager();
+            connManager.setDefaultMaxPerRoute(20);
+            connManager.setMaxTotal(40);
+            httpClient = new DefaultHttpClient(connManager);
         }
 
         restclient = new RestClient(httpClient, creds, URI.create(uri));
 
         if (creds != null) {
             username = creds.getLogonName();
-            // initialize connection if required
+            //intialize connection if required
             creds.initialize(restclient);
         }
     }
