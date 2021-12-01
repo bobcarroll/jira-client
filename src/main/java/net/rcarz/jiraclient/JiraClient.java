@@ -82,7 +82,7 @@ public class JiraClient {
 
         if (creds != null) {
             username = creds.getLogonName();
-            //intialize connection if required
+            //initialize connection if required
             creds.initialize(restclient);
         }
     }
