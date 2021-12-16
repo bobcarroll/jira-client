@@ -2,6 +2,7 @@ package net.rcarz.jiraclient;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+import org.apache.commons.collections.MapUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -104,8 +105,10 @@ public class Group extends Resource {
     public static Collection<String> findGroups(RestClient restClient, String query) throws JiraException {
         JSON response;
         try {
-            Map<String, String> params = Collections.singletonMap("query", query);
-            URI findUri = restClient.buildURI(getBaseUri() + "groups/picker", params);
+            Map<String, String> params = new HashMap<>();
+            params.put("query", query);
+            params.put("maxResults", "1000");
+            URI findUri = restClient.buildURI(getBaseUri() + "groupuserpicker", params);
             response = restClient.get(findUri);
         } catch (Exception e) {
             throw new JiraException("Problem searching Groups with name: "+ query, e);
@@ -117,7 +120,7 @@ public class Group extends Resource {
         }
 
         Collection<String> names = new ArrayList<>();
-        for (Object obj : responseObj.getJSONArray("groups")) {
+        for (Object obj : responseObj.getJSONObject("groups").getJSONArray("groups")) {
             names.add(((JSONObject) obj).getString("name"));
         }
         return names;
