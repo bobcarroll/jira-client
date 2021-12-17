@@ -2,11 +2,8 @@ package net.rcarz.jiraclient;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
-import org.apache.commons.collections.MapUtils;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -151,10 +148,22 @@ public class Group extends Resource {
     }
 
     /**
-     * Get the members of the Group
-     * @return The users which are in this Group
+     * Get the active members of the Group
+     * @return The active users which are in this Group
      */
     public Collection<User> getMembers() {
+        return getMembers(false);
+    }
+
+    /**
+     * Get the members of the Group
+     * @param includeInactiveUsers Flag to get the inactive members as well
+     * @return The users which are in this Group
+     */
+    public Collection<User> getMembers(boolean includeInactiveUsers) {
+        if (!includeInactiveUsers) {
+            return members.stream().filter(User::isActive).collect(Collectors.toList());
+        }
         return Collections.unmodifiableCollection(members);
     }
 
@@ -231,6 +240,7 @@ public class Group extends Resource {
         while (!allMembersLoaded) {
             try {
                 params.put("startAt", String.valueOf(startAt));
+                params.put("includeInactiveUsers", Boolean.TRUE.toString());
                 URI getGroupUri = restclient.buildURI( getBaseUri() + "group/member", params);
                 response = (JSONObject) restclient.get(getGroupUri);
 

@@ -508,8 +508,9 @@ public class JiraClient {
      */
     public Collection<User> getAllUsers(boolean includeInactiveUsers) throws JiraException {
         Group jiraUsers = Group.get(getRestClient(), "jira-users");
-        return jiraUsers.getMembers()
-                .stream().filter(user -> includeInactiveUsers ? true : user.isActive())
+        return jiraUsers.getMembers(true)
+                .stream()
+                .filter(user -> includeInactiveUsers ? true : user.isActive())
                 .collect(Collectors.toList());
     }
 

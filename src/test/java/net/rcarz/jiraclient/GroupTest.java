@@ -177,7 +177,7 @@ public class GroupTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.accumulate("header", "Showing 3 of 3 matching groups");
         jsonObject.accumulate("total", 3);
-        jsonObject.accumulate("groups", groups);
+        jsonObject.accumulate("groups", new JSONObject().accumulate("groups", groups));
         return jsonObject;
     }
 }
