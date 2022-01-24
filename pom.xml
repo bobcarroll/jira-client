@@ -3,11 +3,12 @@
 
   <groupId>de.bwl.lgl.jira.client</groupId>
   <artifactId>jira-client</artifactId>
-  <version>1.5.0</version>
+  <version>1.5.0-${revision}</version>
   <packaging>jar</packaging>
 
   <description>A simple JIRA REST client</description>
   <url>https://github.com/andreas-wenzel/de-bwl-lgl-jira-client</url>
+
 
   <licenses>
     <license>
@@ -39,6 +40,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <revision>SNAPSHOT</revision>
   </properties>
 
   <dependencies>
