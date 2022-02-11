@@ -24,7 +24,7 @@ import net.rcarz.jiraclient.RestClient;
 
 import java.util.Map;
 
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 /**
  * Represents a GreenHopper sprint issue.

@@ -21,8 +21,8 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSON;
+import org.kordamp.json.JSONObject;
 
 /**
  * Represents an custom field option.

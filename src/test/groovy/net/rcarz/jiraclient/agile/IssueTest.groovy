@@ -3,7 +3,7 @@ package net.rcarz.jiraclient.agile
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.RestClient
 import net.rcarz.jiraclient.RestException
-import net.sf.json.JSONSerializer
+import org.kordamp.json.JSONSerializer
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException

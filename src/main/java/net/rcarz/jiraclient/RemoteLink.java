@@ -1,7 +1,7 @@
 package net.rcarz.jiraclient;
 
 import java.util.Map;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 public class RemoteLink extends Resource {
     private String remoteUrl;
