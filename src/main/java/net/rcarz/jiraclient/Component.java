@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.rcarz.jiraclient.Issue.FluentCreate;
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSON;
+import org.kordamp.json.JSONObject;
 
 /**
  * Represents an issue component.

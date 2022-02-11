@@ -3,8 +3,8 @@ package net.rcarz.jiraclient.agile
 import net.rcarz.jiraclient.JiraException
 import net.rcarz.jiraclient.RestClient
 import net.rcarz.jiraclient.RestException
-import net.sf.json.JSONObject
-import net.sf.json.JSONSerializer
+import org.kordamp.json.JSONObject
+import org.kordamp.json.JSONSerializer
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNot
 import org.hamcrest.core.IsNull

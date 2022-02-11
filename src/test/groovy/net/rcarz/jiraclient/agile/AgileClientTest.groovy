@@ -1,6 +1,6 @@
 package net.rcarz.jiraclient.agile
 
-import net.sf.json.JSONSerializer
+import org.kordamp.json.JSONSerializer
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNot
 import org.hamcrest.core.IsNull

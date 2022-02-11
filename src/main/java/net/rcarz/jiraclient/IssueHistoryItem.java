@@ -2,7 +2,7 @@ package net.rcarz.jiraclient;
 
 import java.util.Map;
 
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 public class IssueHistoryItem extends Resource {
 

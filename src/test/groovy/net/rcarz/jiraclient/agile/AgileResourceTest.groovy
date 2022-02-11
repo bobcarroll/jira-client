@@ -1,7 +1,7 @@
 package net.rcarz.jiraclient.agile
 
 import net.rcarz.jiraclient.JiraException
-import net.sf.json.JSONSerializer
+import org.kordamp.json.JSONSerializer
 import org.hamcrest.core.IsNot
 import org.hamcrest.core.IsNull
 import org.junit.Rule

@@ -26,7 +26,7 @@ import net.rcarz.jiraclient.Version;
 
 import java.util.Map;
 
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 /**
  * Represents a GreenHopper JIRA project version.
