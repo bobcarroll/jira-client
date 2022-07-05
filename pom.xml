@@ -3,7 +3,7 @@
 
   <groupId>net.rcarz</groupId>
   <artifactId>jira-client</artifactId>
-  <version>0.7.6-IRIUS</version>
+  <version>0.7.7-IRIUS</version>
   <packaging>jar</packaging>
 
   <name>jira-client</name>
