@@ -160,6 +160,18 @@ public class JiraClient {
      * @throws JiraException when something goes wrong
      */
     public List<Issue> getIssues(String project, List<String> keys) throws JiraException {
+        return getIssues(project, keys, null);
+    }
+
+    /**
+     * Retrieves the issues with the given keys.
+     *
+     * @param keys Issue key list (["PROJECT-123","PROJECT-124"])
+     * @param maxResults limit the number of results
+     * @return an issue list instance (issue includes all fields)
+     * @throws JiraException when something goes wrong
+     */
+    public List<Issue> getIssues(String project, List<String> keys, Integer maxResults) throws JiraException {
         if (keys.isEmpty()) {
             return new ArrayList<Issue>();
         } else {
@@ -168,7 +180,7 @@ public class JiraClient {
                 sb.append(s);
                 sb.append(", ");
             }
-            return searchIssues("project = " + project + " AND Issuekey IN (" + sb.substring(0, sb.length() - 2) + ")").issues;
+            return searchIssues("project = " + project + " AND Issuekey IN (" + sb.substring(0, sb.length() - 2) + ")", maxResults).issues;
         }
     }
 
