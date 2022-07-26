@@ -1,6 +1,6 @@
 # jira-client #
 
-[![Build Status](https://travis-ci.org/rcarz/jira-client.svg?branch=master)](https://travis-ci.org/rcarz/jira-client)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/carlosjustino/jira-client/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/carlosjustino/jira-client/tree/master)
 
 jira-client is a simple and lightweight JIRA REST client library for Java.
 
