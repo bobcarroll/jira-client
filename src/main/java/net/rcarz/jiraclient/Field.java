@@ -669,6 +669,24 @@ public final class Field {
      */
     public static Object toJson(String name, Object value, JSONObject editmeta)
             throws JiraException, UnsupportedOperationException {
+        return toJson(name, value, editmeta, null);
+    }
+
+    /**
+     * Converts the given value to a JSON object.
+     *
+     * @param name Field name
+     * @param value New field value
+     * @param editmeta Edit metadata JSON object
+     * @param serverType Server type
+     *
+     * @return a JSON-encoded field value
+     *
+     * @throws JiraException when a value is bad or field has invalid metadata
+     * @throws UnsupportedOperationException when a field type isn't supported
+     */
+    public static Object toJson(String name, Object value, JSONObject editmeta, String serverType)
+            throws JiraException, UnsupportedOperationException {
 
         Meta m = getFieldMetadata(name, editmeta);
         if (m.type == null)
@@ -708,7 +726,9 @@ public final class Field {
             else if (value instanceof ValueTuple) {
                 ValueTuple tuple = (ValueTuple) value;
                 json.put(tuple.type, tuple.value.toString());
-            } else
+            } else if (m.name.equalsIgnoreCase("reporter") && ServerInfo.CLOUD.equalsIgnoreCase(serverType))
+                json.put(ValueType.ID_NUMBER.toString(), value.toString());
+            else
                 json.put(ValueType.NAME.toString(), value.toString());
 
             return json.toString();

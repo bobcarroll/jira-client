@@ -42,7 +42,7 @@ public class User extends Resource {
      * @param restclient REST client instance
      * @param json       JSON payload
      */
-    protected User(RestClient restclient, JSONObject json) {
+    public User(RestClient restclient, JSONObject json) {
         super(restclient);
 
         if (json != null)
@@ -81,12 +81,26 @@ public class User extends Resource {
         Map map = json;
 
         self = Field.getString(map.get("self"));
-        id = Field.getString(map.get("id"));
+        id = getIdFromMap(map);
         active = Field.getBoolean(map.get("active"));
         avatarUrls = Field.getMap(String.class, String.class, map.get("avatarUrls"));
         displayName = Field.getString(map.get("displayName"));
         email = getEmailFromMap(map);
         name = Field.getString(map.get("name"));
+    }
+
+    /**
+     * API changes id might be represented as either "id" or "accountId"
+     *
+     * @param map JSON object for the User
+     * @return String id of the JIRA user.
+     */
+    private String getIdFromMap(Map map) {
+        if (map.containsKey("id")) {
+            return Field.getString(map.get("id"));
+        } else {
+            return Field.getString(map.get("accountId"));
+        }
     }
 
     /**

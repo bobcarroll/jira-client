@@ -24,6 +24,10 @@ public class ServerInfo extends Resource {
     private String scmInfo;
     private String serverTitle;
 
+    public static final String CLOUD = "Cloud";
+
+    public static final String SERVER = "Server";
+
     /**
      * Creates a server info from a JSON payload.
      *
