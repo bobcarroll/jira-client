@@ -24,13 +24,16 @@ public class IssueTestExternal {
     private static final String PASSWORD = "password1*";
     private static final String PROJECT_KEY = "PROJ";
     private static final String ISSUE_TYPE = "Bug";
+    private static final String SERVER_TYPE = "Server";
 
 
     @Test
     public void testGetIssueStatus() throws JiraException{
 
         JiraClient jiraClient = new JiraClient(URL, new BasicCredentials(USERNAME,PASSWORD));
-        Issue.FluentCreateComposed issuesCreator = jiraClient.createIssues(Issue.getCreateMetadata(jiraClient.getRestClient(), PROJECT_KEY, ISSUE_TYPE),PROJECT_KEY, ISSUE_TYPE);
+        Issue.FluentCreateComposed issuesCreator =
+                jiraClient.createIssues(Issue.getCreateMetadata(jiraClient.getRestClient(), PROJECT_KEY, ISSUE_TYPE),
+                        PROJECT_KEY, ISSUE_TYPE, SERVER_TYPE);
 
         Issue.IssueFields issueFieldsA = issuesCreator.createNewIssue();
         issueFieldsA.field(Field.SUMMARY, "Summary for issue A");
