@@ -44,12 +44,15 @@ public class Issue extends Resource {
         JSONObject createmeta = null;
         String project = null;
         String issueType = null;
+        String serverType = null;
 
-        private FluentCreateComposed(RestClient restclient, JSONObject createmeta, String project, String issueType) {
+        private FluentCreateComposed(RestClient restclient, JSONObject createmeta, String project, String issueType,
+                                     String serverType) {
             this.restclient = restclient;
             this.createmeta = createmeta;
             this.project = project;
             this.issueType = issueType;
+            this.serverType = serverType;
         }
 
         public IssueFields createNewIssue(){
@@ -77,7 +80,7 @@ public class Issue extends Resource {
                 }
 
                 for (Map.Entry<String, Object> ent : issueTocreate.fields.entrySet()) {
-                    Object newval = Field.toJson(ent.getKey(), ent.getValue(), createmeta);
+                    Object newval = Field.toJson(ent.getKey(), ent.getValue(), createmeta, serverType);
                     fieldmap.put(ent.getKey(), newval);
                 }
 
@@ -213,10 +216,12 @@ public class Issue extends Resource {
         Map<String, Object> fields = new HashMap<String, Object>();
         RestClient restclient = null;
         JSONObject createmeta = null;
+        String serverType = null;
 
-        private FluentCreate(RestClient restclient, JSONObject createmeta) {
+        private FluentCreate(RestClient restclient, JSONObject createmeta, String serverType) {
             this.restclient = restclient;
             this.createmeta = createmeta;
+            this.serverType = serverType;
         }
 
         /**
@@ -270,7 +275,7 @@ public class Issue extends Resource {
             }
 
             for (Map.Entry<String, Object> ent : fields.entrySet()) {
-                Object newval = Field.toJson(ent.getKey(), ent.getValue(), createmeta);
+                Object newval = Field.toJson(ent.getKey(), ent.getValue(), createmeta, serverType);
                 fieldmap.put(ent.getKey(), newval);
             }
 
@@ -1336,26 +1341,29 @@ public class Issue extends Resource {
      *
      * @throws JiraException when the client fails to retrieve issue metadata
      */
-    public static FluentCreate create(RestClient restclient, String project, String issueType)
+    public static FluentCreate create(RestClient restclient, String project, String issueType, String serverType)
         throws JiraException {
 
         FluentCreate fc = new FluentCreate(
             restclient,
-            getCreateMetadata(restclient, project, issueType));
+            getCreateMetadata(restclient, project, issueType),
+            serverType);
 
         return fc
             .field(Field.PROJECT, project)
             .field(Field.ISSUE_TYPE, issueType);
     }
 
-    public static FluentCreateComposed createBulk(RestClient restclient,JSONObject createmetadata, String project, String issueType)
+    public static FluentCreateComposed createBulk(RestClient restclient,JSONObject createmetadata, String project,
+                                                  String issueType, String serverType)
             throws JiraException {
 
         return new FluentCreateComposed(
                 restclient,
                 createmetadata,
                 project,
-                issueType);
+                issueType,
+                serverType);
     }
 
     /**
@@ -1366,7 +1374,7 @@ public class Issue extends Resource {
      * @throws JiraException when the client fails to retrieve issue metadata
      */
     public FluentCreate createSubtask() throws JiraException {
-        return Issue.create(restclient, getProject().getKey(), "Sub-task")
+        return Issue.create(restclient, getProject().getKey(), "Sub-task", null)
                 .field(Field.PARENT, getKey());
     }
 

@@ -119,10 +119,10 @@ public class JiraClient {
      * @return a fluent create instance
      * @throws JiraException when something goes wrong
      */
-    public Issue.FluentCreate createIssue(String project, String issueType)
+    public Issue.FluentCreate createIssue(String project, String issueType, String serverType)
             throws JiraException {
 
-        return Issue.create(restclient, project, issueType);
+        return Issue.create(restclient, project, issueType, serverType);
     }
 
     /**
@@ -135,10 +135,11 @@ public class JiraClient {
      *
      * @throws JiraException when something goes wrong
      */
-    public Issue.FluentCreateComposed createIssues(JSONObject createmeta, String project, String issueType)
+    public Issue.FluentCreateComposed createIssues(JSONObject createmeta, String project, String issueType,
+                                                   String serverType)
             throws JiraException {
 
-        return Issue.createBulk(restclient,createmeta, project, issueType);
+        return Issue.createBulk(restclient,createmeta, project, issueType, serverType);
     }
 
     /**
