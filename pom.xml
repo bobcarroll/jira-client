@@ -3,12 +3,17 @@
 
   <groupId>net.rcarz</groupId>
   <artifactId>jira-client</artifactId>
-  <version>0.9.0-IRIUS</version>
+  <version>0.9.1-IRIUS-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>jira-client</name>
   <description>A simple JIRA REST client</description>
   <url>https://github.com/rcarz/jira-client</url>
+
+  <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+  </properties>
 
   <licenses>
     <license>
