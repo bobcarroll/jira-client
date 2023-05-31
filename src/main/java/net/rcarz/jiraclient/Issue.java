@@ -20,6 +20,7 @@
 package net.rcarz.jiraclient;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,6 +34,8 @@ import net.sf.json.JSONObject;
  * Represents a JIRA issue.
  */
 public class Issue extends Resource {
+
+    private static final String MAX_RESULTS = "1000000";
 
     /**
      * Used to chain fields to a create action.
@@ -1030,8 +1033,76 @@ public class Issue extends Resource {
         return getBaseUri() + "issue/bulk";
     }
 
-    public static JSONObject getCreateMetadata(
-        RestClient restclient, String project, String issueType) throws JiraException {
+    public static JSONObject getCreateMetadata(RestClient restclient,
+                                               String project,
+                                               String issueType) throws JiraException {
+        if (isJiraServerV9(restclient)) {
+            String issueTypeId = getIssueTypeIdV9(restclient, project, issueType);
+            return getCreateMetadataV9(restclient, project, issueTypeId);
+        }
+
+        return getCreateMetadataV8(restclient, project, issueType);
+    }
+
+    private static boolean isJiraServerV9(RestClient restclient) throws JiraException {
+        ServerInfo serverInfo = ServerInfo.get(restclient);
+        return serverInfo.getDeploymentType().equalsIgnoreCase("Server") &&
+               serverInfo.getVersionNumbers().get(0) >= 9;
+    }
+
+    private static String getIssueTypeIdV9(RestClient restclient,
+                                           String project,
+                                           String issueType) throws JiraException {
+        JSON jsonIssueTypes;
+        try {
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "issue/createmeta/" + project + "/issuetypes",
+                                          Collections.singletonMap("maxResults", MAX_RESULTS));
+            jsonIssueTypes = restclient.get(uri);
+        } catch (RestException | IOException | URISyntaxException e) {
+            throw new JiraException("No issue types found", e);
+        }
+
+        JSONObject jsonObjectIssueTypes = (JSONObject) jsonIssueTypes;
+        JSONArray values = jsonObjectIssueTypes.getJSONArray("values");
+
+        Optional<Object> issueTypeFound = values.stream()
+                .filter(item -> ((JSONObject)item).getString("name").equalsIgnoreCase(issueType))
+                .findFirst();
+
+        if (!issueTypeFound.isPresent()) {
+            throw new JiraException("No issue type found");
+        }
+
+        return ((JSONObject)issueTypeFound.get()).getString("id");
+    }
+
+    private static JSONObject getCreateMetadataV9(RestClient restclient,
+                                                  String project,
+                                                  String issueTypeId) throws JiraException {
+        JSON jsonFields;
+        try {
+            URI uri = restclient.buildURI(Resource.getBaseUri() + "issue/createmeta/" + project + "/issuetypes/" + issueTypeId,
+                                          Collections.singletonMap("maxResults", MAX_RESULTS));
+            jsonFields = restclient.get(uri);
+        } catch (RestException | IOException | URISyntaxException e) {
+            throw new JiraException("No issue meta fields found", e);
+        }
+
+        if (!(jsonFields instanceof JSONObject))
+            throw new JiraException("JSON payload is malformed");
+
+        JSONObject jsonObjectFields = (JSONObject) jsonFields;
+        JSONArray values = jsonObjectFields.getJSONArray("values");
+
+        JSONObject metaFields = new JSONObject();
+        values.forEach(item -> metaFields.put(((JSONObject)item).getString("fieldId"), item));
+
+        return metaFields;
+    }
+
+    private static JSONObject getCreateMetadataV8(RestClient restclient,
+                                                 String project,
+                                                 String issueType) throws JiraException {
 
         final String pval = project;
         final String itval = issueType;

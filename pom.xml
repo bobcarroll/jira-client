@@ -10,6 +10,11 @@
   <description>A simple JIRA REST client</description>
   <url>https://github.com/rcarz/jira-client</url>
 
+  <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+  </properties>
+
   <licenses>
     <license>
       <name>GNU Lesser General Public License (LGPL)</name>
