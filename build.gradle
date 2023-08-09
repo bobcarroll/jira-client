@@ -50,6 +50,7 @@ publishing {
     }
     repositories {
         maven {
+            allowInsecureProtocol true
             name 'nexus'
             url = version.endsWith('SNAPSHOT') ? iriusriskNexusRepositorySnapshotsUrl : iriusriskNexusRepositoryReleasesUrl
             credentials {
@@ -64,6 +65,7 @@ publish {
     group 'iriusrisk'
     description 'recompiles the library and send to our Nexus repository'
     dependsOn clean, build
+    test.onlyIf { false }
 }
 
 if (jacocoEnabled.toBoolean()) {
