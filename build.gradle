@@ -1,0 +1,73 @@
+/*
+ * Copyright (c) 2012-2023 IriusRisk SL. All rights reserved
+ */
+
+plugins {
+    id 'groovy'
+    id 'maven-publish'
+    id "org.sonarqube" version "3.0"
+}
+
+ext {
+    jacocoEnabled = System.properties.getProperty("jacocoEnabled") ?: "false"
+}
+
+group 'net.rcarz'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    maven {
+        allowInsecureProtocol true
+        url "http://localhost:9092/repository/iriusrisk-central/"
+    }
+}
+
+dependencies {
+    implementation "org.apache.httpcomponents:httpclient:4.5.13"
+    implementation "org.apache.httpcomponents:httpmime:4.2.5"
+    implementation "net.sf.json-lib:json-lib:2.4:jdk15"
+    implementation 'joda-time:joda-time:2.3'
+
+    testImplementation "junit:junit:4.8.2"
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    testImplementation "org.powermock:powermock-module-junit4:1.6.3"
+    testImplementation "org.powermock:powermock-api-mockito:1.6.3"
+    testImplementation "org.codehaus.groovy:groovy-all:2.4.6"
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name 'nexus'
+            url = version.endsWith('SNAPSHOT') ? iriusriskNexusRepositorySnapshotsUrl : iriusriskNexusRepositoryReleasesUrl
+            credentials {
+                username nexusRepositoryUsername
+                password nexusRepositoryPassword
+            }
+        }
+    }
+}
+
+publish {
+    group 'iriusrisk'
+    description 'recompiles the library and send to our Nexus repository'
+    dependsOn clean, build
+}
+
+if (jacocoEnabled.toBoolean()) {
+    project.logger.lifecycle('Applying jacoco build file: build-jacoco.gradle')
+    apply from: rootProject.file("build-jacoco.gradle")
+}
+build.mustRunAfter clean
