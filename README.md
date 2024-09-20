@@ -1,3 +1,11 @@
+### This project is not being maintained anymore. ###
+
+I'm glad so many people have found this library to be useful. I modelled it after the Python library when I was working on a Jenkins plugin. The project was cancelled years ago and I never had a need for jira-client again. Fortunately some people have maintained their own forks!
+
+[iriusrisk/jira-client](https://github.com/iriusrisk/jira-client) is pretty active and with recent releases.
+
+[andreas-wenzel/de-bwl-lgl-jira-client](https://github.com/andreas-wenzel/de-bwl-lgl-jira-client) also has recent improvements and fixes.
+
 # jira-client #
 
 [![Build Status](https://travis-ci.org/rcarz/jira-client.svg?branch=master)](https://travis-ci.org/rcarz/jira-client)
