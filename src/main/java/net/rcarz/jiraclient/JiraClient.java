@@ -31,9 +31,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSON;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 
 /**
  * A simple JIRA REST client.

@@ -22,10 +22,10 @@ package net.rcarz.jiraclient.agile;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.math.NumberUtils;
+import org.kordamp.json.JSON;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

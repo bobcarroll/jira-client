@@ -22,7 +22,7 @@ package net.rcarz.jiraclient;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 /**
  * Issue change log.

@@ -22,7 +22,7 @@ package net.rcarz.jiraclient.agile;
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 /**
  * Represents an Agile TimeTracking.

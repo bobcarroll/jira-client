@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONNull;
+import org.kordamp.json.JSON;
+import org.kordamp.json.JSONNull;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

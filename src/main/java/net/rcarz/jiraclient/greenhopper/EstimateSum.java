@@ -23,7 +23,7 @@ import net.rcarz.jiraclient.Field;
 
 import java.util.Map;
 
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 /**
  * GreenHopper estimate sum for rapid views.

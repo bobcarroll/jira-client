@@ -27,7 +27,7 @@ import net.rcarz.jiraclient.RestClient;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 /**
  * A base class for GreenHopper issues.

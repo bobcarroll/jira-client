@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Map;
 import static net.rcarz.jiraclient.Resource.getBaseUri;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSON;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 
 /**
  * Represents a JIRA project.

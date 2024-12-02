@@ -1,7 +1,7 @@
 package net.rcarz.jiraclient;
 
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
+import org.kordamp.json.JSONObject;
+import org.kordamp.json.JSONSerializer;
 
 public class Utils {
 

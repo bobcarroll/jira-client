@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSON;
+import org.kordamp.json.JSONObject;
 
 /**
  * GreenHopper sprint statistics.

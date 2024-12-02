@@ -31,6 +31,11 @@
     </developer>
   </developers>
 
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
@@ -38,7 +43,6 @@
   </parent>
 
   <dependencies>
-
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
@@ -52,10 +56,9 @@
     </dependency>
 
     <dependency>
-      <groupId>net.sf.json-lib</groupId>
-      <artifactId>json-lib</artifactId>
-      <version>2.4</version>
-      <classifier>jdk15</classifier>
+      <groupId>org.kordamp.json</groupId>
+      <artifactId>json-lib-core</artifactId>
+      <version>3.0.1</version>
     </dependency>
 
     <dependency>
@@ -91,6 +94,5 @@
       <version>2.4.6</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 </project>

@@ -1,6 +1,6 @@
 package net.rcarz.jiraclient;
 
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
