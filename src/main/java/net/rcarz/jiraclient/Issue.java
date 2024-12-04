@@ -23,16 +23,22 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import net.rcarz.utils.WorklogUtils;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Represents a JIRA issue.
@@ -353,8 +359,9 @@ public class Issue extends Resource {
             JSONObject fieldmap = new JSONObject();
             JSONObject updatemap = new JSONObject();
 
-            if (fields.size() == 0 && fieldOpers.size() == 0)
-                throw new JiraException("No fields were given for update");
+            if (fields.size() == 0 && fieldOpers.size() == 0) {
+              throw new JiraException("No fields were given for update");
+            }
 
             for (Map.Entry<String, Object> ent : fields.entrySet()) {
                 Object newval = Field.toJson(ent.getKey(), ent.getValue(), editmeta);
@@ -368,11 +375,13 @@ public class Issue extends Resource {
 
             JSONObject req = new JSONObject();
 
-            if (fieldmap.size() > 0)
-                req.put("fields", fieldmap);
+            if (fieldmap.size() > 0) {
+              req.put("fields", fieldmap);
+            }
 
-            if (updatemap.size() > 0)
-                req.put("update", updatemap);
+            if (updatemap.size() > 0) {
+              req.put("update", updatemap);
+            }
 
             try {
                 restclient.put(getRestUri(key), req);
@@ -395,8 +404,9 @@ public class Issue extends Resource {
         }
 
         private FluentUpdate fieldOperation(String oper, String name, Object value) {
-            if (!fieldOpers.containsKey(name))
-                fieldOpers.put(name, new ArrayList());
+            if (!fieldOpers.containsKey(name)) {
+              fieldOpers.put(name, new ArrayList());
+            }
 
             fieldOpers.get(name).add(new Field.Operation(oper, value));
             return this;
@@ -459,8 +469,9 @@ public class Issue extends Resource {
 
         private void realExecute(Transition trans) throws JiraException {
 
-            if (trans == null || trans.getFields() == null)
-                throw new JiraException("Transition is missing fields");
+            if (trans == null || trans.getFields() == null) {
+              throw new JiraException("Transition is missing fields");
+            }
 
             JSONObject fieldmap = new JSONObject();
 
@@ -470,8 +481,9 @@ public class Issue extends Resource {
 
             JSONObject req = new JSONObject();
 
-            if (fieldmap.size() > 0)
-                req.put("fields", fieldmap);
+            if (fieldmap.size() > 0) {
+              req.put("fields", fieldmap);
+            }
 
             JSONObject t = new JSONObject();
             t.put("id", Field.getString(trans.getId()));
@@ -548,7 +560,7 @@ public class Issue extends Resource {
         private Integer startAt;
         private List<Issue> issues;
         private int total;
-        
+
         public IssueIterator(RestClient restclient, String jql, String includedFields,
                              String expandFields, Integer maxResults, Integer startAt)
                              throws JiraException {
@@ -559,8 +571,7 @@ public class Issue extends Resource {
             this.maxResults = maxResults;
             this.startAt = startAt;
         }
-        
-        @Override
+
         public boolean hasNext() {
             if (nextIssue != null) {
                 return true;
@@ -573,7 +584,6 @@ public class Issue extends Resource {
             return nextIssue != null;
         }
 
-        @Override
         public Issue next() {
             if (! hasNext()) {
                 throw new NoSuchElementException();
@@ -583,7 +593,6 @@ public class Issue extends Resource {
             return result;
         }
 
-        @Override
         public void remove() {
             throw new UnsupportedOperationException("Method remove() not support for class " +
                                                     this.getClass().getName());
@@ -593,7 +602,7 @@ public class Issue extends Resource {
          * Gets the next issue, returning null if none more available
          * Will ask the next set of issues from the server if the end
          * of the current list of issues is reached.
-         * 
+         *
          * @return the next issue, null if none more available
          * @throws JiraException
          */
@@ -607,7 +616,7 @@ public class Issue extends Resource {
                     return currentPage.next();
                 }
             }
-            
+
             // check if we need to get the next set of issues
             if (! currentPage.hasNext()) {
                 currentPage = getNextIssues().iterator();
@@ -625,7 +634,7 @@ public class Issue extends Resource {
          * Execute the query to get the next set of issues.
          * Also sets the startAt, maxMresults, total and issues fields,
          * so that the SearchResult can access them.
-         * 
+         *
          * @return the next set of issues.
          * @throws JiraException
          */
@@ -650,9 +659,9 @@ public class Issue extends Resource {
                 throw new JiraException("JSON payload is malformed");
             }
 
-            
+
             Map map = (Map) result;
-    
+
             this.startAt = Field.getInteger(map.get("startAt"));
             this.maxResults = Field.getInteger(map.get("maxResults"));
             this.total = Field.getInteger(map.get("total"));
@@ -660,7 +669,7 @@ public class Issue extends Resource {
             return issues;
         }
     }
-    
+
     /**
      * Issue search results structure.
      *
@@ -682,7 +691,7 @@ public class Issue extends Resource {
         public List<Issue> issues = null;
         private IssueIterator issueIterator;
 
-        public SearchResult(RestClient restclient, String jql, String includedFields, 
+        public SearchResult(RestClient restclient, String jql, String includedFields,
                             String expandFields, Integer maxResults, Integer startAt)
                             throws JiraException {
             this.issueIterator = new IssueIterator(
@@ -703,7 +712,7 @@ public class Issue extends Resource {
 
         /**
          * All issues found.
-         * 
+         *
          * @return All issues found.
          */
         public Iterator<Issue> iterator() {
@@ -806,8 +815,9 @@ public class Issue extends Resource {
     protected Issue(RestClient restclient, JSONObject json) {
         super(restclient);
 
-        if (json != null)
-            deserialise(json);
+        if (json != null) {
+          deserialise(json);
+        }
     }
 
     private void deserialise(JSONObject json) {
@@ -818,8 +828,9 @@ public class Issue extends Resource {
         key = Field.getString(map.get("key"));
 
         fields = (Map)map.get("fields");
-        if (fields == null)
-            return;
+        if (fields == null) {
+          return;
+        }
 
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
         attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ATTACHMENT), restclient);
@@ -877,23 +888,26 @@ public class Issue extends Resource {
             throw new JiraException("Failed to retrieve issue metadata", ex);
         }
 
-        if (!(result instanceof JSONObject))
-            throw new JiraException("JSON payload is malformed");
+        if (!(result instanceof JSONObject)) {
+          throw new JiraException("JSON payload is malformed");
+        }
 
         JSONObject jo = (JSONObject)result;
 
         if (jo.isNullObject() || !jo.containsKey("projects") ||
-                !(jo.get("projects") instanceof JSONArray))
-            throw new JiraException("Create metadata is malformed");
+                !(jo.get("projects") instanceof JSONArray)) {
+          throw new JiraException("Create metadata is malformed");
+        }
 
         List<Project> projects = Field.getResourceArray(
             Project.class,
-            (JSONArray)jo.get("projects"),
+            jo.get("projects"),
             restclient);
 
-        if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty())
-            throw new JiraException("Project '"+ project + "'  or issue type '" + issueType +
-                    "' missing from create metadata. Do you have enough permissions?");
+        if (projects.isEmpty() || projects.get(0).getIssueTypes().isEmpty()) {
+          throw new JiraException("Project '"+ project + "'  or issue type '" + issueType +
+                  "' missing from create metadata. Do you have enough permissions?");
+        }
 
         return projects.get(0).getIssueTypes().get(0).getFields();
     }
@@ -907,14 +921,16 @@ public class Issue extends Resource {
             throw new JiraException("Failed to retrieve issue metadata", ex);
         }
 
-        if (!(result instanceof JSONObject))
-            throw new JiraException("JSON payload is malformed");
+        if (!(result instanceof JSONObject)) {
+          throw new JiraException("JSON payload is malformed");
+        }
 
         JSONObject jo = (JSONObject)result;
 
         if (jo.isNullObject() || !jo.containsKey("fields") ||
-                !(jo.get("fields") instanceof JSONObject))
-            throw new JiraException("Edit metadata is malformed");
+                !(jo.get("fields") instanceof JSONObject)) {
+          throw new JiraException("Edit metadata is malformed");
+        }
 
         return (JSONObject)jo.get("fields");
     }
@@ -935,8 +951,9 @@ public class Issue extends Resource {
         JSONObject jo = (JSONObject)result;
 
         if (jo.isNullObject() || !jo.containsKey("transitions") ||
-                !(jo.get("transitions") instanceof JSONArray))
-            throw new JiraException("Transition metadata is missing.");
+                !(jo.get("transitions") instanceof JSONArray)) {
+          throw new JiraException("Transition metadata is missing.");
+        }
 
         JSONArray transitions = (JSONArray) jo.get("transitions");
 
@@ -1021,11 +1038,11 @@ public class Issue extends Resource {
      * @throws JiraException when the attachment removal fails
      */
     public void removeAttachment(String attachmentId) throws JiraException {
-    
+
         if (attachmentId == null) {
             throw new NullPointerException("attachmentId may not be null");
         }
-    
+
         try {
             restclient.delete(getBaseUri() + "attachment/" + attachmentId);
         } catch (Exception ex) {
@@ -1092,12 +1109,15 @@ public class Issue extends Resource {
    */
     public WorkLog addWorkLog(String comment, DateTime startDate, long timeSpentSeconds) throws JiraException {
         try {
-            if (comment == null)
-                throw new IllegalArgumentException("Invalid comment.");
-            if (startDate == null)
-                throw new IllegalArgumentException("Invalid start time.");
-            if (timeSpentSeconds < 60) // We do not add a worklog that duration is below a minute
-                throw new IllegalArgumentException("Time spent cannot be lower than 1 minute.");
+            if (comment == null) {
+              throw new IllegalArgumentException("Invalid comment.");
+            }
+            if (startDate == null) {
+              throw new IllegalArgumentException("Invalid start time.");
+            }
+            if (timeSpentSeconds < 60) {
+              throw new IllegalArgumentException("Time spent cannot be lower than 1 minute.");
+            }
 
             JSONObject req = new JSONObject();
             req.put("comment", comment);
@@ -1341,7 +1361,7 @@ public class Issue extends Resource {
      * </ul>
      *
      * @param maxResults if non-<code>null</code>, defines the maximum number of
-     * results that can be returned 
+     * results that can be returned
      *
      * @param startAt if non-<code>null</code>, defines the first issue to
      * return
@@ -1368,7 +1388,7 @@ public class Issue extends Resource {
 
     /**
      * Creates the URI to execute a jql search.
-     * 
+     *
      * @param restclient
      * @param jql
      * @param includedFields

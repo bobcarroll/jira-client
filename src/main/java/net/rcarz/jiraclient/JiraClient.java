@@ -47,7 +47,7 @@ public class JiraClient {
      * Creates a JIRA client.
      *
      * @param uri Base URI of the JIRA server
-     * @throws JiraException 
+     * @throws JiraException
      */
     public JiraClient(String uri) throws JiraException {
         this(null, uri, null);
@@ -58,19 +58,19 @@ public class JiraClient {
      *
      * @param uri Base URI of the JIRA server
      * @param creds Credentials to authenticate with
-     * @throws JiraException 
+     * @throws JiraException
      */
     public JiraClient(String uri, ICredentials creds) throws JiraException {
         this(null, uri, creds);
     }
-    
+
     /**
      * Creates an authenticated JIRA client with custom HttpClient.
      *
      * @param httpClient Custom HttpClient to be used
      * @param uri Base URI of the JIRA server
      * @param creds Credentials to authenticate with
-     * @throws JiraException 
+     * @throws JiraException
      */
     public JiraClient(HttpClient httpClient, String uri, ICredentials creds) throws JiraException {
         if (httpClient == null) {
@@ -155,7 +155,7 @@ public class JiraClient {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param expand issue fields to expand when getting issue data
      *
      * @return an issue instance
@@ -267,7 +267,7 @@ public class JiraClient {
 
         return searchIssues(jql, includedFields, expandFields, null, null);
     }
-    
+
     /**
      * Search for issues with the given query and specify which fields to
      * retrieve.
@@ -313,10 +313,10 @@ public class JiraClient {
      * <li>summary,comment - include just the summary and comments</li>
      * <li>*all,-comment - include all fields</li>
      * </ul>
-     * 
+     *
      * @param maxResults if non-<code>null</code>, defines the maximum number of
-     * results that can be returned 
-     * 
+     * results that can be returned
+     *
      * @param startAt if non-<code>null</code>, defines the first issue to
      * return
      *
@@ -385,6 +385,15 @@ public class JiraClient {
     }
 
     /**
+     * Retrieve the jira filters
+     * @return The Jira filters
+     * @throws JiraException
+     */
+    public List<Filter> getFilters() throws JiraException {
+        return  Filter.getAll(restclient);
+    }
+
+    /**
      *
      * @return a list of all priorities available in the Jira installation
      * @throws JiraException
@@ -419,7 +428,7 @@ public class JiraClient {
      * @throws JiraException when the search fails
      */
     public List<CustomFieldOption> getCustomFieldAllowedValues(String field, String project, String issueType) throws JiraException {
-        JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
+        JSONObject createMetadata = Issue.getCreateMetadata(restclient, project, issueType);
         JSONObject fieldMetadata = (JSONObject) createMetadata.get(field);
         List<CustomFieldOption> customFieldOptions = Field.getResourceArray(
                 CustomFieldOption.class,
@@ -440,7 +449,7 @@ public class JiraClient {
      * @throws JiraException when the search fails
      */
     public List<Component> getComponentsAllowedValues(String project, String issueType) throws JiraException {
-        JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
+        JSONObject createMetadata = Issue.getCreateMetadata(restclient, project, issueType);
         JSONObject fieldMetadata = (JSONObject) createMetadata.get(Field.COMPONENTS);
         List<Component> componentOptions = Field.getResourceArray(
                 Component.class,
@@ -481,7 +490,7 @@ public class JiraClient {
             throw new JiraException(ex.getMessage(), ex);
         }
     }
-    
+
     /**
      * Obtains information about a project, given its project key.
      * @param key the project key
@@ -497,7 +506,7 @@ public class JiraClient {
             throw new JiraException(ex.getMessage(), ex);
         }
     }
-    
+
     /**
      * Obtains the list of all issue types in Jira.
      * @return all issue types
@@ -520,7 +529,7 @@ public class JiraClient {
             throw new JiraException(ex.getMessage(), ex);
         }
     }
-    
+
     /**
      * Creates a new component in the given project.
      *
@@ -531,20 +540,20 @@ public class JiraClient {
     public Component.FluentCreate createComponent(String project) {
         return Component.create(restclient, project);
     }
-    
+
     /**
      * Obtains a component given its ID.
-     * 
+     *
      * @param id the component ID
-     * 
+     *
      * @return the component
-     * 
+     *
      * @throws JiraException failed to obtain the component
      */
     public Component getComponent(String id) throws JiraException {
         return Component.get(restclient, id);
     }
-    
+
     public ArrayList<IssueHistory> filterChangeLog(List<IssueHistory> histoy,String fields) {
         ArrayList<IssueHistory> result = new ArrayList<IssueHistory>(histoy.size());
         fields = "," + fields + ",";
@@ -590,8 +599,8 @@ public class JiraClient {
                 } else {
                     response = getNextPortion(issue,changes.size());
                 }
-            } 
-           
+            }
+
             return changes;
         } catch (Exception ex) {
             throw new JiraException(ex.getMessage(), ex);
