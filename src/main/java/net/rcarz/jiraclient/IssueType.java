@@ -34,6 +34,7 @@ public class IssueType extends Resource {
     private String name = null;
     private boolean subtask = false;
     private JSONObject fields = null;
+    private JSONObject properties = null;
 
     /**
      * Creates an issue type from a JSON payload.
@@ -60,6 +61,9 @@ public class IssueType extends Resource {
 
         if (map.containsKey("fields") && map.get("fields") instanceof JSONObject)
             fields = (JSONObject)map.get("fields");
+
+        if (map.containsKey("properties") && map.get("properties") instanceof JSONObject)
+            properties = (JSONObject)map.get("properties");
     }
 
     /**
@@ -112,6 +116,10 @@ public class IssueType extends Resource {
 
     public JSONObject getFields() {
         return fields;
+    }
+
+    public JSONObject getProperties() {
+        return properties;
     }
 }
 

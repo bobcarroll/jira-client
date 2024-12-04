@@ -764,6 +764,7 @@ public class Issue extends Resource {
 
     private String key = null;
     private Map fields = null;
+    private Map properties = null;
 
     /* system fields */
     private User assignee = null;
@@ -820,6 +821,8 @@ public class Issue extends Resource {
         fields = (Map)map.get("fields");
         if (fields == null)
             return;
+
+        properties = (Map)map.get("properties");
 
         assignee = Field.getResource(User.class, fields.get(Field.ASSIGNEE), restclient);
         attachments = Field.getResourceArray(Attachment.class, fields.get(Field.ATTACHMENT), restclient);

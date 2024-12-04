@@ -40,7 +40,6 @@ public class IssueTypeTest {
         assertEquals(2,issueType.getFields().size());
         assertSame("key1Value",issueType.getFields().getString("key1"));
         assertSame("key2Value",issueType.getFields().getString("key2"));
-
     }
 
     @Test

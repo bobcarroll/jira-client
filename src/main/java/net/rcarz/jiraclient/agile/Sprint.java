@@ -21,6 +21,7 @@ package net.rcarz.jiraclient.agile;
 
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
+import net.rcarz.jiraclient.Parameter;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
 
@@ -40,6 +41,8 @@ public class Sprint extends AgileResource {
     private Date endDate;
     private Date completeDate;
 
+    private JSONObject changelog;
+
     /**
      * Creates a rapid view from a JSON payload.
      *
@@ -58,8 +61,8 @@ public class Sprint extends AgileResource {
      * @return The sprint for the specified ID.
      * @throws JiraException when the retrieval fails
      */
-    public static Sprint get(RestClient restclient, long sprintId) throws JiraException {
-        return AgileResource.get(restclient, Sprint.class, RESOURCE_URI + "sprint/" + sprintId);
+    public static Sprint get(RestClient restclient, long sprintId, Parameter... parameters) throws JiraException {
+        return AgileResource.get(restclient, Sprint.class, RESOURCE_URI + "sprint/" + sprintId, parameters);
     }
 
     /**
@@ -70,16 +73,16 @@ public class Sprint extends AgileResource {
      * @return The list of sprints associated to the board.
      * @throws JiraException when the retrieval fails
      */
-    public static List<Sprint> getAll(RestClient restclient, long boardId) throws JiraException {
-        return AgileResource.list(restclient, Sprint.class, RESOURCE_URI + "board/" + boardId + "/sprint");
+    public static List<Sprint> getAll(RestClient restclient, long boardId, Parameter... parameters) throws JiraException {
+        return AgileResource.list(restclient, Sprint.class, RESOURCE_URI + "board/" + boardId + "/sprint", parameters);
     }
 
     /**
      * @return All issues in the Sprint.
      * @throws JiraException when the retrieval fails
      */
-    public List<Issue> getIssues() throws JiraException {
-        return AgileResource.list(getRestclient(), Issue.class, RESOURCE_URI + "sprint/" + getId() + "/issue", "issues");
+    public List<Issue> getIssues(Parameter... parameters) throws JiraException {
+        return AgileResource.list(getRestclient(), Issue.class, RESOURCE_URI + "sprint/" + getId() + "/issue", "issues", parameters);
     }
 
     @Override
@@ -90,6 +93,10 @@ public class Sprint extends AgileResource {
         startDate = Field.getDateTime(json.get("startDate"));
         endDate = Field.getDateTime(json.get("endDate"));
         completeDate = Field.getDateTime(json.get("completeDate"));
+
+        if (json.containsKey("changelog")) {
+            this.changelog = json.getJSONObject("changelog");
+        }
     }
 
     public String getState() {
@@ -111,5 +118,8 @@ public class Sprint extends AgileResource {
     public Date getCompleteDate() {
         return completeDate;
     }
+
+    public JSONObject getChangelog() { return changelog; }
+
 }
 
