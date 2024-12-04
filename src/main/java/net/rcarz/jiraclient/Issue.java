@@ -637,22 +637,28 @@ public class Issue extends Resource {
             }
 
             JSON result = null;
+            int tryCount = 0;
 
-            try {
-                URI searchUri = createSearchURI(restclient, jql, includedFields,
-                        expandFields, maxResults, startAt);
-                result = restclient.get(searchUri);
-            } catch (Exception ex) {
-                throw new JiraException("Failed to search issues", ex);
+            while (result == null && tryCount++ <= 10) {
+                try {
+                    URI searchUri = createSearchURI(restclient, jql, includedFields,
+                            expandFields, maxResults, startAt);
+                    result = restclient.get(searchUri);
+                } catch (Exception ex) {
+                    throw new JiraException("Failed to search issues", ex);
+                }
+            }
+
+            if (result == null) {
+                throw new JiraException("JSON payload is null");
             }
 
             if (!(result instanceof JSONObject)) {
                 throw new JiraException("JSON payload is malformed");
             }
 
-            
             Map map = (Map) result;
-    
+
             this.startAt = Field.getInteger(map.get("startAt"));
             this.maxResults = Field.getInteger(map.get("maxResults"));
             this.total = Field.getInteger(map.get("total"));
