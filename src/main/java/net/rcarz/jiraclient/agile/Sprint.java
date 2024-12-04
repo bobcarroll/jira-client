@@ -19,20 +19,21 @@
 
 package net.rcarz.jiraclient.agile;
 
+import java.util.Date;
+import java.util.List;
+
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Represents an Agile Sprint.
  *
  * @author pldupont
  */
-public class Sprint extends AgileResource {
+public class Sprint extends AgileResource
+{
 
     private String state;
     private long originBoardId;
@@ -44,9 +45,12 @@ public class Sprint extends AgileResource {
      * Creates a rapid view from a JSON payload.
      *
      * @param restclient REST client instance
-     * @param json       JSON payload
+     * @param json JSON payload
      */
-    protected Sprint(RestClient restclient, JSONObject json) throws JiraException {
+    protected Sprint(RestClient restclient,
+                     JSONObject json)
+        throws JiraException
+    {
         super(restclient, json);
     }
 
@@ -54,11 +58,14 @@ public class Sprint extends AgileResource {
      * Retrieve all sprints related to the specified board.
      *
      * @param restclient REST client instance
-     * @param sprintId   The Internal JIRA sprint ID.
+     * @param sprintId The Internal JIRA sprint ID.
      * @return The sprint for the specified ID.
      * @throws JiraException when the retrieval fails
      */
-    public static Sprint get(RestClient restclient, long sprintId) throws JiraException {
+    public static Sprint get(RestClient restclient,
+                             long sprintId)
+        throws JiraException
+    {
         return AgileResource.get(restclient, Sprint.class, RESOURCE_URI + "sprint/" + sprintId);
     }
 
@@ -66,11 +73,14 @@ public class Sprint extends AgileResource {
      * Retrieve all sprints related to the specified board.
      *
      * @param restclient REST client instance
-     * @param boardId    The Internal JIRA board ID.
+     * @param boardId The Internal JIRA board ID.
      * @return The list of sprints associated to the board.
      * @throws JiraException when the retrieval fails
      */
-    public static List<Sprint> getAll(RestClient restclient, long boardId) throws JiraException {
+    public static List<Sprint> getAll(RestClient restclient,
+                                      long boardId)
+        throws JiraException
+    {
         return AgileResource.list(restclient, Sprint.class, RESOURCE_URI + "board/" + boardId + "/sprint");
     }
 
@@ -78,12 +88,34 @@ public class Sprint extends AgileResource {
      * @return All issues in the Sprint.
      * @throws JiraException when the retrieval fails
      */
-    public List<Issue> getIssues() throws JiraException {
-        return AgileResource.list(getRestclient(), Issue.class, RESOURCE_URI + "sprint/" + getId() + "/issue", "issues");
+    public List<Issue> getIssues()
+        throws JiraException
+    {
+        return AgileResource.list(getRestclient(),
+                                  Issue.class,
+                                  RESOURCE_URI + "sprint/" + getId() + "/issue",
+                                  "issues");
+    }
+
+    /**
+     * @return All issues in the Sprint.
+     * @throws JiraException when the retrieval fails
+     */
+    public List<Issue> getIssues(final String fields)
+        throws JiraException
+    {
+        return AgileResource.list(getRestclient(),
+                                  Issue.class,
+                                  RESOURCE_URI + "sprint/" + getId() + "/issue",
+                                  "issues",
+                                  "",
+                                  fields);
     }
 
     @Override
-    protected void deserialize(JSONObject json) throws JiraException {
+    protected void deserialize(JSONObject json)
+        throws JiraException
+    {
         super.deserialize(json);
         state = Field.getString(json.get("state"));
         originBoardId = getLong(json.get("originBoardId"));
@@ -92,24 +124,28 @@ public class Sprint extends AgileResource {
         completeDate = Field.getDateTime(json.get("completeDate"));
     }
 
-    public String getState() {
+    public String getState()
+    {
         return state;
     }
 
-    public long getOriginBoardId() {
+    public long getOriginBoardId()
+    {
         return originBoardId;
     }
 
-    public Date getStartDate() {
+    public Date getStartDate()
+    {
         return startDate;
     }
 
-    public Date getEndDate() {
+    public Date getEndDate()
+    {
         return endDate;
     }
 
-    public Date getCompleteDate() {
+    public Date getCompleteDate()
+    {
         return completeDate;
     }
 }
-

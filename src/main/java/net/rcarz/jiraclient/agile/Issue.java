@@ -19,20 +19,21 @@
 
 package net.rcarz.jiraclient.agile;
 
+import java.util.Date;
+import java.util.List;
+
 import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.JiraException;
 import net.rcarz.jiraclient.RestClient;
 import net.sf.json.JSONObject;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Represents an Agile Issue.
  *
  * @author pldupont
  */
-public class Issue extends AgileResource {
+public class Issue extends AgileResource
+{
 
     private String key;
     private boolean flagged;
@@ -55,14 +56,16 @@ public class Issue extends AgileResource {
     private User reporter;
     private String environment;
 
-
     /**
      * Creates a new Agile Issue resource.
      *
      * @param restclient REST client instance
-     * @param json       JSON payload
+     * @param json JSON payload
      */
-    public Issue(RestClient restclient, JSONObject json) throws JiraException {
+    public Issue(RestClient restclient,
+                 JSONObject json)
+        throws JiraException
+    {
         super(restclient, json);
     }
 
@@ -70,11 +73,14 @@ public class Issue extends AgileResource {
      * Retrieves the issue matching the ID.
      *
      * @param restclient REST client instance
-     * @param id         Internal JIRA ID of the issue
+     * @param id Internal JIRA ID of the issue
      * @return an issue instance
      * @throws JiraException when the retrieval fails
      */
-    public static Issue get(RestClient restclient, long id) throws JiraException {
+    public static Issue get(RestClient restclient,
+                            long id)
+        throws JiraException
+    {
         return AgileResource.get(restclient, Issue.class, RESOURCE_URI + "issue/" + id);
     }
 
@@ -82,21 +88,27 @@ public class Issue extends AgileResource {
      * Retrieves the issue matching the ID.
      *
      * @param restclient REST client instance
-     * @param key        JIRA key of the issue
+     * @param key JIRA key of the issue
      * @return an issue instance
      * @throws JiraException when the retrieval fails
      */
-    public static Issue get(RestClient restclient, String key) throws JiraException {
+    public static Issue get(RestClient restclient,
+                            String key)
+        throws JiraException
+    {
         return AgileResource.get(restclient, Issue.class, RESOURCE_URI + "issue/" + key);
     }
 
     @Override
-    protected void deserialize(JSONObject json) throws JiraException {
+    protected void deserialize(JSONObject json)
+        throws JiraException
+    {
         super.deserialize(json);
         this.key = Field.getString(json.get("key"));
 
         // Extract from Field sub JSONObject
-        if (json.containsKey("fields")) {
+        if (json.containsKey("fields"))
+        {
             JSONObject fields = (JSONObject) json.get("fields");
             setName(Field.getString(fields.get("summary")));
             this.flagged = Field.getBoolean(fields.get("flagged"));
@@ -123,83 +135,103 @@ public class Issue extends AgileResource {
         }
     }
 
-    public String getKey() {
+    public String getKey()
+    {
         return key;
     }
 
-    public boolean isFlagged() {
+    public boolean isFlagged()
+    {
         return flagged;
     }
 
-    public Sprint getSprint() {
+    public Sprint getSprint()
+    {
         return sprint;
     }
 
-    public List<Sprint> getClosedSprints() {
+    public List<Sprint> getClosedSprints()
+    {
         return closedSprints;
     }
 
-    public String getDescription() {
+    public String getDescription()
+    {
         return description;
     }
 
-    public Project getProject() {
+    public Project getProject()
+    {
         return project;
     }
 
-    public List<Comment> getComments() {
+    public List<Comment> getComments()
+    {
         return comments;
     }
 
-    public Epic getEpic() {
+    public Epic getEpic()
+    {
         return epic;
     }
 
-    public List<Worklog> getWorklogs() {
+    public List<Worklog> getWorklogs()
+    {
         return worklogs;
     }
 
-    public TimeTracking getTimeTracking() {
+    public TimeTracking getTimeTracking()
+    {
         return timeTracking;
     }
 
-    public IssueType getIssueType() {
+    public IssueType getIssueType()
+    {
         return issueType;
     }
 
-    public Status getStatus() {
+    public Status getStatus()
+    {
         return status;
     }
 
-    public Resolution getResolution() {
+    public Resolution getResolution()
+    {
         return resolution;
     }
 
-    public Date getCreated() {
+    public Date getCreated()
+    {
         return created;
     }
 
-    public Date getUpdated() {
+    public Date getUpdated()
+    {
         return updated;
     }
 
-    public Priority getPriority() {
+    public Priority getPriority()
+    {
         return priority;
     }
 
-    public User getAssignee() {
+    public User getAssignee()
+    {
         return assignee;
     }
 
-    public User getCreator() {
+    public User getCreator()
+    {
         return creator;
     }
 
-    public User getReporter() {
+    public User getReporter()
+    {
         return reporter;
     }
 
-    public String getEnvironment() {
+    public String getEnvironment()
+    {
         return environment;
     }
 }
