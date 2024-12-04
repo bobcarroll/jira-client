@@ -93,13 +93,29 @@ public class JiraClient {
      * Creates a new issue in the given project.
      *
      * @param project Key of the project to create in
-     * @param issueType Name of the issue type to create
+     * @param issueTypeName Name of the issue type to create
      *
      * @return a fluent create instance
      *
      * @throws JiraException when something goes wrong
      */
-    public Issue.FluentCreate createIssue(String project, String issueType)
+    public Issue.FluentCreate createIssue(String project, String issueTypeName)
+            throws JiraException {
+
+        return Issue.create(restclient, project, issueTypeName);
+    }
+
+    /**
+     * Creates a new issue in the given project.
+     *
+     * @param project Key of the project to create in
+     * @param issueType Issue type to create
+     *
+     * @return a fluent create instance
+     *
+     * @throws JiraException when something goes wrong
+     */
+    public Issue.FluentCreate createIssue(String project, IssueType issueType)
             throws JiraException {
 
         return Issue.create(restclient, project, issueType);
@@ -412,19 +428,39 @@ public class JiraClient {
      *
      * @param field field id
      * @param project Key of the project context
-     * @param issueType Name of the issue type
+     * @param issueTypeName Name of the issue type
      *
      * @return a search result structure with results
      *
      * @throws JiraException when the search fails
      */
-    public List<CustomFieldOption> getCustomFieldAllowedValues(String field, String project, String issueType) throws JiraException {
+    public List<CustomFieldOption> getCustomFieldAllowedValues(String field, String project, String issueTypeName) throws JiraException {
+        JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueTypeName);
+        return convertCreateMetadataToCustomFieldOptions(field, createMetadata);
+    }
+
+    /**
+     * Get a list of options for a custom field
+     *
+     * @param field field id
+     * @param project Key of the project context
+     * @param issueType Issue type
+     *
+     * @return a search result structure with results
+     *
+     * @throws JiraException when the search fails
+     */
+    public List<CustomFieldOption> getCustomFieldAllowedValues(String field, String project, IssueType issueType) throws JiraException {
         JSONObject createMetadata = (JSONObject) Issue.getCreateMetadata(restclient, project, issueType);
+        return convertCreateMetadataToCustomFieldOptions(field, createMetadata);
+    }
+
+    private List<CustomFieldOption> convertCreateMetadataToCustomFieldOptions(String field, JSONObject createMetadata) {
         JSONObject fieldMetadata = (JSONObject) createMetadata.get(field);
         List<CustomFieldOption> customFieldOptions = Field.getResourceArray(
                 CustomFieldOption.class,
                 fieldMetadata.get("allowedValues"),
-            restclient
+                restclient
         );
         return customFieldOptions;
     }
