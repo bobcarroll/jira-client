@@ -626,9 +626,14 @@ public final class Field {
                     type.equals("string") && custom != null
                     && (custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") ||
                     custom.equals("com.atlassian.jira.plugin.system.customfieldtypes:multiselect")))) {
-                
                 realResult = new JSONObject();
-                ((JSONObject)realResult).put(ValueType.VALUE.toString(), realValue.toString());
+                if (realValue instanceof ValueTuple) {
+                    ValueTuple tuple = (ValueTuple)realValue;
+                    ((JSONObject)realResult).put(tuple.type, tuple.value.toString());
+                } else {
+                    ((JSONObject)realResult).put(ValueType.VALUE.toString(), realValue.toString());
+                }
+
             } else if (type.equals("string"))
                 realResult = realValue.toString();
 
