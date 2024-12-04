@@ -1,10 +1,9 @@
 package net.rcarz.jiraclient;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-
 import java.net.URI;
 import java.util.Map;
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
 
 /**
  * Represens a Jira filter.
@@ -14,26 +13,30 @@ public class Filter extends Resource {
 	private String name;
 	private String jql;
 	private boolean favourite;
+	private User owner;
 
 	public Filter(RestClient restclient, JSONObject json) {
 		super(restclient);
-
 		if (json != null)
-			deserialise(json);
+			deserialise(restclient, json);
 	}
 
-	private void deserialise(JSONObject json) {
+	private void deserialise(final RestClient rst, final JSONObject json) {
 		Map map = json;
-
 		id = Field.getString(map.get("id"));
 		self = Field.getString(map.get("self"));
 		name = Field.getString(map.get("name"));
 		jql = Field.getString(map.get("jql"));
 		favourite = Field.getBoolean(map.get("favourite"));
+		this.owner = new User(rst, (JSONObject) json.get("owner"));
 	}
 
 	public boolean isFavourite() {
 		return favourite;
+	}
+
+	public User getOwner() {
+		return this.owner;
 	}
 
 	public String getJql() {
