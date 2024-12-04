@@ -103,7 +103,7 @@ public class Version extends Resource {
          * @return <code>this</code>
          */
         public FluentCreate releaseDate(Date releaseDate) {
-            DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             req.put("releaseDate", df.format(releaseDate));
             return this;
         }
